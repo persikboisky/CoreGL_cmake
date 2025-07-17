@@ -24,9 +24,13 @@
 #include "../src/file/image.hpp"
 #include "../src/file/code.hpp"
 #include "../src/file/mtl.hpp"
+#include "../src/file/wav.hpp"
 #include "../src/math/math.hpp"
 #include "../src/math/Vectors.hpp"
 #include "../src/math/Matrix4.hpp"
+#include "../src/audio/aDevice.hpp"
+#include "../src/audio/aBuffer.hpp"
+#include "../src/audio/aSource.hpp"
 
 namespace core
 {

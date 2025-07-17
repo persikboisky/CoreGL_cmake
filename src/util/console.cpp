@@ -8,6 +8,14 @@
 #include <windows.h>
 #include <string>
 #include <iostream>
+#include <fcntl.h>
+
+void core::console::init()
+{
+    _setmode(_fileno(stdout), _O_U16TEXT);
+    _setmode(_fileno(stdin),  _O_U16TEXT);
+    _setmode(_fileno(stderr), _O_U16TEXT);
+}
 
 void core::console::printTime()
 {

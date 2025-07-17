@@ -16,6 +16,8 @@ namespace core
 
     namespace console
     {
+        void init();
+
         void printTime();
         void clear();
 

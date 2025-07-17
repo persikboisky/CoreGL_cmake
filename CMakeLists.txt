@@ -20,11 +20,15 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/file/code.cpp
         src/file/mtl.cpp
         src/file/image.cpp
+        src/file/wav.cpp
         src/math/math.cpp
         src/math/Vector2.cpp
         src/math/Vector3.cpp
         src/math/Vector4.cpp
         src/math/Matrix4.cpp
+        src/audio/aDevice.cpp
+        src/audio/aBuffer.cpp
+        src/audio/aSource.cpp
 )
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 
@@ -46,4 +50,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE package/glad/include)
 # link stb_image
 target_include_directories(${PROJECT_NAME} PRIVATE package/stb)
 
+# link openAL
+set(ALSOFT_UTILS OFF)
+set(ALSOFT_NO_CONFIG_UTIL ON)
 
+add_subdirectory(package/openal-soft-1.22.2)
+target_link_libraries(${PROJECT_NAME} OpenAL)
+target_include_directories(${PROJECT_NAME} PRIVATE package/openal-soft-1.22.2/include)
