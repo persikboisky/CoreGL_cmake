@@ -103,3 +103,44 @@ void core::console::print(core::math::Matrix4 &matrix)
     drawlineForTable(9, 6, 5);
     std::cout << std::endl;
 }
+
+void core::console::print(color::RGB color)
+{
+    std::cout << "R:" << color.red << " ";
+    std::cout << "G:" << color.green << " ";
+    std::cout << "B:" << color.blue << " ";
+}
+
+void core::console::getPosCursor(int &x, int &y)
+{
+    CONSOLE_SCREEN_BUFFER_INFO cbsi;
+    if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cbsi))
+    {
+        x = cbsi.dwCursorPosition.X;
+        y = cbsi.dwCursorPosition.Y;
+    }
+    else
+    {
+        x = 0;
+        y = 0;
+    }
+}
+
+core::pos2i core::console::getPosCursor()
+{
+    int x, y;
+    getPosCursor(x, y);
+    return pos2i(x, y);
+}
+
+void core::console::printProgressBar(unsigned int length, unsigned int percent)
+{
+    unsigned int nPerSymbol = (unsigned int)(float(length) * (percent / 100.0));
+    std::cout << "[";
+    for (unsigned int index = 0; index < length; index++)
+    {
+        if (index <= nPerSymbol) std::cout << "#";
+        else std::cout << "-";
+    }
+    std::cout << "] " << percent << "%";
+}

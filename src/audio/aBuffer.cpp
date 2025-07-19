@@ -32,9 +32,6 @@ static unsigned int createBuffer(
     else if (channels == 2 && bitsPerSample == 16)
         format = AL_FORMAT_STEREO16;
 
-    std::cout << channels << std::endl;
-    std::cout << data.size() << std::endl;
-    std::cout << sampleRate << std::endl;
     alBufferData(id, format, data.data(), data.size(), sampleRate);
 
     return id;

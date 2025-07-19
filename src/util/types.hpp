@@ -5,6 +5,8 @@
 #ifndef TYPES_HPP
 #define TYPES_HPP
 
+#include <string>
+
 namespace core
 {
     enum KEY_CODE : int {
@@ -280,6 +282,8 @@ namespace core
             void operator=(const COLOR& color);
             void operator=(const RGB &color);
         };
+
+        RGB stringToRGB(std::string str);
 
         struct RGBA
         {

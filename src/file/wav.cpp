@@ -102,6 +102,23 @@ static std::vector<char> readWav(const char* path, core::wavInfo& info)
     file.read((char*)& dataSizeForByte, 4);
 
     char* containerForDataChunk = new char[dataSizeForByte];
+//    int savePer = -1;
+//    for (int index = 0; index < dataSizeForByte; index++)
+//    {
+//        int per = int(float(index) / float(dataSizeForByte) * 100.0);
+//        if(savePer != per)
+//        {
+//            core::console::printProgressBar(40, per);
+//            savePer = per;
+//            int x, y;
+//            core::console::getPosCursor(x, y);
+//            core::console::setPosCursor(0, y);
+//        }
+//
+//
+//        file.read((char*)&containerForDataChunk[index], 1);
+//    }
+
     file.read(containerForDataChunk, dataSizeForByte);
     std::vector<char> data = core::vector::arrayToVector_char(containerForDataChunk, dataSizeForByte);
 

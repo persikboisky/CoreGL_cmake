@@ -11,7 +11,7 @@
 
 namespace core
 {
-    audio::Source::Source()
+    audio::Source::Source() : id(0)
     {
         alGenSources(1, &this->id);
         if (this->id <= 0)
@@ -24,6 +24,16 @@ namespace core
     {
         this->stop();
         alDeleteSources(1, &this->id);
+    }
+
+    audio::Source audio::Source::create()
+    {
+        return Source();
+    }
+
+    audio::Source* audio::Source::ptrCreate()
+    {
+        return new Source();
     }
 
     void audio::Source::linkBuffer(audio::Buffer buffer) const

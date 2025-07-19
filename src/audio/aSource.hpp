@@ -18,9 +18,13 @@ namespace core
         private:
             unsigned int id;
 
-        public:
             Source();
+
+        public:
             ~Source();
+
+            static Source create();
+            static Source* ptrCreate();
 
             void linkBuffer(Buffer buffer) const;
             void setVolume(float value = 1.0f) const;

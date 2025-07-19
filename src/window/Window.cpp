@@ -56,7 +56,8 @@ core::Window::Window(const core::windowInfo &winInfo) :
     window(createWindow(winInfo.width, winInfo.height, winInfo.title, winInfo.resizable)),
     event(nullptr), width(winInfo.width), height(winInfo.height), posX(winInfo.posX), posY(winInfo.posY),
     saveWidth(winInfo.width), saveHeight(winInfo.height), cursor(nullptr), monitor(nullptr),
-    VSfps(winInfo.VerticalSynchronization), flagFullScreen(winInfo.fullScreen)
+    VSfps(winInfo.VerticalSynchronization), flagFullScreen(winInfo.fullScreen), time(glfwGetTime()),
+    deltaTime(glfwGetTime())
 {
     this->Init();
     if (winInfo.pathToIcon != nullptr)
@@ -68,7 +69,8 @@ core::Window::Window(const core::windowInfo &winInfo) :
 
 core::Window::Window(int width, int height, const char *title, bool resizable) : 
     window(createWindow(width, height, title, resizable)), cursor(nullptr), VSfps(true), monitor(nullptr),
-    event(nullptr), width(width), height(height), posX(0), posY(0), saveWidth(width), saveHeight(height)
+    event(nullptr), width(width), height(height), posX(0), posY(0), saveWidth(width), saveHeight(height),
+    time(glfwGetTime()), deltaTime(glfwGetTime())
 {
     this->Init();
 }
@@ -171,6 +173,9 @@ void core::Window::swapBuffers()
     this->getSizeWindow();
 
     if (!this->flagFullScreen) glfwGetWindowPos(this->window, &this->posX, &this->posY);
+
+    this->deltaTime = glfwGetTime() - this->time;
+    this->time = glfwGetTime();
 }
 
 void core::Window::enableZBuffer()
@@ -382,5 +387,10 @@ void core::Window::fullScreen(bool flag)
         this->setPosFrameBuffer(0, 0);
         this->setSizeFrameBuffer(this->width, this->height);
     }
+}
+
+double core::Window::getDeltaTime() const
+{
+    return this->deltaTime;
 }
 

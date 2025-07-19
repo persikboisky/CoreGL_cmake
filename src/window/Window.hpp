@@ -45,6 +45,9 @@ namespace core
         bool VSfps = true;
         bool flagFullScreen = false;
 
+        double time = 0.0;
+        double deltaTime = 0.0;
+
         void getSizeWindow();
         void Init();
 
@@ -99,6 +102,8 @@ namespace core
         void setSize(const size2i& size);
 
         void fullScreen(bool flag = true);
+
+        [[nodiscard]] double getDeltaTime() const;
     };
 }
 

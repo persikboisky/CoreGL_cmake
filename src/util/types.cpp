@@ -4,6 +4,7 @@
 
 #include "types.hpp"
 #include <GLFW/glfw3.h>
+#include <string>
 
 using namespace core;
 
@@ -181,6 +182,47 @@ void core::color::RGB::operator=(const core::color::RGB &color)
     this->red = color.red;
     this->green = color.green;
     this->blue = color.blue;
+}
+
+constexpr char keySymbol[11] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'};
+core::color::RGB core::color::stringToRGB(std::string str)
+{
+    color::RGB col = {};
+    int colorChannel = 0;
+    std::string colorChannelsValueToStr = "";
+
+    for (unsigned int index = 0; index < str.size(); index++)
+    {
+        bool flag = false;
+        for (unsigned int indexKeySymbol = 0; indexKeySymbol < 11; indexKeySymbol++)
+        {
+            if (str[index] != keySymbol[indexKeySymbol])
+            {
+                flag = false;
+            }
+            else
+            {
+                flag = true;
+                colorChannelsValueToStr += str[index];
+                break;
+            }
+        }
+
+        if (flag == false || index == str.size() - 1)
+        {
+            if (colorChannelsValueToStr != "")
+            {
+                if (colorChannel == 0) col.red = std::stof(colorChannelsValueToStr);
+                else if (colorChannel == 1) col.blue = std::stof(colorChannelsValueToStr);
+                else if (colorChannel == 2) col.green = std::stof(colorChannelsValueToStr);
+
+                colorChannelsValueToStr = "";
+                colorChannel += 1;
+            }
+        }
+    }
+
+    return col;
 }
 
 core::color::RGBA::RGBA(const core::color::COLOR &color)

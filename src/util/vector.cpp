@@ -77,6 +77,29 @@ int vector::searchIndexFromValue(std::vector<unsigned short> vec, unsigned short
     return index;
 }
 
+int vector::searchIndexFromValue(std::vector<std::string> vec, std::string value)
+{
+    int index;
+    bool flag = false;
+
+    for (int i = 0; i < vec.size(); i++)
+    {
+        if (vec[i] == value)
+        {
+            index = i;
+            flag = true;
+            break;
+        }
+    }
+
+    if (!flag)
+    {
+        return -1;
+    }
+
+    return index;
+}
+
 std::vector<float> vector::arrayToVector_float(float* array, unsigned int size_array)
 {
     std::vector<float> new_vector;

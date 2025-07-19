@@ -14,6 +14,11 @@ namespace core
         class Matrix4;
     }
 
+    namespace color
+    {
+        struct RGB;
+    }
+
     namespace console
     {
         void init();
@@ -25,6 +30,12 @@ namespace core
         void setPosCursor(const pos2i& pos);
 
         void print(math::Matrix4& matrix);
+        void print(color::RGB color);
+
+        void getPosCursor(int &x, int &y);
+        pos2i getPosCursor();
+
+        void printProgressBar(unsigned int length, unsigned int percent);
     };
 }
 
