@@ -24,6 +24,7 @@
 #include "../src/file/image.hpp"
 #include "../src/file/code.hpp"
 #include "../src/file/mtl.hpp"
+#include "../src/file/obj.hpp"
 #include "../src/file/wav.hpp"
 #include "../src/math/math.hpp"
 #include "../src/math/Vectors.hpp"

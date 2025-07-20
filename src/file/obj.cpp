@@ -1,0 +1,351 @@
+//
+// Created by kisly on 20.07.2025.
+//
+
+#include "obj.hpp"
+#include "mtl.hpp"
+#include "code.hpp"
+#include "image.hpp"
+#include "../config.hpp"
+#include "../util/console.hpp"
+#include "../util/coders.hpp"
+#include "../graphics/commons/texture.hpp"
+#include <string>
+#include <vector>
+#include <map>
+#include <iostream>
+
+#define CALCULATE_N_POLIGONS(N_VERTEXES) N_VERTEXES / 9
+
+namespace core
+{
+    void obj::read(const char *path)
+    {
+        std::string code = code::loadStr(path);
+
+        unsigned int sizePathToDirect = 0;
+        for (unsigned int index = std::string(path).size() - 1;; index--)
+        {
+            if (path[index] == '/')
+            {
+                sizePathToDirect = index + 1;
+                break;
+            }
+        }
+
+        std::string pathToMtl = "";
+        for (;;)
+        {
+            if (pathToMtl.size() == sizePathToDirect) break;
+            pathToMtl += path[pathToMtl.size()];
+        }
+
+        std::string PathToDirect = pathToMtl;
+
+        std::string nameMtlFile = "";
+        for (unsigned int gIndex = 0; gIndex < code.size(); gIndex++)
+        {
+            if (code[gIndex] == '#')
+            {
+                for (;;gIndex++)
+                {
+                    if (code[gIndex] == '\n')
+                    {
+                        break;
+                    }
+                }
+            }
+
+            else if (
+               code[gIndex] == 'm' &&
+               code[gIndex + 1] == 't' &&
+               code[gIndex + 2] == 'l' &&
+               code[gIndex + 3] == 'l' &&
+               code[gIndex + 4] == 'i' &&
+               code[gIndex + 5] == 'b'
+            )
+            {
+                gIndex += 6;
+                for (;;gIndex++)
+                {
+                    if (code[gIndex] == ' ')
+                    {
+                        for (;;gIndex++)
+                        {
+                            if (code[gIndex] != ' ')
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    else if (code[gIndex] == '\n')
+                    {
+                        gIndex = code.size();
+                        break;
+                    }
+
+                    nameMtlFile += code[gIndex];
+                }
+            }
+        }
+
+        mtl* mtlObj = nullptr;
+        bool flagMtl = false;
+        
+        try
+        {
+            pathToMtl += nameMtlFile;
+            mtlObj = mtl::ptrLoad(pathToMtl.c_str());
+            flagMtl = true;
+        }
+        catch (...)
+        {
+            console::printTime();
+            std::cout << "Warning: I didn't search Mtl to path: " << pathToMtl << std::endl;
+            flagMtl = false;
+        }
+
+        std::vector<unsigned int> idTexture = {};
+        if (flagMtl)
+        {
+            for (std::string nameResource : mtlObj->getListMtlRes())
+            {
+                std::string pathToTexture = PathToDirect;
+                pathToTexture += mtlObj->getPathToKdTexture(nameResource);
+
+                if (mtlObj->getPathToKdTexture(nameResource) == "")
+                    idTexture.push_back(0);
+                else 
+                {
+                    core::image textureImage = core::image::load(pathToTexture.c_str());
+                    idTexture.push_back(texture::load(textureImage));
+                }
+            }
+        }
+
+        std::string comments = "";
+        std::string selectNameObejct = "";
+        std::string selectNameResource  ="";
+
+        std::vector<float> vertexes = {};
+        std::vector<float> normals = {};
+        std::vector<float> texutresCoord = {};
+
+        for (unsigned int index = 0; index < code.size(); index++)
+        {
+            if (code[index] == '#')
+            {
+                index += 1;
+
+                for (;;index++)
+                {
+                    comments += code[index];
+                    if (code[index] == '\n') break;
+                }
+            }
+
+            else if (
+                code[index] == 'v' &&
+                code[index + 1] == ' '
+            )
+            {
+                index += 2;
+                std::string value = "";
+                for (;;index++)
+                {
+                    if (code[index] == ' ')
+                    {
+                        for (;;index++)
+                        {
+                            if (code[index] != ' ') 
+                            {
+                                index -= 1;
+                                if (value != "")
+                                {
+                                    vertexes.push_back(std::stof(value));
+                                }
+                                value = "";
+                                break;
+                            }
+                        }
+                    }
+
+                    else if (code[index] == '\n')
+                    {
+                        vertexes.push_back(std::stof(value));
+                        break;
+                    }
+
+                    value += code[index];
+                }
+            }
+
+            else if (
+                code[index] == 'v' &&
+                code[index + 1] == 'n' 
+            )
+            {
+                index += 2;
+                std::string value = "";
+                for (;;index++)
+                {
+                    if (code[index] == ' ')
+                    {
+                        for (;;index++)
+                        {
+                            if (code[index] != ' ') 
+                            {
+                                index -= 1;
+                                if (value != "")
+                                {
+                                    normals.push_back(std::stof(value));
+                                }
+                                value = "";
+                                break;
+                            }
+                        }
+                    }
+
+                    else if (code[index] == '\n')
+                    {
+                        normals.push_back(std::stof(value));
+                        break;
+                    }
+
+                    value += code[index];
+                }
+            }
+
+            else if (
+                code[index] == 'v' &&
+                code[index + 1] == 't' 
+            )
+            {
+                index += 2;
+                std::string value = "";
+                for (;;index++)
+                {
+                    if (code[index] == ' ')
+                    {
+                        for (;;index++)
+                        {
+                            if (code[index] != ' ') 
+                            {
+                                index -= 1;
+                                if (value != "")
+                                {
+                                    texutresCoord.push_back(std::stof(value));
+                                }
+                                value = "";
+                                break;
+                            }
+                        }
+                    }
+
+                    else if (code[index] == '\n')
+                    {
+                        texutresCoord.push_back(std::stof(value));
+                        break;
+                    }
+
+                    value += code[index];
+                }
+            }
+
+            else if (code[index] == 'o')
+            {
+                index += 1;
+                std::string objectName = "";
+                for (;;index++)
+                {
+                    if (code[index] == ' ') continue;
+                    else if (code[index] == '\n')
+                    {
+                        selectNameObejct = objectName;
+                        this->objects[objectName] = {};
+                        break;
+                    }
+                    objectName += code[index];
+                }
+            }
+
+            else if (
+                code[index] == 'u' &&
+                code[index + 1] == 's' &&
+                code[index + 2] == 'e' &&
+                code[index + 3] == 'm' &&
+                code[index + 4] == 't' &&
+                code[index + 5] == 'l' 
+            )
+            {
+                index += 6;
+                std::string resourceName = "";
+                for (;;index++)
+                {
+                    if (code[index] == ' ') continue;
+                    else if (code[index] == '\n')
+                    {
+                        selectNameResource = resourceName;
+                        break;
+                    }
+                    resourceName += code[index];
+                }
+            }
+
+            else if (
+                code[index] == 'f' &&
+                code[index + 1] == ' '
+            )
+            {
+                index += 2;
+                for (;;index++)
+                {
+                    if (code[index] == ' ')
+                    {
+                        for (;;index++)
+                        {
+                            if (code[index] != ' ')
+                            {
+                                index -= 1;
+                                break;
+                            }
+                        }
+                    }
+                    else if (code[index] == '\n') break;
+                }
+            }
+        }
+
+        if (CORE_INFO)
+        {
+            console::printTime();
+            std::cout << "Ok: load object to path: " << path << std::endl;
+            console::printTime();
+            std::cout << "Objects numbers: " << this->objects.size() << std::endl;
+            console::printTime();
+            std::cout << "Poligons: " << CALCULATE_N_POLIGONS(vertexes.size()) << std::endl;
+        }
+
+        if (mtlObj != nullptr)
+        {
+            delete mtlObj;
+        }
+    }
+
+    obj::obj(const char *path)
+    {
+        this->read(path);
+    }
+
+    obj obj::load(const char *path)
+    {
+        return obj(path);
+    }
+
+    obj *obj::ptrLoad(const char *path)
+    {
+        return new obj(path);
+    }
+
+} // core

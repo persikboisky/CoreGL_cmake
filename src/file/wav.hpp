@@ -31,7 +31,7 @@ namespace core
     public:
         ~wav();
 
-        static std::vector<char> read(const char* path);
+        static std::vector<char> read(const char* path, wavInfo& info);
 
         static wav load(const char* path);
         static wav *ptrLoad(const char* path);

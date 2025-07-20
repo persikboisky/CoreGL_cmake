@@ -19,6 +19,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/graphics/commons/gl.cpp
         src/file/code.cpp
         src/file/mtl.cpp
+        src/file/obj.cpp
         src/file/image.cpp
         src/file/wav.cpp
         src/math/math.cpp

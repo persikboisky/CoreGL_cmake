@@ -43,6 +43,7 @@ const std::string INFO_CODERS[] = {
         "FAILED_SEARCH_BLOCK_DATA",             // 31
         "FAILED_CREATE_AUDIO_BUFFER",           // 32
         "FAILED_CREATE_SOURCE",                 // 33
+        "FAILED_SEARCH_MTL_FILE_NAME_TO_OBJ",   // 34
         ""
 };
 

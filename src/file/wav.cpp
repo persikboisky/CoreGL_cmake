@@ -158,9 +158,9 @@ namespace core
     {
     }
 
-    std::vector<char> wav::read(const char *path)
+    std::vector<char> wav::read(const char *path, wavInfo& info)
     {
-        return std::vector<char>();
+        return readWav(path, info);
     }
 
     wav wav::load(const char *path)
