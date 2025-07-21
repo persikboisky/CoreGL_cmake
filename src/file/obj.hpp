@@ -11,6 +11,8 @@
 
 namespace core
 {
+    class img;
+
     struct infoObject 
     {
         float smoothingPoligons = 0;
@@ -22,13 +24,14 @@ namespace core
     {
     private:
         std::string comments = "";
-        std::map<std::string, infoObject> objects = {};
-
+        
         void read(const char *path);
 
         obj(const char *path);
 
     public:
+        std::map<std::string, infoObject> objects = {};
+
         static obj load(const char *path);
         static obj *ptrLoad(const char *path);
     };

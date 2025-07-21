@@ -175,6 +175,11 @@ Texture::Texture(image& img)
     this->id = texture::load(img);
 }
 
+Texture::Texture(unsigned int id)
+{
+    this->id = id;
+}
+
 Texture Texture::create(unsigned char* png_code, int width, int height, int channels)
 {
     return Texture(png_code, width, height, channels);
@@ -198,6 +203,11 @@ Texture *Texture::ptrCreate(unsigned char* png_code, int width, int height, int 
 Texture Texture::load(const char* path)
 {
     return Texture(path);
+}
+
+Texture Texture::add(unsigned int id)
+{
+    return Texture(id);
 }
 
 Texture::~Texture()

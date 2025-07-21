@@ -10,10 +10,12 @@
 #include "../util/console.hpp"
 #include "../util/coders.hpp"
 #include "../graphics/commons/texture.hpp"
+#include "../graphics/commons/vao.hpp"
 #include <string>
 #include <vector>
 #include <map>
 #include <iostream>
+#include <functional>
 
 #define CALCULATE_N_POLIGONS(N_VERTEXES) N_VERTEXES / 9
 
@@ -36,7 +38,8 @@ namespace core
         std::string pathToMtl = "";
         for (;;)
         {
-            if (pathToMtl.size() == sizePathToDirect) break;
+            if (pathToMtl.size() == sizePathToDirect)
+                break;
             pathToMtl += path[pathToMtl.size()];
         }
 
@@ -47,7 +50,7 @@ namespace core
         {
             if (code[gIndex] == '#')
             {
-                for (;;gIndex++)
+                for (;; gIndex++)
                 {
                     if (code[gIndex] == '\n')
                     {
@@ -57,20 +60,19 @@ namespace core
             }
 
             else if (
-               code[gIndex] == 'm' &&
-               code[gIndex + 1] == 't' &&
-               code[gIndex + 2] == 'l' &&
-               code[gIndex + 3] == 'l' &&
-               code[gIndex + 4] == 'i' &&
-               code[gIndex + 5] == 'b'
-            )
+                code[gIndex] == 'm' &&
+                code[gIndex + 1] == 't' &&
+                code[gIndex + 2] == 'l' &&
+                code[gIndex + 3] == 'l' &&
+                code[gIndex + 4] == 'i' &&
+                code[gIndex + 5] == 'b')
             {
                 gIndex += 6;
-                for (;;gIndex++)
+                for (;; gIndex++)
                 {
                     if (code[gIndex] == ' ')
                     {
-                        for (;;gIndex++)
+                        for (;; gIndex++)
                         {
                             if (code[gIndex] != ' ')
                             {
@@ -90,9 +92,9 @@ namespace core
             }
         }
 
-        mtl* mtlObj = nullptr;
+        mtl *mtlObj = nullptr;
         bool flagMtl = false;
-        
+
         try
         {
             pathToMtl += nameMtlFile;
@@ -106,7 +108,7 @@ namespace core
             flagMtl = false;
         }
 
-        std::vector<unsigned int> idTexture = {};
+        std::map<std::string, unsigned int> idTexture = {};
         if (flagMtl)
         {
             for (std::string nameResource : mtlObj->getListMtlRes())
@@ -115,22 +117,25 @@ namespace core
                 pathToTexture += mtlObj->getPathToKdTexture(nameResource);
 
                 if (mtlObj->getPathToKdTexture(nameResource) == "")
-                    idTexture.push_back(0);
-                else 
+                    idTexture[nameResource] = 0;
+                else
                 {
                     core::image textureImage = core::image::load(pathToTexture.c_str());
-                    idTexture.push_back(texture::load(textureImage));
+                    idTexture[nameResource] = texture::load(textureImage);
                 }
             }
         }
 
         std::string comments = "";
         std::string selectNameObejct = "";
-        std::string selectNameResource  ="";
+        std::string selectNameResource = "";
 
         std::vector<float> vertexes = {};
         std::vector<float> normals = {};
         std::vector<float> texutresCoord = {};
+
+        bool flagCheckFormatF = true;
+        int FormatF = 0;
 
         for (unsigned int index = 0; index < code.size(); index++)
         {
@@ -138,27 +143,27 @@ namespace core
             {
                 index += 1;
 
-                for (;;index++)
+                for (;; index++)
                 {
                     comments += code[index];
-                    if (code[index] == '\n') break;
+                    if (code[index] == '\n')
+                        break;
                 }
             }
 
             else if (
                 code[index] == 'v' &&
-                code[index + 1] == ' '
-            )
+                code[index + 1] == ' ')
             {
                 index += 2;
                 std::string value = "";
-                for (;;index++)
+                for (;; index++)
                 {
                     if (code[index] == ' ')
                     {
-                        for (;;index++)
+                        for (;; index++)
                         {
-                            if (code[index] != ' ') 
+                            if (code[index] != ' ')
                             {
                                 index -= 1;
                                 if (value != "")
@@ -183,18 +188,17 @@ namespace core
 
             else if (
                 code[index] == 'v' &&
-                code[index + 1] == 'n' 
-            )
+                code[index + 1] == 'n')
             {
                 index += 2;
                 std::string value = "";
-                for (;;index++)
+                for (;; index++)
                 {
                     if (code[index] == ' ')
                     {
-                        for (;;index++)
+                        for (;; index++)
                         {
-                            if (code[index] != ' ') 
+                            if (code[index] != ' ')
                             {
                                 index -= 1;
                                 if (value != "")
@@ -219,18 +223,17 @@ namespace core
 
             else if (
                 code[index] == 'v' &&
-                code[index + 1] == 't' 
-            )
+                code[index + 1] == 't')
             {
                 index += 2;
                 std::string value = "";
-                for (;;index++)
+                for (;; index++)
                 {
                     if (code[index] == ' ')
                     {
-                        for (;;index++)
+                        for (;; index++)
                         {
-                            if (code[index] != ' ') 
+                            if (code[index] != ' ')
                             {
                                 index -= 1;
                                 if (value != "")
@@ -257,9 +260,10 @@ namespace core
             {
                 index += 1;
                 std::string objectName = "";
-                for (;;index++)
+                for (;; index++)
                 {
-                    if (code[index] == ' ') continue;
+                    if (code[index] == ' ')
+                        continue;
                     else if (code[index] == '\n')
                     {
                         selectNameObejct = objectName;
@@ -276,17 +280,18 @@ namespace core
                 code[index + 2] == 'e' &&
                 code[index + 3] == 'm' &&
                 code[index + 4] == 't' &&
-                code[index + 5] == 'l' 
-            )
+                code[index + 5] == 'l')
             {
                 index += 6;
                 std::string resourceName = "";
-                for (;;index++)
+                for (;; index++)
                 {
-                    if (code[index] == ' ') continue;
+                    if (code[index] == ' ')
+                        continue;
                     else if (code[index] == '\n')
                     {
                         selectNameResource = resourceName;
+                        this->objects[selectNameObejct].texture = idTexture[selectNameResource];
                         break;
                     }
                     resourceName += code[index];
@@ -295,24 +300,91 @@ namespace core
 
             else if (
                 code[index] == 'f' &&
-                code[index + 1] == ' '
-            )
+                code[index + 1] == ' ')
             {
-                index += 2;
-                for (;;index++)
+                if (flagCheckFormatF)
                 {
-                    if (code[index] == ' ')
+                    int saveIndex = index;
+                    int n = 0;
+                    index += 2;
+                    for (;; index++)
                     {
-                        for (;;index++)
-                        {
-                            if (code[index] != ' ')
-                            {
-                                index -= 1;
-                                break;
-                            }
-                        }
+                        if (code[index] == '\n')
+                            break;
+                        else if (code[index] == '/')
+                            n++;
                     }
-                    else if (code[index] == '\n') break;
+
+                    if (n / 3 == 2)
+                        FormatF = 3;
+                    else if (n == 0)
+                        FormatF = 1;
+                    else
+                        FormatF = 2;
+
+                    flagCheckFormatF = false;
+                    index = saveIndex;
+                }
+
+                index += 2;
+                switch (FormatF)
+                {
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    int indexElementToF = 0;
+                    std::string value = "";
+
+                    for (;; index++)
+                    {
+
+                        if (code[index] == ' ')
+                        {
+                            indexElementToF++;
+                            for (;; index++)
+                            {
+                                if (code[index] != ' ')
+                                {
+                                    index -= 1;
+                                    break;
+                                }
+                            }
+
+                            value = "";
+                        }
+
+                        else if (code[index] == '\n')
+                        {
+                            indexElementToF++;
+                            value = "";
+                            break;
+                        }
+
+                        else if (code[index] == '/')
+                        {
+                            if (indexElementToF == 0 || indexElementToF == 3 || indexElementToF == 6)
+                            {
+                                int indexElementToVertex = (value != "") ? std::stoi(value) : 0;
+                                this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3]);
+                                this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3 + 1]);
+                                this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3 + 2]);
+                            }
+                            else if (indexElementToF == 1 || indexElementToF == 4 || indexElementToF == 7)
+                            {
+                                int indexElementToTextureCoord = (value != "") ? std::stoi(value) : 0;
+                                this->objects[selectNameObejct].vertexes.push_back(texutresCoord[(indexElementToTextureCoord - 1) * 2]);
+                                this->objects[selectNameObejct].vertexes.push_back(texutresCoord[(indexElementToTextureCoord - 1) * 2 + 1]);
+                            }
+                            indexElementToF++;
+                            value = "";
+                            continue;
+                        }
+
+                        value += code[index];
+                    }
+                    break;
                 }
             }
         }
