@@ -24,6 +24,7 @@ namespace core
     {
     private:
         std::string comments = "";
+        std::vector<std::string> listNamesResources = {};
         
         void read(const char *path);
 

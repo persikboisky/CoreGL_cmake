@@ -16,6 +16,7 @@
 #include <map>
 #include <iostream>
 #include <functional>
+#include <windows.h>
 
 #define CALCULATE_N_POLIGONS(N_VERTEXES) N_VERTEXES / 9
 
@@ -330,53 +331,199 @@ namespace core
                 switch (FormatF)
                 {
                 case 1:
-                    break;
+                {
+                    std::string value = "";
+                    for (;; index++)
+                    {
+                        if (code[index] == ' ' || code[index] == '\n')
+                        {
+                            if (code[index] == ' ')
+                            {
+                                for (;; index++)
+                                {
+                                    if (code[index] != ' ')
+                                    {
+                                        index -= 1;
+                                        break;
+                                    }
+                                }
+
+                                value = "";
+                            }
+
+                            int indexElementToVertex = (value != "") ? std::stoi(value) : 0;
+                            if (indexElementToVertex > 0)
+                            {
+                                this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3]);
+                                this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3 + 1]);
+                                this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3 + 2]);
+                            }
+                            else
+                            {
+                                this->objects[selectNameObejct].vertexes.push_back(0);
+                                this->objects[selectNameObejct].vertexes.push_back(0);
+                                this->objects[selectNameObejct].vertexes.push_back(0);
+                            }
+                        }
+
+                        if (code[index] == '\n')
+                        {
+                            value = "";
+                            break;
+                        }
+
+                        value = "";
+                        continue;
+                    }
+                    value += code[index];
+                }
+                break;
                 case 2:
-                    break;
+                {
+                    int indexElementToF = 0;
+                    std::string value = "";
+
+                    for (;; index++)
+                    {
+                        if (code[index] == '/' || code[index] == ' ' || code[index] == '\n')
+                        {
+                            if (code[index] == ' ')
+                            {
+                                for (;; index++)
+                                {
+                                    if (code[index] != ' ')
+                                    {
+                                        index -= 1;
+                                        break;
+                                    }
+                                }
+
+                                value = "";
+                            }
+
+                            if (indexElementToF == 0 || indexElementToF == 2 || indexElementToF == 4)
+                            {
+                                int indexElementToVertex = (value != "") ? std::stoi(value) : 0;
+                                if (indexElementToVertex > 0)
+                                {
+                                    this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3]);
+                                    this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3 + 1]);
+                                    this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3 + 2]);
+                                }
+                                else
+                                {
+                                    this->objects[selectNameObejct].vertexes.push_back(0);
+                                    this->objects[selectNameObejct].vertexes.push_back(0);
+                                    this->objects[selectNameObejct].vertexes.push_back(0);
+                                }
+                            }
+                            else if (indexElementToF == 1 || indexElementToF == 3 || indexElementToF == 5)
+                            {
+                                int indexElementToTextureCoord = (value != "") ? std::stoi(value) : 0;
+                                if (indexElementToTextureCoord > 0)
+                                {
+                                    this->objects[selectNameObejct].vertexes.push_back(texutresCoord[(indexElementToTextureCoord - 1) * 2]);
+                                    this->objects[selectNameObejct].vertexes.push_back(texutresCoord[(indexElementToTextureCoord - 1) * 2 + 1]);
+                                }
+                                else
+                                {
+                                    this->objects[selectNameObejct].vertexes.push_back(0);
+                                    this->objects[selectNameObejct].vertexes.push_back(0);
+                                }
+                            }
+
+                            if (code[index] == '\n')
+                            {
+                                value = "";
+                                indexElementToF++;
+                                break;
+                            }
+
+                            indexElementToF++;
+                            value = "";
+                            continue;
+                        }
+
+                        value += code[index];
+                    }
+                }
+                break;
                 case 3:
                     int indexElementToF = 0;
                     std::string value = "";
 
                     for (;; index++)
                     {
-
-                        if (code[index] == ' ')
+                        if (code[index] == '/' || code[index] == ' ' || code[index] == '\n')
                         {
-                            indexElementToF++;
-                            for (;; index++)
+                            if (code[index] == ' ')
                             {
-                                if (code[index] != ' ')
+                                for (;; index++)
                                 {
-                                    index -= 1;
-                                    break;
+                                    if (code[index] != ' ')
+                                    {
+                                        index -= 1;
+                                        break;
+                                    }
                                 }
+
+                                value = "";
                             }
 
-                            value = "";
-                        }
-
-                        else if (code[index] == '\n')
-                        {
-                            indexElementToF++;
-                            value = "";
-                            break;
-                        }
-
-                        else if (code[index] == '/')
-                        {
                             if (indexElementToF == 0 || indexElementToF == 3 || indexElementToF == 6)
                             {
                                 int indexElementToVertex = (value != "") ? std::stoi(value) : 0;
-                                this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3]);
-                                this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3 + 1]);
-                                this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3 + 2]);
+                                if (indexElementToVertex > 0)
+                                {
+                                    this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3]);
+                                    this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3 + 1]);
+                                    this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3 + 2]);
+                                }
+                                else
+                                {
+                                    this->objects[selectNameObejct].vertexes.push_back(0);
+                                    this->objects[selectNameObejct].vertexes.push_back(0);
+                                    this->objects[selectNameObejct].vertexes.push_back(0);
+                                }
                             }
                             else if (indexElementToF == 1 || indexElementToF == 4 || indexElementToF == 7)
                             {
                                 int indexElementToTextureCoord = (value != "") ? std::stoi(value) : 0;
-                                this->objects[selectNameObejct].vertexes.push_back(texutresCoord[(indexElementToTextureCoord - 1) * 2]);
-                                this->objects[selectNameObejct].vertexes.push_back(texutresCoord[(indexElementToTextureCoord - 1) * 2 + 1]);
+                                if (indexElementToTextureCoord > 0)
+                                {
+                                    this->objects[selectNameObejct].vertexes.push_back(texutresCoord[(indexElementToTextureCoord - 1) * 2]);
+                                    this->objects[selectNameObejct].vertexes.push_back(texutresCoord[(indexElementToTextureCoord - 1) * 2 + 1]);
+                                }
+                                else
+                                {
+                                    this->objects[selectNameObejct].vertexes.push_back(0);
+                                    this->objects[selectNameObejct].vertexes.push_back(0);
+                                }
                             }
+                            else if (indexElementToF == 2 || indexElementToF == 5 || indexElementToF == 8)
+                            {
+                                int indexElementToNormals = (value != "") ? std::stoi(value) : 0;
+                                if (indexElementToNormals > 0)
+                                {
+                                    this->objects[selectNameObejct].vertexes.push_back(normals[(indexElementToNormals - 1) * 3]);
+                                    this->objects[selectNameObejct].vertexes.push_back(normals[(indexElementToNormals - 1) * 3 + 1]);
+                                    this->objects[selectNameObejct].vertexes.push_back(normals[(indexElementToNormals - 1) * 3 + 2]);
+                                }
+                                else
+                                {
+                                    this->objects[selectNameObejct].vertexes.push_back(0);
+                                    this->objects[selectNameObejct].vertexes.push_back(0);
+                                    this->objects[selectNameObejct].vertexes.push_back(0);
+                                }
+                            }
+
+                            if (code[index] == '\n')
+                            {
+                                value = "";
+                                indexElementToF++;
+                                break;
+                            }
+
                             indexElementToF++;
                             value = "";
                             continue;
@@ -403,6 +550,11 @@ namespace core
         {
             delete mtlObj;
         }
+
+        vertexes.clear();
+        normals.clear();
+        texutresCoord.clear();
+        idTexture.clear();
     }
 
     obj::obj(const char *path)

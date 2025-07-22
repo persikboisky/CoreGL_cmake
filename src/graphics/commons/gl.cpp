@@ -48,3 +48,41 @@ void core::gl::setDirectFronFace(const core::DIRECT_FRONT_FACE& dff)
         break;
     }
 }
+
+void core::gl::setTypePolygonMode(const DIRECT_FACE_POLIGONS &DFP, const POLYGON_MODE &PM)
+{
+    int glDFP = 0;
+    int glPM = 0;
+
+    switch (DFP)
+    {
+        case POLYGON_BACK:
+            glDFP = GL_BACK;
+            break;
+
+        case POLYGON_FRONT:
+            glDFP = GL_FRONT;
+            break;
+
+        default:
+            glDFP = GL_FRONT_AND_BACK;
+            break;
+    }
+
+    switch (PM)
+    {
+    case POLYGON_POINT:
+        glPM = GL_POINT;
+        break;
+    
+    case POLYGON_LINE:
+        glPM = GL_LINE;
+        break;
+    
+    default:
+        glPM = GL_FILL;
+        break;
+    }
+
+    glPolygonMode(glDFP, glPM);
+}

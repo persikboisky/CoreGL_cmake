@@ -9,7 +9,8 @@
 
 namespace core
 {
-    enum KEY_CODE : int {
+    enum KEY_CODE : int 
+    {
         K_F1,
         K_F2,
         K_F3,
@@ -119,6 +120,18 @@ namespace core
         TEXTURE_MIRRORED_REPEAT,
         TEXTURE_CLAMP_TP_EDGE,
         TEXTURE_CLAMP_TO_BORDER
+    };
+    enum POLYGON_MODE : int 
+    {
+        POLYGON_POINT,
+        POLYGON_LINE,
+        POLYGON_FILL
+    };
+    enum DIRECT_FACE_POLIGONS : int 
+    {
+        POLYGON_FRONT,
+        POLYGON_BACK,
+        POLYGON_FRONT_AND_BACK
     };
 
     int convertKeyCode(const KEY_CODE& keyCode);
