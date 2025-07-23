@@ -24,17 +24,19 @@ namespace core
     {
     private:
         std::string comments = "";
-        std::vector<std::string> listNamesResources = {};
+        std::map<std::string, infoObject> objects = {};
+        std::vector<std::string> listNamesObjects = {};
         
         void read(const char *path);
 
         obj(const char *path);
 
     public:
-        std::map<std::string, infoObject> objects = {};
-
         static obj load(const char *path);
         static obj *ptrLoad(const char *path);
+
+        std::vector<std::string> getListNamesObjects();
+        std::map<std::string, infoObject> getObjects();
     };
 }
 

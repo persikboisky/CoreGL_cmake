@@ -3,13 +3,13 @@
 //
 
 #include "shader.hpp"
+#include "Camera.hpp"
 #include "../../file/code.hpp"
 #include "../../config.hpp"
 #include "../../util/types.hpp"
 #include "../../util/vector.hpp"
 #include "../../math/Matrix4.hpp"
 #include "../../math/Vectors.hpp"
-#include "Camera.hpp"
 #include "../../Window/Window.hpp"
 #include "../../util/coders.hpp"
 #include "../../util/console.hpp"
@@ -339,6 +339,11 @@ void shader::Uniform4F(math::Vector4 vec4, const char* name)
     glUniform4f(getLocateUniform(shader::SelectID, name), vec4.x, vec4.y, vec4.z, vec4.w);
 }
 
+void shader::Uniform1I(int value, const char* name)
+{
+    glUniform1i(getLocateUniform(shader::SelectID, name), value);
+}
+
 void shader::UniformSample2D(int value, const char* name)
 {
     glUniform1i(getLocateUniform(shader::SelectID, name), value);
@@ -447,6 +452,13 @@ void Shader::Uniform4F(core::math::Vector4 vec4, const char* name) const
     if (shader::getSelectID() != this->id)
         this->use();
     shader::Uniform4F(vec4, name);
+}
+
+void Shader::Uniform1I(int value, const char* name)
+{
+    if (shader::getSelectID() != this->id)
+        this->use();
+    shader::Uniform1I(value, name);
 }
 
 void Shader::UniformSample2D(int value, const char* name) const

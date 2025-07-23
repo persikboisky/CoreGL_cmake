@@ -105,14 +105,14 @@ namespace core
         catch (...)
         {
             console::printTime();
-            std::cout << "Warning: I didn't search Mtl to path: " << pathToMtl << std::endl;
+            std::cout << "Warning: I didn't read or analysis Mtl to path: " << pathToMtl << std::endl;
             flagMtl = false;
         }
 
         std::map<std::string, unsigned int> idTexture = {};
         if (flagMtl)
         {
-            for (std::string nameResource : mtlObj->getListMtlRes())
+            for (auto nameResource : mtlObj->getListMtlRes())
             {
                 std::string pathToTexture = PathToDirect;
                 pathToTexture += mtlObj->getPathToKdTexture(nameResource);
@@ -268,6 +268,7 @@ namespace core
                     else if (code[index] == '\n')
                     {
                         selectNameObejct = objectName;
+                        this->listNamesObjects.push_back(objectName);
                         this->objects[objectName] = {};
                         break;
                     }
@@ -570,6 +571,16 @@ namespace core
     obj *obj::ptrLoad(const char *path)
     {
         return new obj(path);
+    }
+
+    std::vector<std::string> obj::getListNamesObjects()
+    {
+        return this->listNamesObjects;
+    }
+
+    std::map<std::string, infoObject> obj::getObjects()
+    {
+        return this->objects;
     }
 
 } // core

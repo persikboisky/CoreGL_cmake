@@ -133,6 +133,13 @@ namespace core
         POLYGON_BACK,
         POLYGON_FRONT_AND_BACK
     };
+    enum TYPES_COORD : int
+    {
+        POSITIVE_RELATIVE_COORD,
+        RELATIVE_COORD,
+        POSITIVE_WINDOW_COORD,
+        WINDOW_COORD
+    };
 
     int convertKeyCode(const KEY_CODE& keyCode);
     int convertPrimitive(const PRIMITIVE& primitive);
@@ -294,6 +301,8 @@ namespace core
 
             void operator=(const COLOR& color);
             void operator=(const RGB &color);
+
+            void normalize();
         };
 
         RGB stringToRGB(std::string str);
@@ -312,6 +321,8 @@ namespace core
             void operator=(const RGB& color);
             void operator=(const RGBA &color);
             void operator=(const COLOR &color);
+
+            void normalize();
         };
 
         RGB convertColor(const COLOR& color);

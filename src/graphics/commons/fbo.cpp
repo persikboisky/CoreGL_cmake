@@ -255,5 +255,10 @@ void core::FBO::fill(const color::COLOR& color)
     this->fill(color::RGBA(color));
 }
 
+unsigned int core::FBO::getTextureId()
+{
+    return this->idTexture;
+}
+
 #pragma endregion
 

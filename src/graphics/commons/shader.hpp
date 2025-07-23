@@ -76,6 +76,8 @@ namespace core
         static void Uniform3F(core::math::Vector3 vec3, const char* name);
         static void Uniform4F(core::math::Vector4 vec4, const char* name);
 
+        static void Uniform1I(int value, const char* name);
+
         static void UniformSample2D(int value, const char* name);
 
         static void UniformRGBA(const color::RGBA& color, const char* name, bool normalize = false);
@@ -115,6 +117,8 @@ namespace core
         void Uniform2F(core::math::Vector2 vec2, const char* name) const;
         void Uniform3F(core::math::Vector3 vec3, const char* name) const;
         void Uniform4F(core::math::Vector4 vec4, const char* name) const;
+
+        void Uniform1I(int value, const char* name);
 
         /*void Uniform1I(glm::ivec1 value, const char* name) const;
         void Uniform2I(glm::ivec2 value, const char* name) const;*/

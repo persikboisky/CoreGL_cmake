@@ -20,10 +20,12 @@ namespace core
 
         std::vector<std::string> namesResourcesGroups = {};
 
-        std::vector<std::string> teaxturesPathesKd = {};
-        std::vector<std::string> teaxturesPathesNs = {};
-        std::vector<std::string> teaxturesPathesRefl = {};
-        std::vector<std::string> teaxturesPathesReflBump = {};
+        std::vector<std::string> texturesPathesKd = {};
+        std::vector<std::string> texturesPathesKs = {};
+        std::vector<std::string> texturesPathesNs = {};
+        std::vector<std::string> texturesPathesRefl = {};
+        std::vector<std::string> texturesPathesReflBump = {};
+        std::vector<std::string> texturesPathesd = {};
 
         std::vector<color::RGB> colorsKa = {};
         std::vector<color::RGB> colorsKd = {};

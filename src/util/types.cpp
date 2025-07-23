@@ -212,9 +212,9 @@ core::color::RGB core::color::stringToRGB(std::string str)
         {
             if (colorChannelsValueToStr != "")
             {
-                if (colorChannel == 0) col.red = std::stof(colorChannelsValueToStr);
-                else if (colorChannel == 1) col.blue = std::stof(colorChannelsValueToStr);
-                else if (colorChannel == 2) col.green = std::stof(colorChannelsValueToStr);
+                if (colorChannel == 0) col.red = float(std::stod(colorChannelsValueToStr));
+                else if (colorChannel == 1) col.blue = float(std::stod(colorChannelsValueToStr));
+                else if (colorChannel == 2) col.green = float(std::stod(colorChannelsValueToStr));
 
                 colorChannelsValueToStr = "";
                 colorChannel += 1;
@@ -223,6 +223,13 @@ core::color::RGB core::color::stringToRGB(std::string str)
     }
 
     return col;
+}
+
+void core::color::RGB::normalize()
+{
+    this->red /= 255.0f;
+    this->green /= 255.0f;
+    this->blue /= 255.0f;
 }
 
 core::color::RGBA::RGBA(const core::color::COLOR &color)
@@ -265,6 +272,14 @@ void core::color::RGBA::operator=(const core::color::COLOR &color)
     this->green = c.green;
     this->blue = c.blue;
     this->alpha = 255;
+}
+
+void core::color::RGBA::normalize()
+{
+    this->red /= 255.0f;
+    this->green /= 255.0f;
+    this->blue /= 255.0f;
+    this->alpha /= 255.0f;
 }
 
 core::color::RGB core::color::convertColor(const core::color::COLOR &color)

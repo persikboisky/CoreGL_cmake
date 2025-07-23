@@ -62,6 +62,8 @@ namespace core
         void draw(PRIMITIVE Primitive, int first_vert = 0, int count_vert = 0) const;
         void setSizePoints(float sizePixel);
         void setWidthLine(float width);
+
+        [[nodiscard]] unsigned int getId();
     };
 }
 

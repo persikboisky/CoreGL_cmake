@@ -68,6 +68,8 @@ namespace core
         void fill(const color::RGBA& color);
         void fill(const color::RGB& color);
         void fill(const color::COLOR& color);
+
+        unsigned int getTextureId();
     };
 }
 

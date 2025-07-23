@@ -17,6 +17,8 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/graphics/commons/ebo.cpp
         src/graphics/commons/texture.cpp
         src/graphics/commons/gl.cpp
+        src/graphics/renderer/gResource.cpp
+        src/graphics/renderer/Rect.cpp
         src/file/code.cpp
         src/file/mtl.cpp
         src/file/obj.cpp

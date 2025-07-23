@@ -201,4 +201,9 @@ void VAO::setWidthLine(float width)
     this->widthLine = width;
 }
 
+unsigned int VAO::getId()
+{
+    return this->id;
+}
+
 #pragma endregion
