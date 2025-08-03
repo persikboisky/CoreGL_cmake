@@ -19,6 +19,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/graphics/commons/gl.cpp
         src/graphics/renderer/gResource.cpp
         src/graphics/renderer/Rect.cpp
+        src/graphics/vulkan/vInstance.cpp
         src/file/code.cpp
         src/file/mtl.cpp
         src/file/obj.cpp
@@ -60,3 +61,8 @@ set(ALSOFT_NO_CONFIG_UTIL ON)
 add_subdirectory(package/openal-soft-1.22.2)
 target_link_libraries(${PROJECT_NAME} OpenAL)
 target_include_directories(${PROJECT_NAME} PRIVATE package/openal-soft-1.22.2/include)
+
+# link vulkan
+find_package(Vulkan REQUIRED)
+target_link_libraries(${PROJECT_NAME} Vulkan::Vulkan)
+

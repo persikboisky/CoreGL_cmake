@@ -22,6 +22,7 @@
 #include "../src/graphics/commons/texture.hpp"
 #include "../src/graphics/commons/gl.hpp"
 #include "../src/graphics/renderer/Rect.hpp"
+#include "../src/graphics/vulkan/vInstance.hpp"
 #include "../src/file/image.hpp"
 #include "../src/file/code.hpp"
 #include "../src/file/mtl.hpp"
