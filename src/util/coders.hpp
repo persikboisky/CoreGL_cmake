@@ -5,6 +5,12 @@
 #ifndef CODERS_HPP
 #define CODERS_HPP
 
+#include "../modules.hpp"
+
+#if defined(CORE_INCLUDE_VULKAN)
+#include <vulkan/vulkan.h>
+#endif //defined(CORE_INCLUDE_VULKAN)
+
 #include <string>
 
 namespace core
@@ -32,6 +38,10 @@ namespace core
 
         /// @brief выводит в консоль информацию об ошибке и её код
         void print();
+
+#if defined(CORE_INCLUDE_VULKAN)
+        static void vulkanProcessingError(const VkResult& result);
+#endif //defined(CORE_INCLUDE_VULKAN)
     };
 }
 

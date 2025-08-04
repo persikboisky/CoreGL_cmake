@@ -23,6 +23,7 @@
 #include "../src/graphics/commons/gl.hpp"
 #include "../src/graphics/renderer/Rect.hpp"
 #include "../src/graphics/vulkan/vInstance.hpp"
+#include "../src/graphics/vulkan/vPhysicalDevices.hpp"
 #include "../src/file/image.hpp"
 #include "../src/file/code.hpp"
 #include "../src/file/mtl.hpp"

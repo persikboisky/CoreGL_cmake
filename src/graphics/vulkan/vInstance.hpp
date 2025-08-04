@@ -5,18 +5,20 @@
 #ifndef VINSTANCE_HPP
 #define VINSTANCE_HPP
 
+#include "../../modules.hpp"
+#if defined(CORE_INCLUDE_VULKAN)
+#include "../../util/types.hpp"
 #include <vulkan/vulkan.h>
 
 namespace core
 {
     namespace vulkan
     {
-        struct instanceInfo
+        struct InstanceInfo
         {
-            unsigned int VULKAN_VERSION_MAJOR = 1;
-            unsigned int VULKAN_VERSION_MINOR = 4;
-            unsigned int VULKAN_VERSION_PATCH = 0;
-            const char* applicationName = "CoreGL";
+            const char* appName = "CoreGL";
+            version3 appVersion = {1, 0, 0};
+            version3 vulkanVersion = {1, 4, 0};
             bool glfw = true;
         };
 
@@ -25,15 +27,18 @@ namespace core
         private:
             VkInstance instance;
 
-            Instance(const instanceInfo& instInfo);
+            Instance(const InstanceInfo& instInfo);
 
         public:
-            static Instance create(const instanceInfo& instInfo = {});
-            static Instance *ptrCreate(const instanceInfo& instInfo = {});
-
             ~Instance();
+
+            static Instance create(const InstanceInfo& instInfo = {});
+            static Instance *ptrCreate(const InstanceInfo& instInfo = {});
+
+            VkInstance getVkInstance();
         };
     }
 } // core
 
+#endif //defined(CORE_INCLUDE_VULKAN)
 #endif //VINSTANCE_HPP

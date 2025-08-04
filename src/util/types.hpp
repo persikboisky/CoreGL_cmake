@@ -409,6 +409,25 @@ namespace core
 
         void operator = (const size3f& size);
     };
+
+    struct version2
+    {
+        int MAJOR;
+        int MINOR;
+
+        version2(int MAJOR, int MINOR) : MINOR(MINOR), MAJOR(MAJOR) {}
+        void operator = (const version2& v2);
+    };
+
+    struct version3
+    {
+        int MAJOR;
+        int MINOR;
+        int PATCH;
+
+        version3(int MAJOR, int MINOR, int PATCH) : MINOR(MINOR), MAJOR(MAJOR), PATCH(PATCH) {}
+        void operator = (const version3& v3);
+    };
 }
 
 #endif //TYPES_HPP

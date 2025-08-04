@@ -6,6 +6,9 @@
 #include "console.hpp"
 #include <string>
 #include <iostream>
+#if defined(CORE_INCLUDE_VULKAN)
+#include <vulkan/vulkan.h>
+#endif //defined(CORE_INCLUDE_VULKAN)
 
 const std::string INFO_CODERS[] = {             
     //          информация                          // код
@@ -75,3 +78,31 @@ void core::coders::print()
     console::printTime();
     std::cout << this->getInfo() << std::endl;
 }
+
+#if defined(CORE_INCLUDE_VULKAN)
+    void core::coders::vulkanProcessingError(const VkResult& result)
+    {
+        switch (result)
+        {
+            case VK_ERROR_EXTENSION_NOT_PRESENT:
+                throw core::coders(35, "VK_ERROR_EXTENSION_NOT_PRESENT");
+            case VK_ERROR_INCOMPATIBLE_DRIVER:
+                throw core::coders(35, "VK_ERROR_INCOMPATIBLE_DRIVER");
+            case VK_ERROR_INITIALIZATION_FAILED:
+                throw core::coders(35, "VK_ERROR_INITIALIZATION_FAILED");
+            case VK_ERROR_LAYER_NOT_PRESENT:
+                throw core::coders(35, "VK_ERROR_LAYER_NOT_PRESENT");
+            case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                throw core::coders(35, "VK_ERROR_OUT_OF_DEVICE_MEMORY");
+            case VK_ERROR_OUT_OF_HOST_MEMORY:
+                throw core::coders(35, "VK_ERROR_OUT_OF_HOST_MEMORY");
+            case VK_ERROR_UNKNOWN:
+                throw core::coders(35, "VK_ERROR_UNKNOWN");
+            case VK_ERROR_VALIDATION_FAILED_EXT:
+                throw core::coders(35, "VK_ERROR_VALIDATION_FAILED_EXT");
+            default:
+                break;
+        }
+    }
+#endif //defined(CORE_INCLUDE_VULKAN)
+

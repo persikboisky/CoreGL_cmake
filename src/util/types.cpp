@@ -608,3 +608,16 @@ void core::size3f::operator=(const size3f& size)
     this->height = size.height;
     this->length = size.length;
 }
+
+void version2::operator=(const version2 &v2)
+{
+    this->MAJOR = v2.MAJOR;
+    this->MINOR = v2.MINOR;
+}
+
+void version3::operator=(const version3 &v3)
+{
+    this->MAJOR = v3.MAJOR;
+    this->MINOR = v3.MINOR;
+    this->PATCH = v3.PATCH;
+}

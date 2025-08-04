@@ -1,76 +1,81 @@
 //
-// Created by kisly on 03.08.2025.
+// Created by kisly on 04.08.2025.
 //
 
+#include "../../modules.hpp"
+#if defined(CORE_INCLUDE_VULKAN)
 #include "vInstance.hpp"
+#include "../../config.hpp"
+#include "../../util/types.hpp"
 #include "../../util/coders.hpp"
 #include "../../util/console.hpp"
-#include "../../config.hpp"
-#include <vulkan/vulkan.h>
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
 #include <iostream>
+#include <vector>
 
 namespace core
 {
     namespace vulkan
     {
-        Instance::Instance(const instanceInfo& instInfo)
+        Instance::Instance(const InstanceInfo &instInfo)
         {
             VkApplicationInfo appInfo = {};
             appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+            appInfo.pApplicationName = instInfo.appName;
+            appInfo.applicationVersion = VK_MAKE_VERSION(
+                instInfo.appVersion.MAJOR,
+                instInfo.appVersion.MINOR,
+                instInfo.appVersion.PATCH
+            );
+            appInfo.pEngineName = nullptr;
+            appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
             appInfo.apiVersion = VK_MAKE_API_VERSION(
                 0,
-                instInfo.VULKAN_VERSION_MAJOR,
-                instInfo.VULKAN_VERSION_MINOR,
-                instInfo.VULKAN_VERSION_PATCH
+                instInfo.vulkanVersion.MAJOR,
+                instInfo.vulkanVersion.MINOR,
+                instInfo.vulkanVersion.PATCH
             );
-            appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-            appInfo.pEngineName = nullptr;
-            appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-            appInfo.pApplicationName = instInfo.applicationName;
 
             VkInstanceCreateInfo instanceCreateInfo = {};
             instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-            instanceCreateInfo.enabledExtensionCount = 0;
-            instanceCreateInfo.ppEnabledExtensionNames = nullptr;
             instanceCreateInfo.pApplicationInfo = &appInfo;
-            instanceCreateInfo.enabledLayerCount = 0;
-            instanceCreateInfo.ppEnabledLayerNames = nullptr;
 
-            VkResult result = vkCreateInstance(&instanceCreateInfo, nullptr, &this->instance);
-            switch (result)
+            if (instInfo.glfw)
             {
-                case VK_ERROR_EXTENSION_NOT_PRESENT:
-                    throw coders(35, "VK_ERROR_EXTENSION_NOT_PRESENT");
-                    break;
-                case VK_ERROR_INCOMPATIBLE_DRIVER:
-                    throw coders(35, "VK_ERROR_INCOMPATIBLE_DRIVER");
-                    break;
-                case VK_ERROR_INITIALIZATION_FAILED:
-                    throw coders(35, "VK_ERROR_INITIALIZATION_FAILED");
-                    break;
-                case VK_ERROR_LAYER_NOT_PRESENT:
-                    throw coders(35, "VK_ERROR_LAYER_NOT_PRESENT");
-                    break;
-                case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    throw coders(35, "VK_ERROR_OUT_OF_DEVICE_MEMORY");
-                    break;
-                case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    throw coders(35, "VK_ERROR_OUT_OF_HOST_MEMORY");
-                    break;
-                case VK_ERROR_UNKNOWN:
-                    throw coders(35, "VK_ERROR_UNKNOWN");
-                    break;
-                case VK_ERROR_VALIDATION_FAILED_EXT:
-                    throw coders(35, "VK_ERROR_VALIDATION_FAILED_EXT");
-                    break;
-                default:
-                    break;
+                uint32_t count = 0;
+                instanceCreateInfo.ppEnabledExtensionNames = glfwGetRequiredInstanceExtensions(&count);
+                instanceCreateInfo.enabledExtensionCount = count;
+            }
+            else
+            {
+                instanceCreateInfo.enabledExtensionCount = 0;
+                instanceCreateInfo.ppEnabledExtensionNames = nullptr;
             }
 
             if (CORE_INFO)
             {
+                std::vector<const char*> VALIDATION_LAYERS = {};
+
+                instanceCreateInfo.enabledLayerCount = VALIDATION_LAYERS.size();
+                instanceCreateInfo.ppEnabledLayerNames = VALIDATION_LAYERS.data();
+            }
+            else
+            {
+                instanceCreateInfo.enabledLayerCount = 0;
+                instanceCreateInfo.ppEnabledLayerNames = nullptr;
+            }
+
+            VkResult result = vkCreateInstance(&instanceCreateInfo, nullptr, &this->instance);
+            coders::vulkanProcessingError(result);
+
+            if (CORE_INFO)
+            {
                 console::printTime();
-                std::cout << "Ok: create Vulkan instance" << std::endl;
+                std::cout << "Ok: create vulkan instance" << std::endl;
+                console::printTime();
+                std::cout << "Vulkan v" << instInfo.vulkanVersion.MAJOR << "." <<  instInfo.vulkanVersion.MINOR
+                << "." << instInfo.vulkanVersion.PATCH << std::endl;
             }
         }
 
@@ -79,15 +84,21 @@ namespace core
             vkDestroyInstance(this->instance, nullptr);
         }
 
-        Instance Instance::create(const instanceInfo& instInfo)
+        Instance Instance::create(const InstanceInfo &instInfo)
         {
             return Instance(instInfo);
         }
 
-        Instance *Instance::ptrCreate(const instanceInfo& instInfo)
+        Instance *Instance::ptrCreate(const InstanceInfo &instInfo)
         {
             return new Instance(instInfo);
+        }
+
+        VkInstance Instance::getVkInstance()
+        {
+            return this->instance;
         }
     }
 } // core
 
+#endif //defined(CORE_INCLUDE_VULKAN)
