@@ -1,5 +1,5 @@
 //
-// Created by kisly on 03.08.2025.
+// Created by kisly on 06.08.2025.
 //
 
 #ifndef VINSTANCE_HPP
@@ -9,35 +9,23 @@
 #if defined(CORE_INCLUDE_VULKAN)
 #include "../../util/types.hpp"
 #include <vulkan/vulkan.h>
+#include <string>
 
-namespace core
+namespace core::vulkan
 {
-    namespace vulkan
+    struct container;
+    struct instanceInfo
     {
-        struct InstanceInfo
-        {
-            const char* appName = "CoreGL";
-            version3 appVersion = {1, 0, 0};
-            version3 vulkanVersion = {1, 4, 0};
-            bool glfw = true;
-        };
+        version3 VULKAN_VERSION = {1, 0, 0};
+        version3 APP_VERSION = {1, 0, 0};
+        std::string appName = "CoreGL";
+        bool debugApiDump = false;
+    };
 
-        class Instance
-        {
-        private:
-            VkInstance instance;
-
-            Instance(const InstanceInfo& instInfo);
-
-        public:
-            ~Instance();
-
-            static Instance create(const InstanceInfo& instInfo = {});
-            static Instance *ptrCreate(const InstanceInfo& instInfo = {});
-
-            VkInstance getVkInstance();
-        };
-    }
+    struct instance
+    {
+        static void create(container* cnt, const instanceInfo& info = {});
+    };
 } // core
 
 #endif //defined(CORE_INCLUDE_VULKAN)

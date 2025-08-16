@@ -20,7 +20,8 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/graphics/renderer/gResource.cpp
         src/graphics/renderer/Rect.cpp
         src/graphics/vulkan/vInstance.cpp
-        src/graphics/vulkan/vPhysicalDevices.cpp
+        src/graphics/vulkan/vResource.cpp
+        src/graphics/vulkan/vDevices.cpp
         src/file/code.cpp
         src/file/mtl.cpp
         src/file/obj.cpp
@@ -42,6 +43,7 @@ set(BUILD_SHARED_LIBS OFF)
 set(GLFW_BUILD_TESTS OFF)
 set(GLFW_BUILD_DOCS OFF)
 set(GLFW_INSTALL OFF)
+set(GLFW_VULKAN_STATIC ON)
 
 add_subdirectory(package/glfw)
 target_link_libraries(${PROJECT_NAME} glfw)
@@ -56,14 +58,12 @@ target_include_directories(${PROJECT_NAME} PRIVATE package/glad/include)
 target_include_directories(${PROJECT_NAME} PRIVATE package/stb)
 
 # link openAL
-set(ALSOFT_UTILS OFF)
-set(ALSOFT_NO_CONFIG_UTIL ON)
-
+set(LIBTYPE STATIC)
 add_subdirectory(package/openal-soft-1.22.2)
 target_link_libraries(${PROJECT_NAME} OpenAL)
 target_include_directories(${PROJECT_NAME} PRIVATE package/openal-soft-1.22.2/include)
 
 # link vulkan
 find_package(Vulkan REQUIRED)
-target_link_libraries(${PROJECT_NAME} Vulkan::Vulkan)
-
+target_link_libraries(${PROJECT_NAME} ${Vulkan_LIBRARIES})
+target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})

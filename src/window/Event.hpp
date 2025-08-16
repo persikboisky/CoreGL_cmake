@@ -24,8 +24,8 @@ namespace core
         char* saveKey = new char[MAX_KEY_CODE];
 
     public:
-        Event(GLFWwindow& addrWindow);
-        Event(Window& window);
+        explicit Event(GLFWwindow& addrWindow);
+        explicit Event(Window& window);
 
         ~Event();
 

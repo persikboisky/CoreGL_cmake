@@ -20,8 +20,8 @@ namespace core
             float mat[16];
 
         public:
-            Matrix4(float diagonal = 1.0f);
-            Matrix4(float mat4[16]);
+            explicit Matrix4(float diagonal = 1.0f);
+            explicit Matrix4(float mat4[16]);
 
             [[nodiscard]] float* getArray();
             [[nodiscard]] static std::array<float, 16> multiply(float mat1[16], float mat2[16]);

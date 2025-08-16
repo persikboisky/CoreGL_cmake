@@ -75,12 +75,12 @@ void vao::addAttribute(unsigned int id, int index, int n, int size, int indentat
     try
     {
         glVertexAttribPointer(
-                index,
-                n,
-                GL_FLOAT,
-                GL_FALSE,
-                size * sizeof(GLfloat),
-                (GLvoid *)(indentation * sizeof(GLfloat)));
+            index,
+            n,
+            GL_FLOAT,
+            GL_FALSE,
+            size * sizeof(GLfloat),
+            (GLvoid *)(indentation * sizeof(GLfloat)));
         glEnableVertexAttribArray(index);
     }
     catch (...)
@@ -142,18 +142,38 @@ void vao::setWidthLine(float width)
     glLineWidth(width);
 }
 
+void vao::setSeletId(unsigned int id)
+{
+    vao::selectID = id;
+}
+
 #pragma endregion
 
 #pragma region VAO
 
-VAO::VAO(float *data, int sizeOfByte, int elementToVert) : elementToVert(elementToVert), size(sizeOfByte / sizeof(float))
+VAO::VAO(float *data, size_t sizeOfByte, int elementToVert) : elementToVert(elementToVert), size(sizeOfByte / sizeof(float))
 {
     this->id = vao::create(data, sizeOfByte);
 }
 
-VAO::VAO(std::vector<float> data, int elementToVert) : elementToVert(elementToVert), size(data.size())
+VAO core::VAO::create(float *data, size_t sizeOfByte, int elementToVert)
 {
-    this->id = vao::create(data);
+    return VAO(data, sizeOfByte, elementToVert);
+}
+
+VAO core::VAO::create(std::vector<float> data, int elementToVert)
+{
+    return VAO(data.data(), data.size() * sizeof(float), elementToVert);
+}
+
+VAO *core::VAO::ptrCreate(float *data, size_t sizeOfByte, int elementToVert)
+{
+    return new VAO(data, sizeOfByte, elementToVert);
+}
+
+VAO *core::VAO::ptrCreate(std::vector<float> data, int elementToVert)
+{
+    return new VAO(data.data(), data.size() * sizeof(float), elementToVert);
 }
 
 VAO::~VAO()
@@ -166,12 +186,12 @@ void VAO::addAttribute(int index, int n, int indentation) const
     vao::addAttribute(this->id, index, n, this->elementToVert, indentation);
 }
 
-void VAO::bind() const
+void VAO::bind()
 {
     vao::bind(this->id);
 }
 
-void VAO::draw(PRIMITIVE Primitive, int first_vert, int count_vert) const
+void VAO::draw(PRIMITIVE Primitive, int first_vert, int count_vert)
 {
     vao::setSizePoints(this->sizePoint);
     vao::setWidthLine(this->widthLine);

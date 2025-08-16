@@ -4,6 +4,7 @@
 
 #include "ebo.hpp"
 #include "vao.hpp"
+#include "Descriptor.hpp"
 #include "../../util/vector.hpp"
 #include "../../util/types.hpp"
 #include "../../util/coders.hpp"
@@ -36,7 +37,7 @@ void ebo::unBind()
     ebo::bind(0);
 }
 
-unsigned int ebo::create(unsigned int* indexes, unsigned int sizeOfByte)
+unsigned int ebo::create(unsigned int *indexes, unsigned int sizeOfByte)
 {
     unsigned int EBO;
     glGenBuffers(1, &EBO);
@@ -74,7 +75,7 @@ unsigned int ebo::create(std::vector<unsigned int> indexes)
 
 void ebo::draw(PRIMITIVE Primitive, unsigned int nVert)
 {
-    glDrawElements(convertPrimitive(Primitive), nVert, GL_UNSIGNED_INT, (void*)0);
+    glDrawElements(convertPrimitive(Primitive), nVert, GL_UNSIGNED_INT, (void *)0);
 }
 
 void ebo::draw(PRIMITIVE Primitive, unsigned int ebo, unsigned int nVert)
@@ -105,7 +106,7 @@ void ebo::draw(PRIMITIVE Primitive, unsigned int ebo, unsigned int vao, unsigned
     ebo::draw(Primitive, nVert);
 }
 
-void ebo::draw(PRIMITIVE Primitive, unsigned int ebo, VAO& vao, unsigned int nVert)
+void ebo::draw(PRIMITIVE Primitive, unsigned int ebo, VAO &vao, unsigned int nVert)
 {
     if (ebo::SelectID != ebo)
     {
@@ -151,14 +152,14 @@ void ebo::setWidthLine(float width)
 
 #pragma region EBO
 
-EBO::EBO(unsigned int* indexes, unsigned int sizeOfByte) :
-        vao(0), Vao(nullptr), id(0), nVert(sizeOfByte / sizeof(unsigned int))
+EBO::EBO(unsigned int *indexes, unsigned int sizeOfByte) : 
+    vao(0), Vao(nullptr), nVert(sizeOfByte / sizeof(unsigned int))
 {
     this->id = ebo::create(indexes, sizeOfByte);
 }
 
-EBO::EBO(std::vector<unsigned int> indexes) :
-        vao(0), Vao(nullptr), id(0), nVert(indexes.size())
+EBO::EBO(std::vector<unsigned int> indexes) : 
+    vao(0), Vao(nullptr), nVert(indexes.size())
 {
     this->id = ebo::create(indexes);
 }
@@ -174,26 +175,26 @@ void EBO::linkVAO(unsigned int vao)
     this->typeVao = 'v';
 }
 
-void EBO::linkVAO(VAO& vao)
+void EBO::linkVAO(VAO &vao)
 {
     this->Vao = &vao;
     this->typeVao = 'V';
 }
 
-void EBO::draw(PRIMITIVE Primitive, unsigned int nVert)
+void core::EBO::bind()
 {
     switch (this->typeVao)
     {
-        case 'V':
-            this->Vao->bind();
-            break;
+    case 'V':
+        this->Vao->bind();
+        break;
 
-        case 'v':
-            vao::bind(this->vao);
-            break;
+    case 'v':
+        vao::bind(this->vao);
+        break;
 
-        default:
-            break;
+    default:
+        break;
     }
 
     if (nVert == 0)
@@ -202,6 +203,11 @@ void EBO::draw(PRIMITIVE Primitive, unsigned int nVert)
     }
 
     ebo::bind(this->id);
+}
+
+void EBO::draw(PRIMITIVE Primitive, unsigned int nVert)
+{
+    this->bind();
     vao::setSizePoints(this->sizePoint);
     vao::setWidthLine(this->widthLine);
     ebo::draw(Primitive, nVert);

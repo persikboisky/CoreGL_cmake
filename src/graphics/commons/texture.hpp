@@ -38,9 +38,9 @@ namespace core
 
         Texture(unsigned char* png_code, int width, int height, int channels);
         Texture(std::vector<unsigned char>& png_code, int width, int height, int channels);
-        Texture(const char* path);
-        Texture(image& img);
-        Texture(unsigned int id);
+        explicit Texture(const char* path);
+        explicit Texture(image& img);
+        explicit Texture(unsigned int id);
 
     public:
         static Texture create(unsigned char* png_code, int width, int height, int channels);

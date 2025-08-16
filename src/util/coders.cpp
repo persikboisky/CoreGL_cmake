@@ -48,6 +48,10 @@ const std::string INFO_CODERS[] = {
         "FAILED_CREATE_SOURCE",                 // 33
         "FAILED_SEARCH_MTL_FILE_NAME_TO_OBJ",   // 34
         "",                                     // 35
+        "VK_FAILED_YOUR_GPU_NOT_HOLDS_SURFACE_KHR", // 36
+        "VK_FAILED_TO_CREATE_IMAGE_VIEW!",          // 37
+        "VK_FAILED_SEARCH_SURFACE_FORMATS",         // 38
+        "VK_FAILED_SEARCH_PRESENT_MODE",            // 39
         ""
 };
 

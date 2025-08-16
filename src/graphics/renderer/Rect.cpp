@@ -82,7 +82,7 @@ namespace core
             delete this->objVAO;
             delete this->objEBO;
         }
-        this->objVAO = new VAO(vertexes, 4);
+        this->objVAO = VAO::ptrCreate(vertexes, 4);
         this->objVAO->addAttribute(0, 2, 0);
         this->objVAO->addAttribute(1, 2, 2);
 

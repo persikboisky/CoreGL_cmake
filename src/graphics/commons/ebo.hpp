@@ -5,6 +5,7 @@
 #ifndef EBO_HPP
 #define EBO_HPP
 
+#include "Descriptor.hpp"
 #include <vector>
 
 namespace core
@@ -79,15 +80,15 @@ namespace core
         static void setWidthLine(float width);
     };
 
-    /// @brief êëàññ äëÿ ðàáîòû ñ ebo
+
     class EBO
     {
     private:
         unsigned int vao;
         VAO* Vao;
 
-        unsigned int id;
         unsigned int nVert;
+        unsigned int id;
 
         char typeVao = ' ';
 
@@ -95,37 +96,18 @@ namespace core
         float sizePoint = 1.0f;
 
     public:
-        /// @brief êîíñòðóêòîð ñîçäà¸ò ebo è åãî îáúåêò
-        /// @param indexes ìàññèâ èíäåêñîâ
-        /// @param sizeOfByte ðàçìåð ìàññèâà â áàéòàõ
         EBO(unsigned int* indexes, unsigned int sizeOfByte);
+        explicit EBO(std::vector<unsigned int> indexes);
 
-        /// @brief êîíñòðóêòîð ñîçäà¸ò ebo è åãî îáúåêò
-        /// @param indexes âåêòîð èíäåêñîâ
-        EBO(std::vector<unsigned int> indexes);
-
-        /// @brief äåñêðèïòîð óäàëÿåò ebo è åãî îáúåêò
         ~EBO();
 
-        /// @brief ïðèâÿçûâàåò vao ê ebo
-        /// @param vao äåñêðèïòîð vao
         void linkVAO(unsigned int vao);
-
-        /// @brief ïðèâÿçûâàåò vao ê ebo
-        /// @param vao îáúåêò vao
         void linkVAO(VAO& vao);
 
-        /// @brief ðèñóåò ïðèìèòèâ
-        /// @param Primitive íàçâàíèå ïðèìèòèâà
-        /// @param nVert êîë-âî âåðøèí (åñëè íå óêàçàòü, ðèñóåò âñå)
+        void bind();
         void draw(PRIMITIVE Primitive, unsigned int nVert = 0);
 
-        /// @brief óñòàíàâëèâàåò ðàçìåð òî÷êè, åñëè â êà÷åñòâå ïðèìèòèâà òî÷êà
-        /// @param sizePixel ðàçìåð â ïèêñåëÿõ
         void setSizePoints(float sizePixel);
-
-        /// @brief óñòàíàâëèâàåò øèðèíó ëèíèè, åñëè â êà÷åñòâå ïðèìèòèâà ëèíèÿ(èè)
-        /// @param width øèðèíà â ïèêñåëÿõ
         void setWidthLine(float width);
     };
 }

@@ -6,6 +6,7 @@
 #define WINDOW_HPP
 
 #include "../util/types.hpp"
+#include "../modules.hpp"
 
 struct GLFWwindow;
 
@@ -19,9 +20,12 @@ namespace core
         int height = 720;
         bool VerticalSynchronization = true;
         bool resizable = false;
-        int posX = -1;
-        int posY = -1;
+        int posX = 100;
+        int posY = 100;
         bool fullScreen = false;
+#if defined(CORE_INCLUDE_VULKAN)
+        bool VulknanAPI = false;
+#endif //defined(CORE_INCLUDE_VULKAN)
     };
 
     class Event;
@@ -45,14 +49,18 @@ namespace core
         bool VSfps = true;
         bool flagFullScreen = false;
 
+#if defined(CORE_INCLUDE_VULKAN)
+        bool VulknanAPI = false;
+#endif //defined(CORE_INCLUDE_VULKAN)
+
         double time = 0.0;
         double deltaTime = 0.0;
 
         void getSizeWindow();
         void Init();
 
-        Window(const windowInfo& winInfo);
-        Window(int width, int height, const char* title, bool resizable);
+        explicit Window(const windowInfo& winInfo = {});
+        Window(int width, int height, const char* title, bool resizable, bool vkAPI);
 
         void setMonitor(Monitor monitor);
         void resetMonitor();
@@ -63,7 +71,7 @@ namespace core
         Monitor* monitor;
 
         [[nodiscard]] static Window create(const windowInfo& winInfo);
-        [[nodiscard]] static Window create(int width, int height, const char* title = "", bool resizable = false);
+        [[nodiscard]] static Window create(int width, int height, const char* title = "", bool resizable = false, bool vkAPI = false);
 
         [[nodiscard]] GLFWwindow* getWindowOBJ();
         [[nodiscard]] bool isContext();

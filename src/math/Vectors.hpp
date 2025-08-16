@@ -72,7 +72,7 @@ namespace core
 
             Vector3();
             Vector3(float x, float y = 0.0f, float z = 0.0f);
-            Vector3(const Vector4 &vec4);
+            explicit Vector3(const Vector4 &vec4);
 
             Vector3 operator+(const Vector3 &vec3);
             Vector3 operator-(const Vector3 &vec3);

@@ -1,102 +1,71 @@
 //
-// Created by kisly on 04.08.2025.
+// Created by kisly on 06.08.2025.
 //
 
 #include "../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
 #include "vInstance.hpp"
-#include "../../config.hpp"
+#include "vResource.hpp"
 #include "../../util/types.hpp"
 #include "../../util/coders.hpp"
 #include "../../util/console.hpp"
+#include "../../config.hpp"
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <vector>
 
-namespace core
+namespace core::vulkan
 {
-    namespace vulkan
+    void instance::create(container* cnt, const instanceInfo& info)
     {
-        Instance::Instance(const InstanceInfo &instInfo)
-        {
-            VkApplicationInfo appInfo = {};
-            appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-            appInfo.pApplicationName = instInfo.appName;
-            appInfo.applicationVersion = VK_MAKE_VERSION(
-                instInfo.appVersion.MAJOR,
-                instInfo.appVersion.MINOR,
-                instInfo.appVersion.PATCH
-            );
-            appInfo.pEngineName = nullptr;
-            appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-            appInfo.apiVersion = VK_MAKE_API_VERSION(
+        VkApplicationInfo applicationInfo = {};
+        applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+        applicationInfo.pApplicationName = info.appName.c_str();
+        applicationInfo.applicationVersion = VK_MAKE_VERSION(
+                info.APP_VERSION.MAJOR,
+                info.APP_VERSION.MINOR,
+                info.APP_VERSION.PATCH);
+        applicationInfo.apiVersion = VK_MAKE_API_VERSION(
                 0,
-                instInfo.vulkanVersion.MAJOR,
-                instInfo.vulkanVersion.MINOR,
-                instInfo.vulkanVersion.PATCH
-            );
+                info.VULKAN_VERSION.MAJOR,
+                info.VULKAN_VERSION.MINOR,
+                info.VULKAN_VERSION.PATCH);
+        applicationInfo.pEngineName = nullptr;
+        applicationInfo.engineVersion = VK_VERSION_1_0;
 
-            VkInstanceCreateInfo instanceCreateInfo = {};
-            instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-            instanceCreateInfo.pApplicationInfo = &appInfo;
+        VkInstanceCreateInfo instanceInfo = {};
+        instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+        instanceInfo.pNext = nullptr;
+        instanceInfo.flags = 0;
+        instanceInfo.pApplicationInfo = &applicationInfo;
 
-            if (instInfo.glfw)
-            {
-                uint32_t count = 0;
-                instanceCreateInfo.ppEnabledExtensionNames = glfwGetRequiredInstanceExtensions(&count);
-                instanceCreateInfo.enabledExtensionCount = count;
-            }
-            else
-            {
-                instanceCreateInfo.enabledExtensionCount = 0;
-                instanceCreateInfo.ppEnabledExtensionNames = nullptr;
-            }
+        uint32_t countLayer = 0;
+        std::vector<VkLayerProperties> layer = {};
+        vkEnumerateInstanceLayerProperties(&countLayer, nullptr);
+        layer.resize(countLayer);
+        vkEnumerateInstanceLayerProperties(&countLayer, layer.data());
 
-            if (CORE_INFO)
-            {
-                std::vector<const char*> VALIDATION_LAYERS = {};
+        std::vector<const char*> nameValidationLayer = {};
+        if (CORE_INFO) nameValidationLayer.push_back("VK_LAYER_KHRONOS_validation");
+        if (info.debugApiDump) nameValidationLayer.push_back("VK_LAYER_LUNARG_api_dump");
+        instanceInfo.enabledLayerCount = static_cast<uint32_t>(nameValidationLayer.size());
+        instanceInfo.ppEnabledLayerNames = nameValidationLayer.data();
 
-                instanceCreateInfo.enabledLayerCount = VALIDATION_LAYERS.size();
-                instanceCreateInfo.ppEnabledLayerNames = VALIDATION_LAYERS.data();
-            }
-            else
-            {
-                instanceCreateInfo.enabledLayerCount = 0;
-                instanceCreateInfo.ppEnabledLayerNames = nullptr;
-            }
+        uint32_t countExt = 0;
+        instanceInfo.ppEnabledExtensionNames = glfwGetRequiredInstanceExtensions(&countExt);
+        instanceInfo.enabledExtensionCount = countExt;
 
-            VkResult result = vkCreateInstance(&instanceCreateInfo, nullptr, &this->instance);
-            coders::vulkanProcessingError(result);
+        VkResult result = vkCreateInstance(
+                &instanceInfo,
+                nullptr,
+                &cnt->instance);
+        coders::vulkanProcessingError(result);
 
-            if (CORE_INFO)
-            {
-                console::printTime();
-                std::cout << "Ok: create vulkan instance" << std::endl;
-                console::printTime();
-                std::cout << "Vulkan v" << instInfo.vulkanVersion.MAJOR << "." <<  instInfo.vulkanVersion.MINOR
-                << "." << instInfo.vulkanVersion.PATCH << std::endl;
-            }
-        }
-
-        Instance::~Instance()
+        if (CORE_INFO)
         {
-            vkDestroyInstance(this->instance, nullptr);
-        }
-
-        Instance Instance::create(const InstanceInfo &instInfo)
-        {
-            return Instance(instInfo);
-        }
-
-        Instance *Instance::ptrCreate(const InstanceInfo &instInfo)
-        {
-            return new Instance(instInfo);
-        }
-
-        VkInstance Instance::getVkInstance()
-        {
-            return this->instance;
+            console::printTime();
+            std::cout << "Ok: create vulkan instance" << std::endl;
         }
     }
 } // core

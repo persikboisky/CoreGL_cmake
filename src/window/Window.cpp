@@ -2,6 +2,7 @@
 // Created by kisly on 13.07.2025.
 //
 
+#include "../modules.hpp"
 #include "Window.hpp"
 #include "Event.hpp"
 #include "Cursor.hpp"
@@ -16,13 +17,19 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#if defined(CORE_INCLUDE_VULKAN)
+#include <vulkan/vulkan.h>
+#endif //defined(CORE_INCLUDE_VULKAN)
 
 constexpr int HEIGHT_HEAD_WINDOW = 30;
 
 bool core::Window::flagGladInit = true;
 
-static GLFWwindow *createWindow(int width, int height, const char *title, bool resizable)
+static GLFWwindow *createWindow(int width, int height, const char *title, bool resizable, bool vkAPI)
 {
+#if defined(CORE_INCLUDE_VULKAN)
+    if (vkAPI) glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+#endif //defined(CORE_INCLUDE_VULKAN)
     glfwWindowHint(GLFW_RESIZABLE, resizable);
     GLFWwindow *window = glfwCreateWindow(width, height, title, nullptr, nullptr);
 
@@ -53,12 +60,22 @@ void core::Window::Init()
 }
 
 core::Window::Window(const core::windowInfo &winInfo) : 
-    window(createWindow(winInfo.width, winInfo.height, winInfo.title, winInfo.resizable)),
+    window(createWindow(winInfo.width, winInfo.height, winInfo.title, winInfo.resizable,
+#if defined(CORE_INCLUDE_VULKAN)
+    winInfo.VulknanAPI
+#else
+false
+#endif //defined(CORE_INCLUDE_VULKAN)
+    )),
     event(nullptr), width(winInfo.width), height(winInfo.height), posX(winInfo.posX), posY(winInfo.posY),
     saveWidth(winInfo.width), saveHeight(winInfo.height), cursor(nullptr), monitor(nullptr),
     VSfps(winInfo.VerticalSynchronization), flagFullScreen(winInfo.fullScreen), time(glfwGetTime()),
     deltaTime(glfwGetTime())
 {
+#if defined(CORE_INCLUDE_VULKAN)
+    this->VulknanAPI = winInfo.VulknanAPI;
+#endif //defined(CORE_INCLUDE_VULKAN)
+
     this->Init();
     if (winInfo.pathToIcon != nullptr)
     {
@@ -67,11 +84,15 @@ core::Window::Window(const core::windowInfo &winInfo) :
     this->fullScreen(winInfo.fullScreen);
 }
 
-core::Window::Window(int width, int height, const char *title, bool resizable) : 
-    window(createWindow(width, height, title, resizable)), cursor(nullptr), VSfps(true), monitor(nullptr),
+core::Window::Window(int width, int height, const char *title, bool resizable, bool vkAPI) :
+    window(createWindow(width, height, title, resizable, vkAPI)), cursor(nullptr), VSfps(true), monitor(nullptr),
     event(nullptr), width(width), height(height), posX(0), posY(0), saveWidth(width), saveHeight(height),
     time(glfwGetTime()), deltaTime(glfwGetTime())
 {
+#if defined(CORE_INCLUDE_VULKAN)
+    this->VulknanAPI = vkAPI;
+#endif //defined(CORE_INCLUDE_VULKAN)
+
     this->Init();
 }
 
@@ -101,9 +122,9 @@ core::Window core::Window::create(const core::windowInfo &winInfo)
     return Window(winInfo);
 }
 
-core::Window core::Window::create(int width, int height, const char *title, bool resizable)
+core::Window core::Window::create(int width, int height, const char *title, bool resizable, bool vkAPI)
 {
-    return Window(width, height, title, resizable);
+    return Window(width, height, title, resizable, vkAPI);
 }
 
 GLFWwindow *core::Window::getWindowOBJ()
@@ -147,22 +168,29 @@ static void gladInit()
 
 void core::Window::setContext()
 {
-    glfwMakeContextCurrent(this->window);
-
-    if (this->flagGladInit)
+#if defined(CORE_INCLUDE_VULKAN)
+    if (!this->VulknanAPI)
     {
-        gladInit();
-        this->flagGladInit = false;
-    }
+#endif //defined(CORE_INCLUDE_VULKAN)
+        glfwMakeContextCurrent(this->window);
 
-    gl::setDirectFronFace(core::DIRECT_FRONT_FACE{OPENGL_FRONT_FACE});
-    gl::enableCullFace(OPENGL_CULL_FACE_FUNCTION);
+        if (this->flagGladInit)
+        {
+            gladInit();
+            this->flagGladInit = false;
+        }
 
-    if (OPENGL_CULL_FACE_FUNCTION)
-    {
-        gl::setTypeCullFace(core::TYPE_CULL_FACE{OPENGL_CULL_FACE});
+        gl::setDirectFronFace(core::DIRECT_FRONT_FACE{OPENGL_FRONT_FACE});
+        gl::enableCullFace(OPENGL_CULL_FACE_FUNCTION);
+
+        if (OPENGL_CULL_FACE_FUNCTION)
+        {
+            gl::setTypeCullFace(core::TYPE_CULL_FACE{OPENGL_CULL_FACE});
+        }
+        gl::enableDepthTest(OPENGL_DEPTH_FUNCTION);
+#if defined(CORE_INCLUDE_VULKAN)
     }
-    gl::enableDepthTest(OPENGL_DEPTH_FUNCTION);
+#endif //defined(CORE_INCLUDE_VULKAN)
 }
 
 void core::Window::swapBuffers()
