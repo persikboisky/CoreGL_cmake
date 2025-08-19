@@ -3,7 +3,9 @@
 //
 
 #include "math.hpp"
+#include <random>
 
-namespace core
+void core::math::setSeedRandom(unsigned int seed)
 {
-} // core
+    srand(seed);
+}

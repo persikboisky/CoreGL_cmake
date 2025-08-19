@@ -59,6 +59,11 @@ namespace core
         {
             return new Devices(cnt);
         }
+
+        VkPhysicalDevice Devices::getDevice(uint32_t id)
+        {
+            return this->devices[id];
+        }
     } // vulkan
 } // core
 

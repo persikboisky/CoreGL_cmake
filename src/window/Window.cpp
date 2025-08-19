@@ -281,7 +281,7 @@ void core::Window::setIcon(const char *pathToImg)
     GLFWimage images[1] = {};
 
     int channels = 0;
-    images[0].pixels = core::image::load(pathToImg, images[0].width, images[0].height, channels);
+    images[0].pixels = core::image::load(pathToImg, images[0].width, images[0].height, channels, false);
 
     glfwSetWindowIcon(this->window, 1, images);
     free(images[0].pixels);

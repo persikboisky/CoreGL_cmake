@@ -18,42 +18,42 @@ namespace core
     {
         float x = this->x;
         float y = this->y;
-        float x2 = x + width;
-        float y2 = y - height;
+        float x2 = x + width * this->ScaleX;
+        float y2 = y - height * this->ScaleY;
 
-        switch(this->typeCoord)
+        switch (this->typeCoord)
         {
-            case WINDOW_COORD:
-                if (this->ptrWindow != nullptr)
-                {
-                    y2 = y + height;
-                    x = x / ((float) ptrWindow->getWidth() / 2.0);
-                    y = y / ((float) ptrWindow->getHeight() / 2.0);
-                    x2 = x2 / ((float) ptrWindow->getWidth() / 2.0);
-                    y2 = y2 / ((float) ptrWindow->getHeight() / 2.0);
-                }
-                break;
+        case WINDOW_COORD:
+            if (this->ptrWindow != nullptr)
+            {
+                y2 = y + height * this->ScaleY;
+                x = x / ((float)ptrWindow->getWidth() / 2.0);
+                y = y / ((float)ptrWindow->getHeight() / 2.0);
+                x2 = x2 / ((float)ptrWindow->getWidth() / 2.0);
+                y2 = y2 / ((float)ptrWindow->getHeight() / 2.0);
+            }
+            break;
 
-            case POSITIVE_WINDOW_COORD:
-                if (this->ptrWindow != nullptr)
-                {
-                    y2 = y + height;
-                    x = x / ((float) ptrWindow->getWidth() / 2.0) - 1.0;
-                    y = -(y / ((float) ptrWindow->getHeight() / 2.0) - 1.0);
-                    x2 = x2 / ((float) ptrWindow->getWidth() / 2.0) - 1.0;
-                    y2 = -(y2 / ((float) ptrWindow->getHeight()  / 2.0) - 1.0);
-                }
-                break;
+        case POSITIVE_WINDOW_COORD:
+            if (this->ptrWindow != nullptr)
+            {
+                y2 = y + height * this->ScaleY;
+                x = x / ((float)ptrWindow->getWidth() / 2.0) - 1.0;
+                y = -(y / ((float)ptrWindow->getHeight() / 2.0) - 1.0);
+                x2 = x2 / ((float)ptrWindow->getWidth() / 2.0) - 1.0;
+                y2 = -(y2 / ((float)ptrWindow->getHeight() / 2.0) - 1.0);
+            }
+            break;
 
-            case POSITIVE_RELATIVE_COORD:
-                x = (x - 0.5) * 2.0;
-                y = (y - 0.5) * 2.0;
-                x2 = (x2 - 0.5) * 2.0;
-                y2 = (y2 - 0.5) * 2.0;
-                break;
+        case POSITIVE_RELATIVE_COORD:
+            x = (x - 0.5) * 2.0;
+            y = (y - 0.5) * 2.0;
+            x2 = (x2 - 0.5) * 2.0;
+            y2 = (y2 - 0.5) * 2.0;
+            break;
 
-            default:
-                break;
+        default:
+            break;
         }
 
         std::vector<float> vertexes = {};
@@ -77,7 +77,7 @@ namespace core
         vertexes.push_back(this->u + this->tWidth);
         vertexes.push_back(this->v);
 
-        if(this->objVAO != nullptr)
+        if (this->objVAO != nullptr)
         {
             delete this->objVAO;
             delete this->objEBO;
@@ -95,7 +95,7 @@ namespace core
         indexes.clear();
     }
 
-    Rect::Rect(const pos2f& pos, const size2f& size, const color::RGBA& color) :
+    Rect::Rect(const pos2f &pos, const size2f &size, const color::RGBA &color) : 
         typeCoord(RELATIVE_COORD), x(pos.x), y(pos.y), width(size.width), height(size.height), color(color),
         idTexture(0)
     {
@@ -106,39 +106,39 @@ namespace core
 
         this->createVAO();
 
-        unsigned char* img = new unsigned char[4 * 3];
+        unsigned char *img = new unsigned char[4 * 3];
         for (unsigned int index = 0; index < 4 * 3; index++)
             img[index] = 255;
         this->idTexture = texture::load(img, 2, 2, 3, false);
         delete[] img;
     }
 
-    Rect Rect::create(const pos2f& pos, const size2f& size, const color::RGBA& color)
+    Rect Rect::create(const pos2f &pos, const size2f &size, const color::RGBA &color)
     {
         return Rect(pos, size, color);
     }
 
-    Rect Rect::create(const pos2f& pos, const size2f& size, const color::RGB& color)
+    Rect Rect::create(const pos2f &pos, const size2f &size, const color::RGB &color)
     {
         return Rect(pos, size, color);
     }
 
-    Rect Rect::create(const pos2f& pos, const size2f& size, const color::COLOR& color)
+    Rect Rect::create(const pos2f &pos, const size2f &size, const color::COLOR &color)
     {
         return Rect(pos, size, color);
     }
 
-    Rect *Rect::ptrCreate(const pos2f& pos, const size2f& size, const color::RGBA& color)
+    Rect *Rect::ptrCreate(const pos2f &pos, const size2f &size, const color::RGBA &color)
     {
         return new Rect(pos, size, color);
     }
 
-    Rect *Rect::ptrCreate(const pos2f& pos, const size2f& size, const color::RGB& color)
+    Rect *Rect::ptrCreate(const pos2f &pos, const size2f &size, const color::RGB &color)
     {
         return new Rect(pos, size, color);
     }
 
-    Rect *Rect::ptrCreate(const pos2f& pos, const size2f& size, const color::COLOR& color)
+    Rect *Rect::ptrCreate(const pos2f &pos, const size2f &size, const color::COLOR &color)
     {
         return new Rect(pos, size, color);
     }
@@ -152,7 +152,8 @@ namespace core
 
     void Rect::draw()
     {
-        if (this->flagUbdateVao) this->createVAO();
+        if (this->flagUbdateVao)
+            this->createVAO();
 
         texture::bind((this->userTexture == 0) ? this->idTexture : this->userTexture, 0);
         shader::use(gResource::rectIdShader);
@@ -160,7 +161,7 @@ namespace core
         this->objEBO->draw(TRIANGLES, 6);
     }
 
-    void Rect::setPos(const pos2f& pos)
+    void Rect::setPos(const pos2f &pos)
     {
         this->flagUbdateVao = true;
         this->x = pos.x;
@@ -174,7 +175,7 @@ namespace core
         this->y = y;
     }
 
-    void Rect::setSize(const size2f& size)
+    void Rect::setSize(const size2f &size)
     {
         this->flagUbdateVao = true;
         this->width = size.width;
@@ -188,7 +189,7 @@ namespace core
         this->height = height;
     }
 
-    void Rect::setPosTexture(const pos2f& pos)
+    void Rect::setPosTexture(const pos2f &pos)
     {
         this->flagUbdateVao = true;
         this->u = pos.x;
@@ -202,7 +203,7 @@ namespace core
         this->v = y;
     }
 
-    void Rect::setSizeTexture(const size2f& size)
+    void Rect::setSizeTexture(const size2f &size)
     {
         this->flagUbdateVao = true;
         this->tWidth = size.width;
@@ -222,7 +223,7 @@ namespace core
         this->userTexture = id;
     }
 
-    void Rect::setTexture(const Texture& texture)
+    void Rect::setTexture(const Texture &texture)
     {
         this->flagUbdateVao = true;
         this->userTexture = texture.getID();
@@ -238,16 +239,38 @@ namespace core
         this->userTexture = 0;
     }
 
-    void Rect::setTypeCoord(const TYPES_COORD& typeCoord)
+    void Rect::setColor(const color::RGBA &color)
+    {
+        this->color = color;
+    }
+
+    void core::Rect::setColor(const color::COLOR &color)
+    {
+        this->color = color;
+    }
+
+    void core::Rect::setColor(const color::RGB &color)
+    {
+        this->color = color;
+    }
+
+    void Rect::setTypeCoord(const TYPES_COORD &typeCoord)
     {
         this->flagUbdateVao = true;
         this->typeCoord = typeCoord;
     }
 
-    void Rect::setWindow(Window& window)
+    void Rect::setWindow(Window &window)
     {
         this->flagUbdateVao = true;
         this->ptrWindow = &window;
+    }
+
+    void Rect::scale(float x, float y)
+    {
+        this->ScaleX = x;
+        this->ScaleY = y;
+        this->flagUbdateVao = true;
     }
 
 } // core

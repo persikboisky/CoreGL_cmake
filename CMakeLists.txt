@@ -20,8 +20,10 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/graphics/renderer/gResource.cpp
         src/graphics/renderer/Rect.cpp
         src/graphics/vulkan/vInstance.cpp
+        src/graphics/vulkan/vSurface.cpp
         src/graphics/vulkan/vResource.cpp
         src/graphics/vulkan/vDevices.cpp
+        src/graphics/vulkan/vDevice.cpp
         src/file/code.cpp
         src/file/mtl.cpp
         src/file/obj.cpp

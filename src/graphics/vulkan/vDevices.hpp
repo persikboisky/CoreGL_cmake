@@ -20,11 +20,13 @@ namespace core
         private:
             std::vector<VkPhysicalDevice> devices;
 
-            Devices(const container& cnt);
+            explicit Devices(const container& cnt);
 
         public:
             static Devices get(const container& cnt);
             static Devices *ptrGet(const container& cnt);
+
+            VkPhysicalDevice getDevice(uint32_t id);
         };
     } // vulkan
 } // core

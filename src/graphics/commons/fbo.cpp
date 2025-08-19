@@ -148,7 +148,7 @@ void core::FBO::unBind()
     this->flagBind = false;
 }
 
-void core::FBO::bindTexture(unsigned int Sampler)
+void core::FBO::textureBind(unsigned int Sampler)
 {
     this->sampler = Sampler;
     texture::bind(this->idTexture, Sampler);

@@ -11,6 +11,14 @@ namespace core::vulkan
 	struct container
 	{
         VkInstance instance;
+        VkSurfaceKHR surface;
+
+        VkPhysicalDevice physicalDevice;
+        VkDevice logicalDevice;
+        VkQueue graphicsQueue;
+
+        uint32_t graphicQueueFamilyIndex;
+        uint32_t presentQueueFamilyIndex;
 
         ~container();
 	};

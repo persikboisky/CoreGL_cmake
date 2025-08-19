@@ -56,7 +56,7 @@ namespace core
         void bind();
         void unBind();
 
-        void bindTexture(unsigned int Sampler = 0);
+        void textureBind(unsigned int Sampler = 0);
         void unBindTexture();
 
         static FBO create(int width, int height, int colorsChannels = 3);

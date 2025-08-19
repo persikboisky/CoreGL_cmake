@@ -22,6 +22,11 @@ namespace core
         {
             return T(180) / T(PI) * radians;
         }
+
+        void setSeedRandom(unsigned int seed);
+
+        // double random();
+        // bool randomB(float chanceToTrue = 0.5f);
     }
 } // core
 

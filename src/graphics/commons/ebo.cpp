@@ -152,14 +152,12 @@ void ebo::setWidthLine(float width)
 
 #pragma region EBO
 
-EBO::EBO(unsigned int *indexes, unsigned int sizeOfByte) : 
-    vao(0), Vao(nullptr), nVert(sizeOfByte / sizeof(unsigned int))
+EBO::EBO(unsigned int *indexes, unsigned int sizeOfByte) : vao(0), Vao(nullptr), nVert(sizeOfByte / sizeof(unsigned int))
 {
     this->id = ebo::create(indexes, sizeOfByte);
 }
 
-EBO::EBO(std::vector<unsigned int> indexes) : 
-    vao(0), Vao(nullptr), nVert(indexes.size())
+EBO::EBO(std::vector<unsigned int> indexes) : vao(0), Vao(nullptr), nVert(indexes.size())
 {
     this->id = ebo::create(indexes);
 }
@@ -197,16 +195,16 @@ void core::EBO::bind()
         break;
     }
 
-    if (nVert == 0)
-    {
-        nVert = this->nVert;
-    }
-
     ebo::bind(this->id);
 }
 
 void EBO::draw(PRIMITIVE Primitive, unsigned int nVert)
 {
+    if (nVert == 0)
+    {
+        nVert = this->nVert;
+    }
+    
     this->bind();
     vao::setSizePoints(this->sizePoint);
     vao::setWidthLine(this->widthLine);

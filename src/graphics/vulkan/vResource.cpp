@@ -11,6 +11,8 @@ namespace core::vulkan
 {
     container::~container()
     {
+        vkDestroyDevice(this->logicalDevice, nullptr);
+        vkDestroySurfaceKHR(this->instance, this->surface, nullptr);
         vkDestroyInstance(this->instance, nullptr);
     }
 }
