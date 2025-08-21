@@ -52,6 +52,7 @@ const std::string INFO_CODERS[] = {
         "VK_FAILED_TO_CREATE_IMAGE_VIEW!",          // 37
         "VK_FAILED_SEARCH_SURFACE_FORMATS",         // 38
         "VK_FAILED_SEARCH_PRESENT_MODE",            // 39
+        "VK_FAILED_TO_CREATE_IMAGE_VIEW!",          // 40
         ""
 };
 

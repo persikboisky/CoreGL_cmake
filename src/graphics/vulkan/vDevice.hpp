@@ -9,18 +9,17 @@
 #if defined(CORE_INCLUDE_VULKAN)
 #include <vulkan/vulkan.h>
 
-namespace core
+namespace core::vulkan
 {
-    namespace vulkan
-    {
-        struct container;
-        class Devices;
 
-        struct device
-        {
-            static void create(container* cnt, Devices &devices, uint32_t id = 0);
-        };
-    }
+    struct container;
+    class Devices;
+
+    struct device
+    {
+        static void create(container* cnt, Devices &devices, uint32_t id = 0);
+        static void destroy(container* cnt);
+    };
 }
 
 #endif //!VRESOURCE_HPP

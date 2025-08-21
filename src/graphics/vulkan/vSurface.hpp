@@ -15,6 +15,7 @@ namespace core
         struct surface
         {
             static void create(container* cnt, Window& window);
+            static void destroy(container* cnt);
         };
     } // vulkan
 } // core

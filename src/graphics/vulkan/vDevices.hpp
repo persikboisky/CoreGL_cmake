@@ -10,25 +10,24 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 
-namespace core
+namespace core::vulkan
 {
-    namespace vulkan
+    struct container;
+    class Devices
     {
-        struct container;
-        class Devices
-        {
-        private:
-            std::vector<VkPhysicalDevice> devices;
+    private:
+        std::vector<VkPhysicalDevice> devices;
 
-            explicit Devices(const container& cnt);
+        explicit Devices(const container& cnt);
 
-        public:
-            static Devices get(const container& cnt);
-            static Devices *ptrGet(const container& cnt);
+    public:
+        static Devices get(const container& cnt);
+        static Devices *ptGet(const container& cnt);
 
-            VkPhysicalDevice getDevice(uint32_t id);
-        };
-    } // vulkan
+        ~Devices() = default;
+
+        VkPhysicalDevice getDevice(uint32_t id);
+    };
 } // core
 
 #endif //defined(CORE_INCLUDE_VULKAN)

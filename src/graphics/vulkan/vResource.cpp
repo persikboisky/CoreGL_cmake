@@ -5,14 +5,14 @@
 #include "../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
 #include "vResource.hpp"
+#include "vSurface.hpp"
 #include <vulkan/vulkan.h>
 
 namespace core::vulkan
 {
     container::~container()
     {
-        vkDestroyDevice(this->logicalDevice, nullptr);
-        vkDestroySurfaceKHR(this->instance, this->surface, nullptr);
+        surface::destroy(this);
         vkDestroyInstance(this->instance, nullptr);
     }
 }

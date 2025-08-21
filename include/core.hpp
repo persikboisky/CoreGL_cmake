@@ -27,6 +27,7 @@
 #include "../src/graphics/vulkan/vSurface.hpp"
 #include "../src/graphics/vulkan/vDevices.hpp"
 #include "../src/graphics/vulkan/vDevice.hpp"
+#include "../src/graphics/vulkan/vSwapChain.hpp"
 #include "../src/file/image.hpp"
 #include "../src/file/code.hpp"
 #include "../src/file/mtl.hpp"

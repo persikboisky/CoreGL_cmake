@@ -24,6 +24,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/graphics/vulkan/vResource.cpp
         src/graphics/vulkan/vDevices.cpp
         src/graphics/vulkan/vDevice.cpp
+        src/graphics/vulkan/vSwapChain.cpp
         src/file/code.cpp
         src/file/mtl.cpp
         src/file/obj.cpp
