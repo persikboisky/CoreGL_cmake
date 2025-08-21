@@ -986,7 +986,7 @@ ALenum ALeffectslot::initEffect(ALenum effectType, const EffectProps &effectProp
 
 void ALeffectslot::updateProps(ALCcontext *context)
 {
-    /* Get an unused property container, or allocate a new one as needed. */
+    /* Get an unused property apiContainer, or allocate a new one as needed. */
     EffectSlotProps *props{context->mFreeEffectslotProps.load(std::memory_order_relaxed)};
     if(!props)
         props = new EffectSlotProps{};
@@ -1008,11 +1008,11 @@ void ALeffectslot::updateProps(ALCcontext *context)
     props->Props = Effect.Props;
     props->State = Effect.State;
 
-    /* Set the new container for updating internal parameters. */
+    /* Set the new apiContainer for updating internal parameters. */
     props = mSlot.Update.exchange(props, std::memory_order_acq_rel);
     if(props)
     {
-        /* If there was an unused update container, put it back in the
+        /* If there was an unused update apiContainer, put it back in the
          * freelist.
          */
         props->State = nullptr;

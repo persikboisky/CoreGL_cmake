@@ -13,7 +13,7 @@
 
 namespace core::vulkan
 {
-    void device::create(container *cnt, Devices &devices, uint32_t id)
+    void device::create(apiContainer *cnt, Devices &devices, uint32_t id)
     {
         cnt->physicalDevice = devices.getDevice(id);
 
@@ -104,7 +104,7 @@ namespace core::vulkan
                 &cnt->graphicsQueue);
     }
 
-    void device::destroy(container *cnt)
+    void device::destroy(apiContainer *cnt)
     {
         swapchain::destroy(cnt);
         vkDestroyDevice(cnt->logicalDevice, nullptr);

@@ -28,6 +28,8 @@
 #include "../src/graphics/vulkan/vDevices.hpp"
 #include "../src/graphics/vulkan/vDevice.hpp"
 #include "../src/graphics/vulkan/vSwapChain.hpp"
+#include "../src/graphics/vulkan/vRenderPass.hpp"
+#include "../src/graphics/vulkan/vGraphicsPipeline.hpp"
 #include "../src/file/image.hpp"
 #include "../src/file/code.hpp"
 #include "../src/file/mtl.hpp"

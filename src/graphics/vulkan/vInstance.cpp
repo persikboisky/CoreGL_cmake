@@ -16,7 +16,7 @@
 
 namespace core::vulkan
 {
-    void instance::create(container* cnt, const instanceInfo& info)
+    void instance::create(apiContainer* cnt, const instanceInfo& info)
     {
         VkApplicationInfo appInfo = {};
         appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -57,7 +57,7 @@ namespace core::vulkan
         }
     }
 
-    void instance::destroy(container* cnt)
+    void instance::destroy(apiContainer* cnt)
     {
         vkDestroyInstance(cnt->instance, nullptr);
     }

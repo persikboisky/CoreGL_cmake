@@ -12,7 +12,7 @@
 
 namespace core::vulkan
 {
-    struct container;
+    struct apiContainer;
 
     struct instanceInfo
     {
@@ -25,8 +25,8 @@ namespace core::vulkan
 
     struct instance
     {
-        static void create(container* cnt, const instanceInfo& info = {});
-        static void destroy(container* cnt);
+        static void create(apiContainer* cnt, const instanceInfo& info = {});
+        static void destroy(apiContainer* cnt);
     };
 } // core
 

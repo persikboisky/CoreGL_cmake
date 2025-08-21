@@ -6,14 +6,20 @@
 #if defined(CORE_INCLUDE_VULKAN)
 #include "vResource.hpp"
 #include "vSurface.hpp"
+#include "vRenderPass.hpp"
 #include <vulkan/vulkan.h>
 
 namespace core::vulkan
 {
-    container::~container()
+    apiContainer::~apiContainer()
     {
         surface::destroy(this);
         vkDestroyInstance(this->instance, nullptr);
+    }
+
+    piplineContainer::~piplineContainer()
+    {
+        renderPass::destroy(this, *this->ptrApiContainer);
     }
 }
 

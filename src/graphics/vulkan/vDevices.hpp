@@ -12,17 +12,17 @@
 
 namespace core::vulkan
 {
-    struct container;
+    struct apiContainer;
     class Devices
     {
     private:
         std::vector<VkPhysicalDevice> devices;
 
-        explicit Devices(const container& cnt);
+        explicit Devices(const apiContainer& cnt);
 
     public:
-        static Devices get(const container& cnt);
-        static Devices *ptGet(const container& cnt);
+        static Devices get(const apiContainer& cnt);
+        static Devices *ptGet(const apiContainer& cnt);
 
         ~Devices() = default;
 

@@ -17,7 +17,7 @@ namespace core
 {
     namespace vulkan
     {
-        Devices::Devices(const container& cnt)
+        Devices::Devices(const apiContainer& cnt)
         {
             uint32_t count = 0;
             VkResult result = vkEnumeratePhysicalDevices(
@@ -50,12 +50,12 @@ namespace core
             }
         }
 
-        Devices Devices::get(const container &cnt)
+        Devices Devices::get(const apiContainer &cnt)
         {
             return Devices(cnt);
         }
 
-        Devices *Devices::ptGet(const container &cnt)
+        Devices *Devices::ptGet(const apiContainer &cnt)
         {
             return new Devices(cnt);
         }

@@ -99,7 +99,7 @@ Voice *GetSourceVoice(ALsource *source, ALCcontext *context)
 
 void UpdateSourceProps(const ALsource *source, Voice *voice, ALCcontext *context)
 {
-    /* Get an unused property container, or allocate a new one as needed. */
+    /* Get an unused property apiContainer, or allocate a new one as needed. */
     VoicePropsItem *props{context->mFreeVoiceProps.load(std::memory_order_acquire)};
     if(!props)
     {
@@ -172,11 +172,11 @@ void UpdateSourceProps(const ALsource *source, Voice *voice, ALCcontext *context
     if(!props->Send[0].Slot && context->mDefaultSlot)
         props->Send[0].Slot = &context->mDefaultSlot->mSlot;
 
-    /* Set the new container for updating internal parameters. */
+    /* Set the new apiContainer for updating internal parameters. */
     props = voice->mUpdate.exchange(props, std::memory_order_acq_rel);
     if(props)
     {
-        /* If there was an unused update container, put it back in the
+        /* If there was an unused update apiContainer, put it back in the
          * freelist.
          */
         AtomicReplaceHead(context->mFreeVoiceProps, props);

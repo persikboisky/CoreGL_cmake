@@ -921,7 +921,7 @@ END_API_FUNC
 
 void UpdateContextProps(ALCcontext *context)
 {
-    /* Get an unused proprty container, or allocate a new one as needed. */
+    /* Get an unused proprty apiContainer, or allocate a new one as needed. */
     ContextProps *props{context->mFreeContextProps.load(std::memory_order_acquire)};
     if(!props)
         props = new ContextProps{};
@@ -951,11 +951,11 @@ void UpdateContextProps(ALCcontext *context)
     props->SourceDistanceModel = context->mSourceDistanceModel;
     props->mDistanceModel = context->mDistanceModel;
 
-    /* Set the new container for updating internal parameters. */
+    /* Set the new apiContainer for updating internal parameters. */
     props = context->mParams.ContextUpdate.exchange(props, std::memory_order_acq_rel);
     if(props)
     {
-        /* If there was an unused update container, put it back in the
+        /* If there was an unused update apiContainer, put it back in the
          * freelist.
          */
         AtomicReplaceHead(context->mFreeContextProps, props);

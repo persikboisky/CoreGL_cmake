@@ -14,7 +14,7 @@ namespace core
 {
     namespace vulkan
     {
-        void surface::create(container* cnt, Window& window)
+        void surface::create(apiContainer* cnt, Window& window)
         {
             VkResult result = glfwCreateWindowSurface(
                     cnt->instance,
@@ -24,7 +24,7 @@ namespace core
             coders::vulkanProcessingError(result);
         }
 
-        void surface::destroy(container* cnt)
+        void surface::destroy(apiContainer* cnt)
         {
             device::destroy(cnt);
             vkDestroySurfaceKHR(cnt->instance, cnt->surface, nullptr);

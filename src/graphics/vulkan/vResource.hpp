@@ -9,8 +9,7 @@
 
 namespace core::vulkan
 {
-    class SwapChain;
-	struct container
+	struct apiContainer
 	{
         VkInstance instance;
         VkSurfaceKHR surface;
@@ -29,9 +28,28 @@ namespace core::vulkan
 
         const float _QueuePriorities = 1.0f;
 
-        ~container();
+        ~apiContainer();
 	};
+
+    struct piplineContainer
+    {
+        VkRenderPass renderPass;
+        apiContainer *ptrApiContainer = nullptr;
+        VkPipelineLayout pipelineLayout;
+        VkPipeline graphicsPipeline;
+
+        ~piplineContainer();
+    };
+
+    inline VkFormat findDepthFormat(const apiContainer& cnt);
+    inline VkFormat findSupportedFormats(
+            const apiContainer& cnt,
+            const std::vector<VkFormat>& candidates,
+            VkImageTiling tiling,
+            VkFormatFeatureFlags features);
 }
+
+#include "vResource.inl"
 
 #endif //defined(CORE_INCLUDE_VULKAN)
 #endif //!VRESOURCE_HPP

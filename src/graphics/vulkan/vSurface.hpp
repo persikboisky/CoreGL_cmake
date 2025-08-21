@@ -11,11 +11,11 @@ namespace core
 
     namespace vulkan
     {
-        struct container;
+        struct apiContainer;
         struct surface
         {
-            static void create(container* cnt, Window& window);
-            static void destroy(container* cnt);
+            static void create(apiContainer* cnt, Window& window);
+            static void destroy(apiContainer* cnt);
         };
     } // vulkan
 } // core

@@ -18,7 +18,7 @@ const std::string INFO_CODERS[] = {
         "FAILED_LOAD_IMAGE",                    // 3
         "FAILED_CHECK_KEY",                     // 4
         "FAILED_CREATE_CUSTOM_CURSOR",          // 5
-        "FAILED_LOAD_FILE",                     // 6
+        "FAILED_READ_FILE",                     // 6
         "FAILED_CREATE_VERTEX_SHADER",          // 7
         "FAILED_CREATE_FRAGMENT_SHADER",        // 8
         "FAILED_CREATE_SHADER_PROGRAM",         // 9
@@ -53,6 +53,8 @@ const std::string INFO_CODERS[] = {
         "VK_FAILED_SEARCH_SURFACE_FORMATS",         // 38
         "VK_FAILED_SEARCH_PRESENT_MODE",            // 39
         "VK_FAILED_TO_CREATE_IMAGE_VIEW!",          // 40
+        "VK_FAILED_SEARCH_IMAGE_FORMAT",            // 41
+        "VK_DIDN'T_SEARCH_FRAG_OR_VERT_SHADER",     // 42
         ""
 };
 

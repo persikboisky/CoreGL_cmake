@@ -1,8 +1,7 @@
-#include "../../modules.hpp"
-#if defined(CORE_INCLUDE_VULKAN)
 #include "vSwapChain.hpp"
 #include "vResource.hpp"
 #include "../../util/coders.hpp"
+#include <iostream>
 
 inline VkSurfaceFormatKHR core::vulkan::swapchain::chooseSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &formats)
 {
@@ -30,7 +29,7 @@ inline VkPresentModeKHR core::vulkan::swapchain::chooseSwapPresentMode(
 }
 
 inline VkImageView core::vulkan::swapchain::createImageView(
-        container* cnt,
+        apiContainer* cnt,
         const VkImage& image,
         VkFormat format,
         VkImageAspectFlags aspectFlags)
@@ -56,6 +55,3 @@ inline VkImageView core::vulkan::swapchain::createImageView(
 
     return imageView;
 }
-
-
-#endif //defined(CORE_INCLUDE_VULKAN)

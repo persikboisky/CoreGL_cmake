@@ -15,7 +15,7 @@
 
 namespace core::vulkan
 {
-    void swapchain::create(container *cnt, bool VerticalSynchronization)
+    void swapchain::create(apiContainer *cnt, bool VerticalSynchronization)
     {
 ////////////////////////////////////////////////////////////
 // формат изображения
@@ -40,7 +40,7 @@ namespace core::vulkan
                     formats.data());
             coders::vulkanProcessingError(result);
         }
-        else coders(38, "Function: void swapchain::create(container *cnt)");
+        else coders(38, "Function: void swapchain::create(apiContainer *cnt)");
 
         cnt->swapChainFormat = chooseSurfaceFormat(formats);
 
@@ -66,7 +66,7 @@ namespace core::vulkan
                     presentModes.data());
             coders::vulkanProcessingError(result);
         }
-        else coders(39, "Function: void swapchain::create(container *cnt)");
+        else coders(39, "Function: void swapchain::create(apiContainer *cnt)");
 
         cnt->presentMode = chooseSwapPresentMode(presentModes, VerticalSynchronization);
 
@@ -91,10 +91,10 @@ namespace core::vulkan
         swapChainInfo.pNext = nullptr;
         swapChainInfo.flags = 0;
         swapChainInfo.surface = cnt->surface;
-        swapChainInfo.imageFormat = cnt->swapChainFormat.format;
-        swapChainInfo.imageColorSpace = cnt->swapChainFormat.colorSpace;
+        swapChainInfo.imageFormat = formats[1].format;
+        swapChainInfo.imageColorSpace = formats[1].colorSpace;
         swapChainInfo.presentMode = cnt->presentMode;
-        swapChainInfo.minImageCount = capabilities.minImageCount + 1;         // кол-во изображений в буфере
+        swapChainInfo.minImageCount = capabilities.minImageCount + 1;
         swapChainInfo.imageExtent = capabilities.currentExtent;
         swapChainInfo.preTransform = capabilities.currentTransform;
         swapChainInfo.imageArrayLayers = 1;
@@ -145,7 +145,7 @@ namespace core::vulkan
         }
     }
 
-    void swapchain::destroy(container *cnt)
+    void swapchain::destroy(apiContainer *cnt)
     {
         for (const VkImageView &imageView : cnt->swapChainImagesViews)
         {

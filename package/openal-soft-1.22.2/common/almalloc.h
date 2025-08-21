@@ -30,7 +30,7 @@ void *al_calloc(size_t alignment, size_t size);
     void *operator new(size_t size)                                           \
     {                                                                         \
         static_assert(&operator new == &T::operator new,                      \
-            "Incorrect container type specified");                            \
+            "Incorrect apiContainer type specified");                            \
         if(void *ret{al_malloc(alignof(T), size)})                            \
             return ret;                                                       \
         throw std::bad_alloc();                                               \
@@ -53,7 +53,7 @@ enum FamCount : size_t { };
     static constexpr size_t Sizeof(size_t count) noexcept                     \
     {                                                                         \
         static_assert(&Sizeof == &T::Sizeof,                                  \
-            "Incorrect container type specified");                            \
+            "Incorrect apiContainer type specified");                            \
         return std::max(decltype(FamMem)::Sizeof(count, offsetof(T, FamMem)), \
             sizeof(T));                                                       \
     }                                                                         \

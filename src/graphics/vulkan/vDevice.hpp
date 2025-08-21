@@ -12,13 +12,13 @@
 namespace core::vulkan
 {
 
-    struct container;
+    struct apiContainer;
     class Devices;
 
     struct device
     {
-        static void create(container* cnt, Devices &devices, uint32_t id = 0);
-        static void destroy(container* cnt);
+        static void create(apiContainer* cnt, Devices &devices, uint32_t id = 0);
+        static void destroy(apiContainer* cnt);
     };
 }
 
