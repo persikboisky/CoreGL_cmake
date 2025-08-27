@@ -5,6 +5,9 @@
 #ifndef VSURFACE_HPP
 #define VSURFACE_HPP
 
+#include "../../modules.hpp"
+#if defined(CORE_INCLUDE_VULKAN)
+
 namespace core
 {
     class Window;
@@ -20,4 +23,5 @@ namespace core
     } // vulkan
 } // core
 
+#endif //defined(CORE_INCLUDE_VULKAN)
 #endif //VSURFACE_HPP

@@ -32,6 +32,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/file/obj.cpp
         src/file/image.cpp
         src/file/wav.cpp
+        src/file/ttf.cpp
         src/math/math.cpp
         src/math/Vector2.cpp
         src/math/Vector3.cpp
@@ -55,7 +56,7 @@ target_link_libraries(${PROJECT_NAME} glfw)
 target_include_directories(${PROJECT_NAME} PRIVATE package/glfw/include)
 
 # link glad
-add_library(glad STATIC package/glad/include/glad/glad.h package/glad/src/glad.c)
+add_library(glad STATIC package/glad/include/glad/glad.h package/glad/src/glad.c "src/file/ttf.cpp")
 target_link_libraries(${PROJECT_NAME} glad)
 target_include_directories(${PROJECT_NAME} PRIVATE package/glad/include)
 

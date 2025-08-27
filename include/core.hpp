@@ -35,6 +35,7 @@
 #include "../src/file/mtl.hpp"
 #include "../src/file/obj.hpp"
 #include "../src/file/wav.hpp"
+#include "../src/file/ttf.hpp"
 #include "../src/math/math.hpp"
 #include "../src/math/Vectors.hpp"
 #include "../src/math/Matrix4.hpp"

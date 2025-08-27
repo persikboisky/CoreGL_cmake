@@ -2,6 +2,8 @@
 // Created by kisly on 19.08.2025.
 //
 
+#include "../../modules.hpp"
+#if defined(CORE_INCLUDE_VULKAN)
 #include "vSurface.hpp"
 #include "vResource.hpp"
 #include "vDevice.hpp"
@@ -31,3 +33,5 @@ namespace core
         }
     } // vulkan
 } // core
+
+#endif //defined(CORE_INCLUDE_VULKAN)

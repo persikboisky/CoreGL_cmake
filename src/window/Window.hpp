@@ -16,8 +16,8 @@ namespace core
     {
         const char* title = "CoreGL";
         const char* pathToIcon = nullptr;
-        int width = 1280;
-        int height = 720;
+        int width = 800;
+        int height = 800;
         bool VerticalSynchronization = true;
         bool resizable = false;
         int posX = 100;
@@ -70,7 +70,7 @@ namespace core
         Cursor* cursor;
         Monitor* monitor;
 
-        [[nodiscard]] static Window create(const windowInfo& winInfo);
+        [[nodiscard]] static Window create(const windowInfo& winInfo = {});
         [[nodiscard]] static Window create(int width, int height, const char* title = "", bool resizable = false, bool vkAPI = false);
 
         [[nodiscard]] GLFWwindow* getWindowOBJ();
