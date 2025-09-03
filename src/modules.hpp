@@ -5,6 +5,6 @@
 #ifndef MODULES_HPP
 #define MODULES_HPP
 
-//#define CORE_INCLUDE_VULKAN
+#define CORE_INCLUDE_VULKAN
 
-#endif //MODULES_HPP
+#endif // MODULES_HPP

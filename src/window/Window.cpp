@@ -31,6 +31,7 @@ static GLFWwindow *createWindow(int width, int height, const char *title, bool r
     if (vkAPI) glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif //defined(CORE_INCLUDE_VULKAN)
     glfwWindowHint(GLFW_RESIZABLE, resizable);
+	glfwWindowHint(GLFW_OPENGL_API, GLFW_OPENGL_CORE_PROFILE);
     GLFWwindow *window = glfwCreateWindow(width, height, title, nullptr, nullptr);
 
     if (window == nullptr)
@@ -64,7 +65,7 @@ core::Window::Window(const core::windowInfo &winInfo) :
 #if defined(CORE_INCLUDE_VULKAN)
     winInfo.VulknanAPI
 #else
-false
+	false
 #endif //defined(CORE_INCLUDE_VULKAN)
     )),
     event(nullptr), width(winInfo.width), height(winInfo.height), posX(winInfo.posX), posY(winInfo.posY),
@@ -81,7 +82,8 @@ false
     {
         this->setIcon(winInfo.pathToIcon);
     }
-    this->fullScreen(winInfo.fullScreen);
+
+	if (winInfo.fullScreen)  this->fullScreen(winInfo.fullScreen);
 }
 
 core::Window::Window(int width, int height, const char *title, bool resizable, bool vkAPI) :
@@ -134,11 +136,16 @@ GLFWwindow *core::Window::getWindowOBJ()
 
 bool core::Window::isContext()
 {
-    if (this->window == glfwGetCurrentContext())
-    {
-        return true;
-    }
-    return false;
+	if (this->VulknanAPI)
+	{
+		if (this->window == glfwGetCurrentContext())
+		{
+			return true;
+		}
+		return false;
+	}
+
+	return true;
 }
 
 core::Window::~Window()
@@ -254,7 +261,7 @@ void core::Window::setSizeFrameBuffer(int width, int height)
         this->setContext();
     }
 
-    core::fbo::setSize(width, height);
+	if (!this->VulknanAPI) core::fbo::setSize(width, height);
 }
 
 void core::Window::setSizeFrameBuffer(const core::size2i &size)

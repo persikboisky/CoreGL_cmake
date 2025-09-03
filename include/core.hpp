@@ -22,14 +22,9 @@
 #include "../src/graphics/commons/texture.hpp"
 #include "../src/graphics/commons/gl.hpp"
 #include "../src/graphics/renderer/Rect.hpp"
-#include "../src/graphics/vulkan/vResource.hpp"
-#include "../src/graphics/vulkan/vInstance.hpp"
-#include "../src/graphics/vulkan/vSurface.hpp"
-#include "../src/graphics/vulkan/vDevices.hpp"
-#include "../src/graphics/vulkan/vDevice.hpp"
-#include "../src/graphics/vulkan/vSwapChain.hpp"
-#include "../src/graphics/vulkan/vRenderPass.hpp"
-#include "../src/graphics/vulkan/vGraphicsPipeline.hpp"
+#include "../src/graphics/api/Vulkan/vk_Instance.hpp"
+//#include "../src/graphics/api/Vulkan/vk_physicalDevices.hpp"
+//#include "../src/graphics/api/Vulkan/vk_context.hpp"
 #include "../src/file/image.hpp"
 #include "../src/file/code.hpp"
 #include "../src/file/mtl.hpp"
@@ -53,4 +48,4 @@ namespace core
     }
 }
 
-#endif //CORE_HPP_
+#endif // CORE_HPP_

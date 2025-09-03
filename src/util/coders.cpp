@@ -57,7 +57,8 @@ const std::string INFO_CODERS[] = {
         "VK_DIDN'T_SEARCH_FRAG_OR_VERT_SHADER",     // 42
         "FAILED_SEARCH_TAG_HEAD_TO_TTF_FILE",       // 43
         "FAILED_THIS_FILE_DON'T_BE_TO_TTF",         // 44
-        ""
+        "VK_FAILED_YOUR_GPU_DON'T_HOLDING_VULKAN_API",	//45
+		""
 };
 
 core::coders::coders(int codeError, std::string addInfo)

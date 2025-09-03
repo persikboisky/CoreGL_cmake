@@ -1,5 +1,8 @@
 
-target_sources(${PROJECT_NAME} PRIVATE
+cmake_minimum_required(VERSION 3.5)
+project(CoreGL)
+
+set(CoreGL_source
         src/core.cpp
         src/util/coders.cpp
         src/util/console.cpp
@@ -19,14 +22,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/graphics/commons/gl.cpp
         src/graphics/renderer/gResource.cpp
         src/graphics/renderer/Rect.cpp
-        src/graphics/vulkan/vInstance.cpp
-        src/graphics/vulkan/vSurface.cpp
-        src/graphics/vulkan/vResource.cpp
-        src/graphics/vulkan/vDevices.cpp
-        src/graphics/vulkan/vDevice.cpp
-        src/graphics/vulkan/vSwapChain.cpp
-        src/graphics/vulkan/vRenderPass.cpp
-        src/graphics/vulkan/vGraphicsPipeline.cpp
+        src/graphics/api/Vulkan/vk_Instance.cpp
         src/file/code.cpp
         src/file/mtl.cpp
         src/file/obj.cpp
@@ -42,7 +38,10 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/audio/aBuffer.cpp
         src/audio/aSource.cpp
 )
-target_include_directories(${PROJECT_NAME} PRIVATE include)
+
+add_library(CoreGL STATIC ${CoreGL_source})
+
+target_link_directories(CoreGL PRIVATE include)
 
 # link GLFW
 set(BUILD_SHARED_LIBS OFF)
@@ -56,7 +55,7 @@ target_link_libraries(${PROJECT_NAME} glfw)
 target_include_directories(${PROJECT_NAME} PRIVATE package/glfw/include)
 
 # link glad
-add_library(glad STATIC package/glad/include/glad/glad.h package/glad/src/glad.c "src/file/ttf.cpp")
+add_library(glad STATIC package/glad/include/glad/glad.h package/glad/src/glad.c)
 target_link_libraries(${PROJECT_NAME} glad)
 target_include_directories(${PROJECT_NAME} PRIVATE package/glad/include)
 
@@ -65,9 +64,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE package/stb)
 
 # link openAL
 set(LIBTYPE STATIC)
-add_subdirectory(package/openal-soft-1.22.2)
+add_subdirectory(package/openal-soft)
 target_link_libraries(${PROJECT_NAME} OpenAL)
-target_include_directories(${PROJECT_NAME} PRIVATE package/openal-soft-1.22.2/include)
+target_include_directories(${PROJECT_NAME} PRIVATE package/openal-soft/include)
 
 # link vulkan
 find_package(Vulkan REQUIRED)
