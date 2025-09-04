@@ -34,6 +34,9 @@ namespace core
 			static Instance *PtrCreate(const instanceInfo& info = {});
 
 			~Instance();
+
+			[[maybe_unused]] VkInstance getVkInstance();
+			[[maybe_unused]] VkInstance *getVkPtrInstance();
 		};
 	} // vulkan
 } // core

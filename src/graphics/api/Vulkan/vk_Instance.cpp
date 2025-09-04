@@ -64,7 +64,7 @@ namespace core
 			return Instance(info);
 		}
 
-		Instance* Instance::PtrCreate(const instanceInfo& info)
+		[[maybe_unused]] Instance* Instance::PtrCreate(const instanceInfo& info)
 		{
 			return new Instance(info);
 		}
@@ -72,6 +72,16 @@ namespace core
 		Instance::~Instance()
 		{
 			vkDestroyInstance(this->instance, nullptr);
+		}
+
+		[[maybe_unused]] VkInstance Instance::getVkInstance()
+		{
+			return this->instance;
+		}
+
+		[[maybe_unused]] VkInstance* Instance::getVkPtrInstance()
+		{
+			return &this->instance;
 		}
 	} // culkan
 } // core
