@@ -26,6 +26,7 @@
 #include "../src/graphics/api/Vulkan/vk_physicalDevices.hpp"
 #include "../src/graphics/api/Vulkan/vk_surface.hpp"
 #include "../src/graphics/api/Vulkan/vk_device.hpp"
+#include "../src/graphics/api/Vulkan/vk_swapChain.hpp"
 #include "../src/file/image.hpp"
 #include "../src/file/code.hpp"
 #include "../src/file/mtl.hpp"

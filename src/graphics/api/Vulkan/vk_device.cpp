@@ -105,6 +105,39 @@ namespace core
 				console::printTime();
 				std::cout << "Ok: create vulkan device" << std::endl;
 			}
+
+			count = 0;
+			std::vector<VkSurfaceFormatKHR> surfaceFormats = {};
+			result = vkGetPhysicalDeviceSurfaceFormatsKHR(
+				phDevice,
+				info.ptrSurface->getVkSurfaceKHR(),
+				&count,
+				nullptr);
+			coders::vulkanProcessingError(result);
+
+			surfaceFormats.resize(count);
+			result = vkGetPhysicalDeviceSurfaceFormatsKHR(
+				phDevice,
+				info.ptrSurface->getVkSurfaceKHR(),
+				&count,
+				surfaceFormats.data());
+			coders::vulkanProcessingError(result);
+
+			for (const VkSurfaceFormatKHR& format : surfaceFormats)
+			{
+				if (format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR &&
+					format.format == VK_FORMAT_B8G8R8A8_UNORM)
+				{
+					this->surfaceFormat = format;
+					break;
+				}
+			}
+
+			result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+				phDevice,
+				info.ptrSurface->getVkSurfaceKHR(),
+				&this->surfaceCapabilitiesFormat);
+			coders::vulkanProcessingError(result);
 		}
 
 		Device Device::create(const deviceInfo& info)
@@ -120,6 +153,36 @@ namespace core
 		Device::~Device()
 		{
 			vkDestroyDevice(this->device, nullptr);
+		}
+
+		uint32_t Device::getGraphicsQueueFamilyIndex()
+		{
+			return this->graphicsQueueFamilyIndex;
+		}
+
+		uint32_t Device::getPresentQueueFamilyIndex()
+		{
+			return this->presentQueueFamilyIndex;
+		}
+
+		VkSurfaceFormatKHR Device::getVkSurfaceFormat()
+		{
+			return this->surfaceFormat;
+		}
+
+		VkSurfaceCapabilitiesKHR Device::getVkSurfaceCapabilities()
+		{
+			return this->surfaceCapabilitiesFormat;
+		}
+
+		VkDevice Device::getDevice()
+		{
+			return this->device;
+		}
+
+		VkDevice* Device::getPtrDevice()
+		{
+			return &this->device;
 		}
 	} // vulkan
 } // core

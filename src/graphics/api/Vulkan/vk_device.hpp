@@ -28,6 +28,9 @@ namespace core
 			VkPhysicalDeviceProperties deviceProperties = {};
 			VkPhysicalDeviceFeatures deviceFeatures = {};
 
+			VkSurfaceFormatKHR surfaceFormat = {};
+			VkSurfaceCapabilitiesKHR surfaceCapabilitiesFormat = {};
+
 			uint32_t graphicsQueueFamilyIndex = 0;
 			uint32_t presentQueueFamilyIndex = 0;
 
@@ -40,6 +43,15 @@ namespace core
 			static Device* ptrCreate(const deviceInfo& info);
 
 			~Device();
+
+			uint32_t getGraphicsQueueFamilyIndex();
+			uint32_t getPresentQueueFamilyIndex();
+
+			VkSurfaceFormatKHR getVkSurfaceFormat();
+			VkSurfaceCapabilitiesKHR getVkSurfaceCapabilities();
+
+			VkDevice getDevice();
+			VkDevice *getPtrDevice();
 		};
 	} // vulkan
 } // core

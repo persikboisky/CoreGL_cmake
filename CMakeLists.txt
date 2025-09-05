@@ -23,6 +23,10 @@ set(CoreGL_source
         src/graphics/renderer/gResource.cpp
         src/graphics/renderer/Rect.cpp
         src/graphics/api/Vulkan/vk_Instance.cpp
+        src/graphics/api/Vulkan/vk_physicalDevices.cpp
+        src/graphics/api/Vulkan/vk_surface.cpp
+        src/graphics/api/Vulkan/vk_device.cpp
+        src/graphics/api/Vulkan/vk_swapChain.cpp
         src/file/code.cpp
         src/file/mtl.cpp
         src/file/obj.cpp
