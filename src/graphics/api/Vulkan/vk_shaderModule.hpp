@@ -36,7 +36,7 @@ namespace core::vulkan
 
 		VkDevice* device = nullptr;
 
-		ShaderModule(const ShaderModuleInfo& info);
+		explicit ShaderModule(const ShaderModuleInfo& info);
 
 	 public:
 		static ShaderModule create(const ShaderModuleInfo& info);

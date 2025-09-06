@@ -28,6 +28,8 @@ set(CoreGL_source
         src/graphics/api/Vulkan/vk_device.cpp
         src/graphics/api/Vulkan/vk_swapChain.cpp
         src/graphics/api/Vulkan/vk_shaderModule.cpp
+        src/graphics/api/Vulkan/vk_pipeline.cpp
+        src/graphics/api/Vulkan/vk_renderPass.cpp
         src/file/code.cpp
         src/file/mtl.cpp
         src/file/obj.cpp
