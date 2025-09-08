@@ -6,43 +6,13 @@
 #if defined(CORE_INCLUDE_VULKAN)
 #include "vk_surface.hpp"
 #include "vk_device.hpp"
+#include "vk_imageView.hpp"
 #include "../../../util/coders.hpp"
 
 namespace core
 {
 	namespace vulkan
 	{
-		static VkImageView createImageView(
-			VkDevice device,
-			VkImage image,
-			VkFormat format,
-			VkImageAspectFlags aspectFlags,
-			uint32_t mipLevels)
-		{
-			VkImageViewCreateInfo viewInfo{};
-			viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-			viewInfo.image = image;
-			viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-			viewInfo.format = format;
-
-			viewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-			viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-			viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-			viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-
-			viewInfo.subresourceRange.aspectMask = aspectFlags;
-			viewInfo.subresourceRange.baseMipLevel = 0;
-			viewInfo.subresourceRange.levelCount = mipLevels;
-			viewInfo.subresourceRange.baseArrayLayer = 0;
-			viewInfo.subresourceRange.layerCount = 1;
-
-			VkImageView imageView;
-			VkResult result = vkCreateImageView(device, &viewInfo, nullptr, &imageView);
-			coders::vulkanProcessingError(result);
-
-			return imageView;
-		}
-
 		SwapChain::SwapChain(const swapChainInfo& info) : device(info.ptrDevice->getPtrDevice())
 		{
 			uint32_t FamilyIndices = info.ptrDevice->getPresentQueueFamilyIndex();
@@ -97,16 +67,6 @@ namespace core
 				&count,
 				swapChainImages.data());
 			coders::vulkanProcessingError(result);
-
-			for (const VkImage& image : swapChainImages)
-			{
-				this->imagesView.push_back(createImageView(
-					*this->device,
-					image,
-					info.ptrDevice->getVkSurfaceFormat().format,
-					VK_IMAGE_ASPECT_COLOR_BIT,
-					1));
-			}
 		}
 
 		SwapChain SwapChain::create(const swapChainInfo& info)
@@ -121,15 +81,32 @@ namespace core
 
 		SwapChain::~SwapChain()
 		{
-			for (const VkImageView& image : this->imagesView)
-			{
-				vkDestroyImageView(*this->device, image, nullptr);
-			}
-
 			vkDestroySwapchainKHR(
 				*this->device,
 				this->swapChain,
 				nullptr);
+		}
+
+		std::vector<VkImage> SwapChain::getVkImages()
+		{
+			uint32_t count = 0;
+			std::vector<VkImage> swapChainImages = {};
+			VkResult result = vkGetSwapchainImagesKHR(
+				*this->device,
+				swapChain,
+				&count,
+				nullptr);
+			coders::vulkanProcessingError(result);
+
+			swapChainImages.resize(count);
+			result = vkGetSwapchainImagesKHR(
+				*this->device,
+				swapChain,
+				&count,
+				swapChainImages.data());
+			coders::vulkanProcessingError(result);
+
+			return swapChainImages;
 		}
 	} // vulkan
 } // core

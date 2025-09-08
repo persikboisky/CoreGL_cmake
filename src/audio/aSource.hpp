@@ -39,7 +39,7 @@ namespace core
             bool isPlaying() const;
 
             void setPos(float x, float y, float z) const;
-            void setPos(pos3f pos) const;
+            void setPos(const pos3f& pos) const;
 
             void setVelocity(float x, float y, float z) const;
         };

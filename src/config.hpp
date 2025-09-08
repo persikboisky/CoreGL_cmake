@@ -27,4 +27,4 @@ constexpr unsigned short OPENGL_FRONT_FACE = 0;
 // разрешить выводить в консоль информацию об процесах
 constexpr bool CORE_INFO = true;
 
-#endif //CONFIG_HPP
+#endif // CONFIG_HPP

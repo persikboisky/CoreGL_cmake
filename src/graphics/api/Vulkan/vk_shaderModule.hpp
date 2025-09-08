@@ -43,6 +43,9 @@ namespace core::vulkan
 		static ShaderModule *ptrCreate(const ShaderModuleInfo& info);
 
 		~ShaderModule();
+
+		std::vector<VkShaderModule> getShaders();
+		std::vector<const char*> getNamesFuncToShaders();
 	};
 }
 

@@ -42,5 +42,4 @@ namespace core
         };
     }
 }
-
 #endif //MATRIX4_HPP

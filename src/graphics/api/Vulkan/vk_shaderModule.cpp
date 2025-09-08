@@ -109,6 +109,16 @@ namespace core::vulkan
 			vkDestroyShaderModule(*this->device, shader, nullptr);
 		}
 	}
+
+	std::vector<VkShaderModule> ShaderModule::getShaders()
+	{
+		return this->shader;
+	}
+
+	std::vector<const char*> ShaderModule::getNamesFuncToShaders()
+	{
+		return this->nameFunc;
+	}
 }
 
 #endif //defined(CORE_INCLUDE_VULKAN)

@@ -71,6 +71,16 @@ namespace core
 		{
 			return new RenderPass(info);
 		}
+
+		VkRenderPass RenderPass::getVkRenderPass()
+		{
+			return this->renderPass;
+		}
+
+		VkRenderPass* RenderPass::getVkPtrRenderPass()
+		{
+			return &this->renderPass;
+		}
 	} // vulkan
 } // core
 

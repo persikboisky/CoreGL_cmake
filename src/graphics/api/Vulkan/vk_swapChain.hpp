@@ -16,8 +16,8 @@ namespace core
 	{
 		struct swapChainInfo
 		{
-			class Surface* ptrSurface = nullptr;
-			class Device* ptrDevice = nullptr;
+			class Surface *ptrSurface = nullptr;
+			class Device *ptrDevice = nullptr;
 
 			uint32_t countFrameBuffers = 3;
 
@@ -27,22 +27,22 @@ namespace core
 
 		class SwapChain
 		{
-		 private:
-			SwapChain(const swapChainInfo& info);
+		private:
+			SwapChain(const swapChainInfo &info);
 
 			VkSwapchainKHR swapChain = {};
-			std::vector<VkImageView> imagesView = {};
-
 			VkDevice *device = nullptr;
 
-		 public:
-			static SwapChain create(const swapChainInfo& info);
-			static SwapChain *ptrCreate(const swapChainInfo& info);
+		public:
+			static SwapChain create(const swapChainInfo &info);
+			static SwapChain *ptrCreate(const swapChainInfo &info);
 
 			~SwapChain();
+
+			std::vector<VkImage> getVkImages();
 		};
 	} // vulkan
 } // core
 
-#endif //defined(CORE_INCLUDE_VULKAN)
-#endif //VK_SWAPCHAIN_HPP_
+#endif // defined(CORE_INCLUDE_VULKAN)
+#endif // VK_SWAPCHAIN_HPP_

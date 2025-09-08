@@ -135,7 +135,7 @@ static std::vector<char> readWav(const char* path, core::wavInfo& info)
         core::console::printTime();
         std::cout << "channels: " << info.channels << std::endl;
         core::console::printTime();
-        std::cout << "data size: " << dataSizeForByte << "Bytes" << std::endl;
+        std::cout << "data size: " << dataSizeForByte << " Bytes" << std::endl;
         core::console::printTime();
         std::cout << "sampling frequency: " << info.sampleRate << "Hz" << std::endl;
         core::console::printTime();

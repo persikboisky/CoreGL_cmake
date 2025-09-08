@@ -63,7 +63,7 @@ void core::Window::Init()
 core::Window::Window(const core::windowInfo &winInfo) : 
     window(createWindow(winInfo.width, winInfo.height, winInfo.title, winInfo.resizable,
 #if defined(CORE_INCLUDE_VULKAN)
-    winInfo.VulknanAPI
+    winInfo.VulkanAPI
 #else
 	false
 #endif //defined(CORE_INCLUDE_VULKAN)
@@ -74,7 +74,7 @@ core::Window::Window(const core::windowInfo &winInfo) :
     deltaTime(glfwGetTime())
 {
 #if defined(CORE_INCLUDE_VULKAN)
-    this->VulknanAPI = winInfo.VulknanAPI;
+    this->VulknanAPI = winInfo.VulkanAPI;
 #endif //defined(CORE_INCLUDE_VULKAN)
 
     this->Init();

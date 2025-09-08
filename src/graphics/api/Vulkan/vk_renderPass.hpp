@@ -31,6 +31,9 @@ namespace core
 
 			static RenderPass create(const renderPassInfo& info);
 			static RenderPass *ptrCreate(const renderPassInfo& info);
+
+			VkRenderPass getVkRenderPass();
+			VkRenderPass *getVkPtrRenderPass();
 		};
 	} // vulkan
 } // core

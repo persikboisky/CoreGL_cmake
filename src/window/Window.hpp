@@ -14,8 +14,8 @@ namespace core
 {
     struct windowInfo
     {
-        const char* title = "CoreGL";
-        const char* pathToIcon = nullptr;
+        const char *title = "CoreGL";
+        const char *pathToIcon = nullptr;
         int width = 800;
         int height = 800;
         bool VerticalSynchronization = true;
@@ -24,8 +24,8 @@ namespace core
         int posY = 100;
         bool fullScreen = false;
 #if defined(CORE_INCLUDE_VULKAN)
-        bool VulknanAPI = false;
-#endif //defined(CORE_INCLUDE_VULKAN)
+        bool VulkanAPI = false;
+#endif // defined(CORE_INCLUDE_VULKAN)
     };
 
     class Event;
@@ -34,7 +34,7 @@ namespace core
     class Window
     {
     private:
-        GLFWwindow* window;
+        GLFWwindow *window;
         static bool flagGladInit;
 
         int width;
@@ -51,7 +51,7 @@ namespace core
 
 #if defined(CORE_INCLUDE_VULKAN)
         bool VulknanAPI = false;
-#endif //defined(CORE_INCLUDE_VULKAN)
+#endif // defined(CORE_INCLUDE_VULKAN)
 
         double time = 0.0;
         double deltaTime = 0.0;
@@ -59,21 +59,21 @@ namespace core
         void getSizeWindow();
         void Init();
 
-        explicit Window(const windowInfo& winInfo = {});
-        Window(int width, int height, const char* title, bool resizable, bool vkAPI);
+        explicit Window(const windowInfo &winInfo = {});
+        Window(int width, int height, const char *title, bool resizable, bool vkAPI);
 
         void setMonitor(Monitor monitor);
         void resetMonitor();
 
     public:
-        Event* event;
-        Cursor* cursor;
-        Monitor* monitor;
+        Event *event;
+        Cursor *cursor;
+        Monitor *monitor;
 
-        [[nodiscard]] static Window create(const windowInfo& winInfo = {});
-        [[nodiscard]] static Window create(int width, int height, const char* title = "", bool resizable = false, bool vkAPI = false);
+        [[nodiscard]] static Window create(const windowInfo &winInfo = {});
+        [[nodiscard]] static Window create(int width, int height, const char *title = "", bool resizable = false, bool vkAPI = false);
 
-        [[nodiscard]] GLFWwindow* getWindowOBJ();
+        [[nodiscard]] GLFWwindow *getWindowOBJ();
         [[nodiscard]] bool isContext();
 
         ~Window();
@@ -82,17 +82,17 @@ namespace core
         void swapBuffers();
 
         void enableZBuffer();
-        void setClearColor(const color::RGBA& color);
+        void setClearColor(const color::RGBA &color);
         void clearFrameBuffer();
         void clearZBuffer();
 
         void setSizeFrameBuffer(int width, int height);
-        void setSizeFrameBuffer(const size2i& size);
+        void setSizeFrameBuffer(const size2i &size);
 
         void setPosFrameBuffer(int posX, int posY);
-        void setPosFrameBuffer(const pos2i& pos);
+        void setPosFrameBuffer(const pos2i &pos);
 
-        void setIcon(const char* pathToImg);
+        void setIcon(const char *pathToImg);
 
         [[nodiscard]] int getWidth() const;
         [[nodiscard]] int getHeight() const;
@@ -103,11 +103,11 @@ namespace core
 
         void setPos(int posX, int posY);
 
-        void setPos(const pos2i& pos);
-        void setPos(const POSITION& pos);
+        void setPos(const pos2i &pos);
+        void setPos(const POSITION &pos);
 
         void setSize(int width, int height);
-        void setSize(const size2i& size);
+        void setSize(const size2i &size);
 
         void fullScreen(bool flag = true);
 
@@ -115,4 +115,4 @@ namespace core
     };
 }
 
-#endif //WINDOW_HPP
+#endif // WINDOW_HPP
