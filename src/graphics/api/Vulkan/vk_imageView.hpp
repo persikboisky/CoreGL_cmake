@@ -22,7 +22,7 @@ namespace core
 		class ImageViews
 		{
 		 private:
-			std::vector<VkImageView> image = {};
+			std::vector<VkImageView> images = {};
 			VkDevice* ptrDevice = nullptr;
 
 			ImageViews(class Device& device, class SwapChain& swapChain);
@@ -32,6 +32,8 @@ namespace core
 
 			static ImageViews create(class Device& device, class SwapChain& swapChain);
 			static ImageViews *ptrCreate(class Device& device, class SwapChain& swapChain);
+
+			std::vector<VkImageView> getVkImagesView();
 		};
 	} // vulkan
 } // core

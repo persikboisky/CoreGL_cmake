@@ -33,12 +33,20 @@ namespace core
 				viewInfo.subresourceRange.levelCount = 1; // Сколько уровней мипмаппинга использовать
 				viewInfo.subresourceRange.baseArrayLayer = 0; // Начинаем с 0-го слоя
 				viewInfo.subresourceRange.layerCount = 1; // Сколько слоев использовать (1 для 2D текстур)
+
+				VkImageView imageView;
+				VkResult result = vkCreateImageView(
+					device.getDevice(),
+					&viewInfo,
+					nullptr,
+					&imageView);
+				this->images.push_back(imageView);
 			}
 		}
 
 		ImageViews::~ImageViews()
 		{
-			for (const VkImageView &image : this->image) {
+			for (const VkImageView &image : this->images) {
 				vkDestroyImageView(
 					*this->ptrDevice,
 					image,
@@ -54,6 +62,11 @@ namespace core
 		ImageViews* ImageViews::ptrCreate(Device& device, SwapChain& swapChain)
 		{
 			return new ImageViews(device, swapChain);
+		}
+
+		std::vector<VkImageView> ImageViews::getVkImagesView()
+		{
+			return this->images;
 		}
 	} // vulkan
 } // core
