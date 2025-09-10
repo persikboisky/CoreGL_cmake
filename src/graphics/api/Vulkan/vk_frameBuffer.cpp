@@ -45,7 +45,6 @@ namespace core::vulkan
 		}
 	}
 
-
 	FrameBuffers FrameBuffers::create(class Device& device, class RenderPass& renderPass, class ImageViews& swapchainImageViews)
 	{
 		return FrameBuffers(device, renderPass, swapchainImageViews);
@@ -54,6 +53,36 @@ namespace core::vulkan
 	FrameBuffers* FrameBuffers::ptrCreate(Device& device, RenderPass& renderPass, ImageViews& swapchainImageViews)
 	{
 		return new FrameBuffers(device, renderPass, swapchainImageViews);
+	}
+
+	FrameBuffer::FrameBuffer() : fbo(nullptr)
+	{
+
+	}
+
+	std::vector<VkFramebuffer> FrameBuffers::getVkFramebuffers()
+	{
+		return this->fbo;
+	}
+
+	FrameBuffer::FrameBuffer(VkFramebuffer const& fbo)
+	{
+		this->fbo = fbo;
+	}
+
+	FrameBuffer FrameBuffer::createFromBuffers(FrameBuffers& fbos, uint32_t index)
+	{
+		return FrameBuffer(fbos.getVkFramebuffers()[index]);
+	}
+
+	VkFramebuffer FrameBuffer::getVkFramebuffer()
+	{
+		return this->fbo;
+	}
+
+	void FrameBuffer::operator=(FrameBuffer fbo)
+	{
+		this->fbo = fbo.getVkFramebuffer();
 	}
 }
 

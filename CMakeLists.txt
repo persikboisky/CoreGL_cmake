@@ -32,7 +32,7 @@ set(CoreGL_source
         src/graphics/api/Vulkan/vk_renderPass.cpp
         src/graphics/api/Vulkan/vk_imageView.cpp
         src/graphics/api/Vulkan/vk_frameBuffer.cpp
-        src/graphics/api/Vulkan/vk_commandPool.cpp
+        src/graphics/api/Vulkan/vk_commandBuffer.cpp
         src/file/code.cpp
         src/file/mtl.cpp
         src/file/obj.cpp

@@ -25,15 +25,27 @@ namespace core::vulkan
 
 		static FrameBuffers create(class Device& device, class RenderPass& renderPass, class ImageViews& swapchainImageViews);
 		static FrameBuffers *ptrCreate(class Device& device, class RenderPass& renderPass, class ImageViews& swapchainImageViews);
+
+		std::vector<VkFramebuffer> getVkFramebuffers();
 	};
 
-//	class FrameBuffer
-//	{
-//	 private:
-//		VkFramebuffer fbo;
-//
+	class FrameBuffer
+	{
+	 private:
+		VkFramebuffer fbo;
+
 //		FrameBuffer(class SwapChain& swapChain, class RenderPass& renderPass);
-//	};
+		FrameBuffer(const VkFramebuffer& fbo);
+
+	 public:
+		FrameBuffer();
+
+		static FrameBuffer createFromBuffers(FrameBuffers& fbos, uint32_t index);
+
+		VkFramebuffer getVkFramebuffer();
+
+		void operator=(FrameBuffer fbo);
+	};
 }
 
 #endif //defined(CORE_INCLUDE_VULKAN)

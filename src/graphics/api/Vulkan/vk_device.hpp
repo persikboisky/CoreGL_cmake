@@ -24,9 +24,10 @@ namespace core
 		class Device
 		{
 		 private:
-			VkDevice device;
+			VkDevice device = {};
 			VkPhysicalDeviceProperties deviceProperties = {};
 			VkPhysicalDeviceFeatures deviceFeatures = {};
+			VkCommandPool commandPool = {};
 
 			VkSurfaceFormatKHR surfaceFormat = {};
 			VkSurfaceCapabilitiesKHR surfaceCapabilitiesFormat = {};
@@ -52,6 +53,9 @@ namespace core
 
 			VkDevice getDevice();
 			VkDevice *getPtrDevice();
+
+			VkCommandPool getVkCommandPool();
+			VkCommandPool *getVkPtrCommandPool();
 		};
 	} // vulkan
 } // core
