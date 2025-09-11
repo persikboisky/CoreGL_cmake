@@ -42,6 +42,9 @@ namespace core
 			static Pipeline *ptrCreate(const pipelineInfo& info);
 
 			~Pipeline();
+
+			VkPipeline getVkPipeline();
+			VkPipeline *getVkPtrPipeline();
 		};
 
 	} // vulkan

@@ -49,7 +49,7 @@ void core::gl::setDirectFronFace(const core::DIRECT_FRONT_FACE& dff)
     }
 }
 
-void core::gl::setTypePolygonMode(const DIRECT_FACE_POLIGONS &DFP, const POLYGON_MODE &PM)
+void core::gl::setTypePolygonMode(const DIRECT_FACE_POLYGONS &DFP, const POLYGON_MODE &PM)
 {
     int glDFP = 0;
     int glPM = 0;

@@ -7,6 +7,7 @@
 #include "vk_surface.hpp"
 #include "vk_device.hpp"
 #include "vk_imageView.hpp"
+#include "vk_image.hpp"
 #include "../../../util/coders.hpp"
 
 namespace core
@@ -55,7 +56,7 @@ namespace core
 			std::vector<VkImage> swapChainImages = {};
 			result = vkGetSwapchainImagesKHR(
 				*this->device,
-				swapChain,
+				this->swapChain,
 				&count,
 				nullptr);
 			coders::vulkanProcessingError(result);
@@ -63,10 +64,15 @@ namespace core
 			swapChainImages.resize(count);
 			result = vkGetSwapchainImagesKHR(
 				*this->device,
-				swapChain,
+				this->swapChain,
 				&count,
 				swapChainImages.data());
 			coders::vulkanProcessingError(result);
+
+			for (VkImage& img : swapChainImages)
+			{
+				this->swapChainImages.push_back(image(img));
+			}
 		}
 
 		SwapChain SwapChain::create(const swapChainInfo& info)
@@ -87,26 +93,9 @@ namespace core
 				nullptr);
 		}
 
-		std::vector<VkImage> SwapChain::getVkImages()
+		std::vector<image> SwapChain::getImages()
 		{
-			uint32_t count = 0;
-			std::vector<VkImage> swapChainImages = {};
-			VkResult result = vkGetSwapchainImagesKHR(
-				*this->device,
-				swapChain,
-				&count,
-				nullptr);
-			coders::vulkanProcessingError(result);
-
-			swapChainImages.resize(count);
-			result = vkGetSwapchainImagesKHR(
-				*this->device,
-				swapChain,
-				&count,
-				swapChainImages.data());
-			coders::vulkanProcessingError(result);
-
-			return swapChainImages;
+			return this->swapChainImages;
 		}
 	} // vulkan
 } // core

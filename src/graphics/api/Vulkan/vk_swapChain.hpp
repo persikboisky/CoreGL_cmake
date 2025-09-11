@@ -25,6 +25,7 @@ namespace core
 			bool clipped = true;
 		};
 
+		struct image;
 		class SwapChain
 		{
 		private:
@@ -33,13 +34,15 @@ namespace core
 			VkSwapchainKHR swapChain = {};
 			VkDevice *device = nullptr;
 
+			std::vector<image> swapChainImages = {};
+
 		public:
 			static SwapChain create(const swapChainInfo &info);
 			static SwapChain *ptrCreate(const swapChainInfo &info);
 
 			~SwapChain();
 
-			std::vector<VkImage> getVkImages();
+			std::vector<image> getImages();
 		};
 	} // vulkan
 } // core

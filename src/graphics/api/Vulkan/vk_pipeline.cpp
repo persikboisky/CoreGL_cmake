@@ -211,6 +211,16 @@ namespace core
 				this->pipelineLayout,
 				nullptr);
 		}
+
+		VkPipeline Pipeline::getVkPipeline()
+		{
+			return this->pipeline;
+		}
+
+		VkPipeline* Pipeline::getVkPtrPipeline()
+		{
+			return &this->pipeline;
+		}
 	} // vulkan
 } // core
 

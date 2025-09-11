@@ -10,7 +10,7 @@ namespace core
     enum TYPE_CULL_FACE : int;
     enum DIRECT_FRONT_FACE : int;
     enum POLYGON_MODE : int;
-    enum DIRECT_FACE_POLIGONS : int;
+    enum DIRECT_FACE_POLYGONS : int;
 
     /// @brief пространсво имён для настроки openGL
     namespace gl
@@ -31,7 +31,7 @@ namespace core
         /// @param dff напровление (core::DIRECT_CCW - против часовой стрелки, core::DIRECT_CW - по часовой)
         void setDirectFronFace(const DIRECT_FRONT_FACE & dff);
 
-        void setTypePolygonMode(const DIRECT_FACE_POLIGONS& DFP, const POLYGON_MODE& PM);
+        void setTypePolygonMode(const DIRECT_FACE_POLYGONS& DFP, const POLYGON_MODE& PM);
     };
 
 } 

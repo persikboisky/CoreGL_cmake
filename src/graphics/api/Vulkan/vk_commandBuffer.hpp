@@ -8,7 +8,6 @@
 #include "../../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
 #include <vulkan/vulkan.h>
-#include "vk_frameBuffer.hpp"
 #include "../../../util/types.hpp"
 
 namespace core
@@ -18,10 +17,11 @@ namespace core
 		struct beginRenderPassInfo
 		{
 			class RenderPass* renderPass = nullptr;
-			FrameBuffer frameBuffer = {};
+			class FrameBuffer* frameBuffer = nullptr;
 
 			pos2i offset = {0, 0};
 			size2i extent = {0, 0};
+			DepthSize depth = {1.0, 0.0};
 
 			color::RGBA clearColor = color::BLACK;
 		};
@@ -33,8 +33,6 @@ namespace core
 			VkDevice *ptrDevice = nullptr;
 			VkCommandPool *ptrCommandPool = nullptr;
 
-			bool flagFuncBegin = true;
-
 			explicit CommandBuffer(class Device& device);
 
 		 public:
@@ -43,7 +41,15 @@ namespace core
 			static CommandBuffer create(class Device& device);
 			static CommandBuffer *ptrCreate(class Device& device);
 
+			void begin();
+			void end();
+
 			void beginRenderPass(beginRenderPassInfo& brpi);
+			void endRenderPas();
+
+			void bindPipeline(class Pipeline& pipeline);
+
+			void draw(uint32_t firstVertex, uint32_t vertexCount, uint32_t instanceCount = 0, uint32_t firstInstance = 0);
 		};
 	} // vulkan
 } // core

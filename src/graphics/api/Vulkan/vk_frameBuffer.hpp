@@ -12,10 +12,28 @@
 
 namespace core::vulkan
 {
+	class FrameBuffer
+	{
+	 private:
+		VkFramebuffer fbo = {};
+		VkDevice* ptrDevice = nullptr;
+
+		FrameBuffer(class Device& device, class RenderPass& renderPass, class ImageView& image);
+
+	 public:
+		static FrameBuffer create(class Device& device, class RenderPass& renderPass, class ImageView& image);
+		static FrameBuffer *ptrCreate(class Device& device, class RenderPass& renderPass, class ImageView& image);
+
+		~FrameBuffer();
+
+		VkFramebuffer getVkFramebuffer();
+		VkFramebuffer *getVkPtrFramebuffer();
+	};
+
 	class FrameBuffers
 	{
 	 private:
-		std::vector<VkFramebuffer> fbo = {};
+		std::vector<FrameBuffer*> fbos = {};
 		VkDevice *device = nullptr;
 
 		FrameBuffers(class Device& device, class RenderPass& renderPass, class ImageViews& swapchainImageViews);
@@ -26,25 +44,7 @@ namespace core::vulkan
 		static FrameBuffers create(class Device& device, class RenderPass& renderPass, class ImageViews& swapchainImageViews);
 		static FrameBuffers *ptrCreate(class Device& device, class RenderPass& renderPass, class ImageViews& swapchainImageViews);
 
-		std::vector<VkFramebuffer> getVkFramebuffers();
-	};
-
-	class FrameBuffer
-	{
-	 private:
-		VkFramebuffer fbo;
-
-//		FrameBuffer(class SwapChain& swapChain, class RenderPass& renderPass);
-		FrameBuffer(const VkFramebuffer& fbo);
-
-	 public:
-		FrameBuffer();
-
-		static FrameBuffer createFromBuffers(FrameBuffers& fbos, uint32_t index);
-
-		VkFramebuffer getVkFramebuffer();
-
-		void operator=(FrameBuffer fbo);
+		std::vector<FrameBuffer*> getPtrFramebuffers();
 	};
 }
 

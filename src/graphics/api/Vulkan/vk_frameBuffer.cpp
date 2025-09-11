@@ -7,42 +7,76 @@
 #include "vk_renderPass.hpp"
 #include "vk_imageView.hpp"
 #include "vk_device.hpp"
+#include "vk_image.hpp"
+#include "../../../util/coders.hpp"
 
 namespace core::vulkan
 {
+	FrameBuffer::FrameBuffer(Device& device, RenderPass& renderPass, class ImageView& img) :
+		ptrDevice(device.getPtrDevice())
+	{
+		VkImageView Attachments[1] = { img.getVkImageView() };
+		VkFramebufferCreateInfo framebufferInfo = {};
+		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+		framebufferInfo.renderPass = renderPass.getVkRenderPass();
+		framebufferInfo.attachmentCount = 1;
+		framebufferInfo.pAttachments = Attachments;
+		framebufferInfo.width = device.getVkSurfaceCapabilities().currentExtent.width;
+		framebufferInfo.height = device.getVkSurfaceCapabilities().currentExtent.height;
+		framebufferInfo.layers = 1;
+
+		VkResult result = vkCreateFramebuffer(
+			device.getDevice(),
+			&framebufferInfo,
+			nullptr,
+			&this->fbo);
+		coders::vulkanProcessingError(result);
+	}
+
+	FrameBuffer FrameBuffer::create(Device& device, RenderPass& renderPass, ImageView& image)
+	{
+		return FrameBuffer(device, renderPass, image);
+	}
+
+	FrameBuffer* FrameBuffer::ptrCreate(Device& device, RenderPass& renderPass, ImageView& image)
+	{
+		return new FrameBuffer(device, renderPass, image);
+	}
+
+	FrameBuffer::~FrameBuffer()
+	{
+		vkDestroyFramebuffer(
+			*this->ptrDevice,
+			this->fbo,
+			nullptr);
+	}
+
+	VkFramebuffer FrameBuffer::getVkFramebuffer()
+	{
+		return this->fbo;
+	}
+
+	VkFramebuffer* FrameBuffer::getVkPtrFramebuffer()
+	{
+		return &this->fbo;
+	}
+
 	FrameBuffers::FrameBuffers(Device& device, RenderPass& renderPass, ImageViews& swapchainImageViews) :
 		device(device.getPtrDevice())
 	{
-		for (const VkImageView& image : swapchainImageViews.getVkImagesView())
+		for (ImageView* image : swapchainImageViews.getPtrImagesView())
 		{
-			VkFramebufferCreateInfo framebufferInfo{};
-			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-			framebufferInfo.renderPass = renderPass.getVkRenderPass();
-			framebufferInfo.attachmentCount = 1;
-			framebufferInfo.pAttachments = &image;
-			framebufferInfo.width = device.getVkSurfaceCapabilities().currentExtent.width;
-			framebufferInfo.height = device.getVkSurfaceCapabilities().currentExtent.height;
-			framebufferInfo.layers = 1;
-
-			VkFramebuffer framebuffer;
-			vkCreateFramebuffer(
-				device.getDevice(),
-				&framebufferInfo,
-				nullptr,
-				&framebuffer);
-			this->fbo.push_back(framebuffer);
+			this->fbos.push_back(FrameBuffer::ptrCreate(device, renderPass, *image));
 		}
 	}
 
 	FrameBuffers::~FrameBuffers()
 	{
-		for (const VkFramebuffer& frameBuffer : this->fbo)
+		for (FrameBuffer* fbo : this->fbos)
 		{
-			vkDestroyFramebuffer(
-				*this->device,
-				frameBuffer,
-				nullptr);
+			delete fbo;
 		}
+		this->fbos.clear();
 	}
 
 	FrameBuffers FrameBuffers::create(class Device& device, class RenderPass& renderPass, class ImageViews& swapchainImageViews)
@@ -55,35 +89,11 @@ namespace core::vulkan
 		return new FrameBuffers(device, renderPass, swapchainImageViews);
 	}
 
-	FrameBuffer::FrameBuffer() : fbo(nullptr)
+	std::vector<FrameBuffer*> FrameBuffers::getPtrFramebuffers()
 	{
-
+		return this->fbos;
 	}
 
-	std::vector<VkFramebuffer> FrameBuffers::getVkFramebuffers()
-	{
-		return this->fbo;
-	}
-
-	FrameBuffer::FrameBuffer(VkFramebuffer const& fbo)
-	{
-		this->fbo = fbo;
-	}
-
-	FrameBuffer FrameBuffer::createFromBuffers(FrameBuffers& fbos, uint32_t index)
-	{
-		return FrameBuffer(fbos.getVkFramebuffers()[index]);
-	}
-
-	VkFramebuffer FrameBuffer::getVkFramebuffer()
-	{
-		return this->fbo;
-	}
-
-	void FrameBuffer::operator=(FrameBuffer fbo)
-	{
-		this->fbo = fbo.getVkFramebuffer();
-	}
 }
 
 #endif //defined(CORE_INCLUDE_VULKAN)

@@ -127,7 +127,7 @@ namespace core
         POLYGON_LINE,
         POLYGON_FILL
     };
-    enum DIRECT_FACE_POLIGONS : int 
+    enum DIRECT_FACE_POLYGONS : int
     {
         POLYGON_FRONT,
         POLYGON_BACK,
@@ -140,6 +140,12 @@ namespace core
         POSITIVE_WINDOW_COORD,
         WINDOW_COORD
     };
+	enum Buffer : int
+	{
+		COLOR_BUFFER = 1,
+		DEPTH_BUFFER = 2,
+		NONE = 0
+	};
 
     int convertKeyCode(const KEY_CODE& keyCode);
     int convertPrimitive(const PRIMITIVE& primitive);
@@ -328,13 +334,6 @@ namespace core
         RGB convertColor(const COLOR& color);
     }
 
-    enum Buffer : int
-    {
-        COLOR_BUFFER = 1,
-        DEPTH_BUFFER = 2,
-        NONE = 0
-    };
-
     struct pos2f final
     {
         float x = 0;
@@ -428,6 +427,15 @@ namespace core
         version3(int MAJOR, int MINOR, int PATCH) : MINOR(MINOR), MAJOR(MAJOR), PATCH(PATCH) {}
         void operator = (const version3& v3);
     };
+
+	struct DepthSize
+	{
+		float depth;
+		float stencil;
+
+		DepthSize(float depth = 1.0, float stencil = 0.0);
+		void operator = (const DepthSize& ds);
+	};
 }
 
 #endif //TYPES_HPP

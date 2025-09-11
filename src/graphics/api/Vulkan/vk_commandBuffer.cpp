@@ -7,8 +7,8 @@
 #include "vk_device.hpp"
 #include "vk_renderPass.hpp"
 #include "vk_frameBuffer.hpp"
+#include "vk_pipeline.hpp"
 #include "../../../util/coders.hpp"
-#include <array>
 
 namespace core
 {
@@ -49,39 +49,80 @@ namespace core
 			return new CommandBuffer(device);
 		}
 
+		void CommandBuffer::begin()
+		{
+			VkCommandBufferBeginInfo beginInfo = {};
+			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+			VkResult result = vkBeginCommandBuffer(this->commandBuffer, &beginInfo);
+			coders::vulkanProcessingError(result);
+		}
+
+		void CommandBuffer::end()
+		{
+			VkResult result = vkEndCommandBuffer(this->commandBuffer);
+			coders::vulkanProcessingError(result);
+		}
+
 		void CommandBuffer::beginRenderPass(beginRenderPassInfo& brpi)
 		{
 			VkRenderPassBeginInfo renderPassInfo{};
 			renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 			renderPassInfo.renderPass = brpi.renderPass->getVkRenderPass();
-			renderPassInfo.framebuffer = brpi.frameBuffer.getVkFramebuffer();
+			renderPassInfo.framebuffer = brpi.frameBuffer->getVkFramebuffer();
 			renderPassInfo.renderArea.offset = {0, 0};
 			renderPassInfo.renderArea.extent.width =  brpi.extent.width;
 			renderPassInfo.renderArea.extent.height = brpi.extent.height;
 
 			// Настройка значений очистки
-			std::array<VkClearValue, 2> clearValues = {};
-			color::RGBA color = brpi.clearColor;
-			color.normalize();
+			std::vector<VkClearValue> clearValues = {};
 
-			clearValues[0].color = {{
-				color.red,
-				color.green,
-				color.blue,
-				color.alpha
-			}};    // Цвет фона (RGB)
-			clearValues[1].depthStencil = {1.0f, 0};              // Depth значение
+			VkClearValue clearValue = {};
+			clearValue.color = {{
+				brpi.clearColor.red,
+				brpi.clearColor.green,
+				brpi.clearColor.blue,
+				brpi.clearColor.alpha}};
+			clearValue.depthStencil.depth = brpi.depth.depth;
+			clearValue.depthStencil.depth = brpi.depth.stencil;
+
+			clearValues.push_back(clearValue);
 
 			renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 			renderPassInfo.pClearValues = clearValues.data();
 
-			// Начало render pass
+//			// Начало render pass
 			vkCmdBeginRenderPass(
 				this->commandBuffer,
 				&renderPassInfo,
 				VK_SUBPASS_CONTENTS_INLINE  // Команды будут записываться непосредственно
 			);
+
+
 		}
+
+		void CommandBuffer::endRenderPas()
+		{
+			vkCmdEndRenderPass(this->commandBuffer);
+		}
+
+		void CommandBuffer::bindPipeline(Pipeline& pipeline)
+		{
+			vkCmdBindPipeline(
+				this->commandBuffer,
+				VK_PIPELINE_BIND_POINT_GRAPHICS,
+				pipeline.getVkPipeline());
+		}
+
+		void CommandBuffer::draw(
+			uint32_t firstVertex,
+			uint32_t vertexCount,
+			uint32_t instanceCount,
+			uint32_t firstInstance)
+		{
+			vkCmdDraw(this->commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
+		}
+
 	} // vulkan
 } // core
 
