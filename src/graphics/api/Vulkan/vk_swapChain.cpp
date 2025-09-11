@@ -8,13 +8,14 @@
 #include "vk_device.hpp"
 #include "vk_imageView.hpp"
 #include "vk_image.hpp"
+#include "vk_semaphore.hpp"
 #include "../../../util/coders.hpp"
 
 namespace core
 {
 	namespace vulkan
 	{
-		SwapChain::SwapChain(const swapChainInfo& info) : device(info.ptrDevice->getPtrDevice())
+		SwapChain::SwapChain(const swapChainInfo& info) : ptrDevice(info.ptrDevice->getPtrDevice())
 		{
 			uint32_t FamilyIndices = info.ptrDevice->getPresentQueueFamilyIndex();
 
@@ -55,7 +56,7 @@ namespace core
 			uint32_t count = 0;
 			std::vector<VkImage> swapChainImages = {};
 			result = vkGetSwapchainImagesKHR(
-				*this->device,
+				*this->ptrDevice,
 				this->swapChain,
 				&count,
 				nullptr);
@@ -63,7 +64,7 @@ namespace core
 
 			swapChainImages.resize(count);
 			result = vkGetSwapchainImagesKHR(
-				*this->device,
+				*this->ptrDevice,
 				this->swapChain,
 				&count,
 				swapChainImages.data());
@@ -88,7 +89,7 @@ namespace core
 		SwapChain::~SwapChain()
 		{
 			vkDestroySwapchainKHR(
-				*this->device,
+				*this->ptrDevice,
 				this->swapChain,
 				nullptr);
 		}
@@ -96,6 +97,34 @@ namespace core
 		std::vector<image> SwapChain::getImages()
 		{
 			return this->swapChainImages;
+		}
+
+		uint32_t SwapChain::getCountImage()
+		{
+			return static_cast<uint32_t>(this->swapChainImages.size());
+		}
+
+		uint32_t SwapChain::getNextImageIndex(Semaphore* semaphore, bool wait)
+		{
+			uint32_t index = 0;
+			vkAcquireNextImageKHR(
+				*this->ptrDevice,
+				this->swapChain,
+				UINT64_MAX,
+				semaphore->getVkSemaphore(),
+				VK_NULL_HANDLE,
+				&index);
+			return index;
+		}
+
+		VkSwapchainKHR SwapChain::getVkSwapchainKHR()
+		{
+			return this->swapChain;
+		}
+
+		VkSwapchainKHR* SwapChain::getVkPtrSwapchainKHR()
+		{
+			return &this->swapChain;
 		}
 	} // vulkan
 } // core

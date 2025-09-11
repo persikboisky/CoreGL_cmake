@@ -20,11 +20,11 @@ namespace core
 			class ShaderModule* shaderModule = nullptr;
 			class RenderPass* renderPass = nullptr;
 
-			const size2i sizeViewport = {600, 600};
-			const pos2i posViewport = {0, 0};
+			size2i sizeViewport = {600, 600};
+			pos2i posViewport = {0, 0};
 
-			const float maxDepth = 1.0f;
-			const float minDepth = 0.0;
+			float maxDepth = 1.0f;
+			float minDepth = 0.0;
 		};
 
 		class Pipeline

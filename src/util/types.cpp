@@ -571,6 +571,30 @@ core::color::RGB core::color::convertColor(const core::color::COLOR &color)
     }
 }
 
+color::RGBA color::normalize(const color::RGBA& color)
+{
+	return color::RGBA(
+		color.red / 255.0f,
+		color.green / 255.0f,
+		color.blue / 255.0f,
+		color.alpha / 255.0f
+		);
+}
+
+color::RGB color::normalize(const color::RGB& color)
+{
+	return color::RGB(
+		color.red / 255.0f,
+		color.green / 255.0f,
+		color.blue / 255.0f
+	);
+}
+
+color::RGB color::normalize(const color::COLOR& color)
+{
+	return color::normalize(color::convertColor(color));
+}
+
 void core::pos2f::operator=(const pos2f& pos)
 {
     this->x = pos.x;

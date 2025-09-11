@@ -7,7 +7,7 @@
 
 #include "../../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
-#include <vulkan/vulkan.h>
+#include "vk_image.hpp"
 #include <vector>
 
 namespace core
@@ -25,14 +25,13 @@ namespace core
 			bool clipped = true;
 		};
 
-		struct image;
 		class SwapChain
 		{
 		private:
 			SwapChain(const swapChainInfo &info);
 
 			VkSwapchainKHR swapChain = {};
-			VkDevice *device = nullptr;
+			VkDevice *ptrDevice = nullptr;
 
 			std::vector<image> swapChainImages = {};
 
@@ -43,6 +42,12 @@ namespace core
 			~SwapChain();
 
 			std::vector<image> getImages();
+			uint32_t getCountImage();
+
+			uint32_t getNextImageIndex(class Semaphore* semaphore, bool wait = true);
+
+			VkSwapchainKHR getVkSwapchainKHR();
+			VkSwapchainKHR *getVkPtrSwapchainKHR();
 		};
 	} // vulkan
 } // core

@@ -42,6 +42,7 @@ namespace core
 				if (prop.queueFlags & VK_QUEUE_GRAPHICS_BIT)
 				{
 					this->graphicsQueueFamilyIndex = count;
+					this->countGraphicsQueue = prop.queueCount;
 					break;
 				}
 				count++;
@@ -63,6 +64,7 @@ namespace core
 					if (flag == VK_TRUE)
 					{
 						this->presentQueueFamilyIndex = count;
+						this->countPresentQueue = prop.queueCount;
 						break;
 					}
 				}
@@ -207,6 +209,16 @@ namespace core
 		VkCommandPool* Device::getVkPtrCommandPool()
 		{
 			return &this->commandPool;
+		}
+
+		uint32_t Device::getCountGraphicsQueue() const
+		{
+			return this->countGraphicsQueue;
+		}
+
+		uint32_t Device::getCountPresentQueue() const
+		{
+			return this->countPresentQueue;
 		}
 	} // vulkan
 } // core

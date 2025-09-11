@@ -332,6 +332,10 @@ namespace core
         };
 
         RGB convertColor(const COLOR& color);
+
+		RGBA normalize(const RGBA& color);
+		RGB normalize(const RGB& color);
+		RGB normalize(const COLOR& color);
     }
 
     struct pos2f final

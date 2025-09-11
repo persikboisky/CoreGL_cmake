@@ -123,6 +123,16 @@ namespace core
 			vkCmdDraw(this->commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 		}
 
+		VkCommandBuffer CommandBuffer::getVkCommandBuffer()
+		{
+			return this->commandBuffer;
+		}
+
+		VkCommandBuffer* CommandBuffer::getVkPtrCommandBuffer()
+		{
+			return &this->commandBuffer;
+		}
+
 	} // vulkan
 } // core
 

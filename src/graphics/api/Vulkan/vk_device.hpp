@@ -35,6 +35,9 @@ namespace core
 			uint32_t graphicsQueueFamilyIndex = 0;
 			uint32_t presentQueueFamilyIndex = 0;
 
+			uint32_t countGraphicsQueue = 0;
+			uint32_t countPresentQueue = 0;
+
 			const float queuePriorities = 1.0f;
 
 			explicit Device(const deviceInfo& info);
@@ -56,6 +59,9 @@ namespace core
 
 			VkCommandPool getVkCommandPool();
 			VkCommandPool *getVkPtrCommandPool();
+
+			uint32_t getCountGraphicsQueue() const;
+			uint32_t getCountPresentQueue() const;
 		};
 	} // vulkan
 } // core
