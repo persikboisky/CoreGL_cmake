@@ -140,19 +140,6 @@ namespace core
 				info.ptrSurface->getVkSurfaceKHR(),
 				&this->surfaceCapabilitiesFormat);
 			coders::vulkanProcessingError(result);
-
-			VkCommandPoolCreateInfo poolInfo = {};
-			poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-			poolInfo.queueFamilyIndex = this->graphicsQueueFamilyIndex;
-			poolInfo.flags = 0;
-			poolInfo.pNext = nullptr;
-
-			result = vkCreateCommandPool(
-				this->device,
-				&poolInfo,
-				nullptr,
-				&this->commandPool);
-			coders::vulkanProcessingError(result);
 		}
 
 		Device Device::create(const deviceInfo& info)
@@ -167,7 +154,6 @@ namespace core
 
 		Device::~Device()
 		{
-			vkDestroyCommandPool(this->device, this->commandPool, nullptr);
 			vkDestroyDevice(this->device, nullptr);
 		}
 
@@ -199,16 +185,6 @@ namespace core
 		VkDevice* Device::getPtrDevice()
 		{
 			return &this->device;
-		}
-
-		VkCommandPool Device::getVkCommandPool()
-		{
-			return this->commandPool;
-		}
-
-		VkCommandPool* Device::getVkPtrCommandPool()
-		{
-			return &this->commandPool;
 		}
 
 		uint32_t Device::getCountGraphicsQueue() const

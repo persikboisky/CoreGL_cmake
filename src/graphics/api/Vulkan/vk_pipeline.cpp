@@ -65,7 +65,31 @@ namespace core
 			// Входной сборщик вершин
 			VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
 			inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-			inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+
+			VkPrimitiveTopology primitive;
+			switch (info.primirive)
+			{
+			case TRIANGLE_STRIP:
+				primitive = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
+				break;
+			case TRIANGLE_LIST:
+				primitive = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+				break;
+			case LINE_STRIP:
+				primitive = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP;
+				break;
+			case LINE_LIST:
+				primitive = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+				break;
+			case TRIANGLE_FAN:
+				primitive = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN;
+				break;
+			default:
+				primitive = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+				break;
+			}
+			
+			inputAssembly.topology = primitive;
 
 			//--------------------------------------------------------------------------------------------------
 			// Мультисэмплинг

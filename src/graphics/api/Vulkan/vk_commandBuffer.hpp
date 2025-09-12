@@ -33,13 +33,13 @@ namespace core
 			VkDevice *ptrDevice = nullptr;
 			VkCommandPool *ptrCommandPool = nullptr;
 
-			explicit CommandBuffer(class Device& device);
+			explicit CommandBuffer(class Device& device, class CommandPool &commandPool);
 
 		 public:
 			~CommandBuffer();
 
-			static CommandBuffer create(class Device& device);
-			static CommandBuffer *ptrCreate(class Device& device);
+			static CommandBuffer create(class Device& device, class CommandPool &commandPool);
+			static CommandBuffer *ptrCreate(class Device& device, class CommandPool &commandPool);
 
 			void begin();
 			void end();
@@ -49,7 +49,7 @@ namespace core
 
 			void bindPipeline(class Pipeline& pipeline);
 
-			void draw(uint32_t firstVertex, uint32_t vertexCount, uint32_t instanceCount = 0, uint32_t firstInstance = 0);
+			void draw(uint32_t firstVertex, uint32_t vertexCount, uint32_t instanceCount = 1, uint32_t firstInstance = 0);
 
 			VkCommandBuffer getVkCommandBuffer();
 			VkCommandBuffer *getVkPtrCommandBuffer();

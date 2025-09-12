@@ -25,6 +25,8 @@ namespace core
 
 			float maxDepth = 1.0f;
 			float minDepth = 0.0;
+
+			vulkan::PRIMITIVE primirive = vulkan::TRIANGLE_STRIP;
 		};
 
 		class Pipeline

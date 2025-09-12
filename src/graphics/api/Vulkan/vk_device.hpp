@@ -27,7 +27,6 @@ namespace core
 			VkDevice device = {};
 			VkPhysicalDeviceProperties deviceProperties = {};
 			VkPhysicalDeviceFeatures deviceFeatures = {};
-			VkCommandPool commandPool = {};
 
 			VkSurfaceFormatKHR surfaceFormat = {};
 			VkSurfaceCapabilitiesKHR surfaceCapabilitiesFormat = {};
@@ -56,9 +55,6 @@ namespace core
 
 			VkDevice getDevice();
 			VkDevice *getPtrDevice();
-
-			VkCommandPool getVkCommandPool();
-			VkCommandPool *getVkPtrCommandPool();
 
 			uint32_t getCountGraphicsQueue() const;
 			uint32_t getCountPresentQueue() const;

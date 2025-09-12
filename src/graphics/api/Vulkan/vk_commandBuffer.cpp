@@ -8,18 +8,19 @@
 #include "vk_renderPass.hpp"
 #include "vk_frameBuffer.hpp"
 #include "vk_pipeline.hpp"
+#include "vk_commandPool.hpp"
 #include "../../../util/coders.hpp"
 
 namespace core
 {
 	namespace vulkan
 	{
-		CommandBuffer::CommandBuffer(struct Device& device) :
-			ptrDevice(device.getPtrDevice()), ptrCommandPool(device.getVkPtrCommandPool())
+		CommandBuffer::CommandBuffer(struct Device& device, class CommandPool &commandPool) :
+			ptrDevice(device.getPtrDevice()), ptrCommandPool(commandPool.getVkPtrCommandPool())
 		{
 			VkCommandBufferAllocateInfo allocInfo = {};
 			allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-			allocInfo.commandPool = device.getVkCommandPool();
+			allocInfo.commandPool = commandPool.getVkCommandPool();
 			allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 			allocInfo.commandBufferCount = 1;
 
@@ -39,14 +40,14 @@ namespace core
 				&this->commandBuffer);
 		}
 
-		CommandBuffer CommandBuffer::create(Device& device)
+		CommandBuffer CommandBuffer::create(Device& device, class CommandPool &commandPool)
 		{
-			return CommandBuffer(device);
+			return CommandBuffer(device, commandPool);
 		}
 
-		CommandBuffer* CommandBuffer::ptrCreate(Device& device)
+		CommandBuffer* CommandBuffer::ptrCreate(Device& device, class CommandPool &commandPool)
 		{
-			return new CommandBuffer(device);
+			return new CommandBuffer(device, commandPool);
 		}
 
 		void CommandBuffer::begin()
@@ -97,8 +98,6 @@ namespace core
 				&renderPassInfo,
 				VK_SUBPASS_CONTENTS_INLINE  // Команды будут записываться непосредственно
 			);
-
-
 		}
 
 		void CommandBuffer::endRenderPas()

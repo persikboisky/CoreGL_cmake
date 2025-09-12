@@ -36,6 +36,7 @@
 #include "../src/graphics/api/Vulkan/vk_image.hpp"
 #include "../src/graphics/api/Vulkan/vk_semaphore.hpp"
 #include "../src/graphics/api/Vulkan/vk_graphicsQueue.hpp"
+#include "../src/graphics/api/Vulkan/vk_commandPool.hpp"
 #include "../src/file/image.hpp"
 #include "../src/file/code.hpp"
 #include "../src/file/mtl.hpp"

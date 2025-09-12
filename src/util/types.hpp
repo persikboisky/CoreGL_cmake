@@ -6,6 +6,7 @@
 #define TYPES_HPP
 
 #include <string>
+#include "../modules.hpp"
 
 namespace core
 {
@@ -97,6 +98,22 @@ namespace core
         TRIANGLES_FAN,
         TRIANGLES_STRIP
     };
+
+#if defined(CORE_INCLUDE_VULKAN)
+	namespace vulkan
+	{
+		enum PRIMITIVE : int
+		{
+			POINT_LIST,
+			LINE_LIST,
+			LINE_STRIP,
+			TRIANGLE_LIST,
+			TRIANGLE_STRIP,
+			TRIANGLE_FAN
+		};
+	}
+#endif //defined(CORE_INCLUDE_VULKAN)
+
     enum TYPE_SHADER : int
     {
         FRAGMENT,

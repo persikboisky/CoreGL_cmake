@@ -1,9 +1,13 @@
 //
-// Created by kisly on 08.09.2025.
+// Created by kisly on 12.09.2025.
 //
 
-#ifndef RENDER_COREGL_CMAKE_SRC_GRAPHICS_API_VULKAN_VK_COMMANDPOOL_HPP_
-#define RENDER_COREGL_CMAKE_SRC_GRAPHICS_API_VULKAN_VK_COMMANDPOOL_HPP_
+#ifndef VK_COMMANDPOOL_HPP_
+#define VK_COMMANDPOOL_HPP_
+
+#include "../../../modules.hpp"
+#if defined(CORE_INCLUDE_VULKAN)
+#include <vulkan/vulkan.h>
 
 namespace core
 {
@@ -11,9 +15,23 @@ namespace core
 	{
 		class CommandPool
 		{
+		 private:
+			VkCommandPool commandPool;
+			VkDevice* ptrDevice = nullptr;
 
+			explicit CommandPool(class Device& device);
+
+		 public:
+			~CommandPool();
+
+			static CommandPool create(class Device& device);
+			static CommandPool *ptrCreate(class Device& device);
+
+			VkCommandPool getVkCommandPool();
+			VkCommandPool *getVkPtrCommandPool();
 		};
 	} // vulkan
 } // core
 
-#endif //RENDER_COREGL_CMAKE_SRC_GRAPHICS_API_VULKAN_VK_COMMANDPOOL_HPP_
+#endif //defined(CORE_INCLUDE_VULKAN)
+#endif //VK_COMMANDPOOL_HPP_
