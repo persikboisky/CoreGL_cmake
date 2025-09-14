@@ -30,8 +30,8 @@ static GLFWwindow *createWindow(int width, int height, const char *title, bool r
 #if defined(CORE_INCLUDE_VULKAN)
     if (vkAPI) glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif //defined(CORE_INCLUDE_VULKAN)
+	else glfwWindowHint(GLFW_OPENGL_API, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, resizable);
-	glfwWindowHint(GLFW_OPENGL_API, GLFW_OPENGL_CORE_PROFILE);
     GLFWwindow *window = glfwCreateWindow(width, height, title, nullptr, nullptr);
 
     if (window == nullptr)

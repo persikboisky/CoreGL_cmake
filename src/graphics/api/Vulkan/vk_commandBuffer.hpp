@@ -48,11 +48,13 @@ namespace core
 			void endRenderPas();
 
 			void bindPipeline(class Pipeline& pipeline);
+			void pushConstants(class Pipeline& pipeline, struct pushConstantInfo& pci, void *push);
 
 			void draw(uint32_t firstVertex, uint32_t vertexCount, uint32_t instanceCount = 1, uint32_t firstInstance = 0);
 
 			VkCommandBuffer getVkCommandBuffer();
 			VkCommandBuffer *getVkPtrCommandBuffer();
+
 		};
 	} // vulkan
 } // core

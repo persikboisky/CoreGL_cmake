@@ -15,24 +15,59 @@ namespace core
 	{
 		Pipeline::Pipeline(const pipelineInfo& info) : ptrDevice(info.device->getPtrDevice())
 		{
-			if (true)
-			{
-				VkPipelineLayoutCreateInfo layoutInfoCreateInfo = {};
-				layoutInfoCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-				layoutInfoCreateInfo.flags = 0;
-				layoutInfoCreateInfo.pNext = nullptr;
-				layoutInfoCreateInfo.pPushConstantRanges = nullptr;
-				layoutInfoCreateInfo.pSetLayouts = nullptr;
-				layoutInfoCreateInfo.pushConstantRangeCount = 0;
-				layoutInfoCreateInfo.setLayoutCount = 0;
+			VkPipelineLayoutCreateInfo layoutInfoCreateInfo = {};
+			layoutInfoCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+			layoutInfoCreateInfo.flags = 0;
+			layoutInfoCreateInfo.pNext = nullptr;
 
-				VkResult result = vkCreatePipelineLayout(
+			layoutInfoCreateInfo.pSetLayouts = nullptr;
+			layoutInfoCreateInfo.setLayoutCount = 0;
+
+			std::vector<VkPushConstantRange> pushConstantRanges = {};
+			for (uint32_t index = 0; index < info.pushConstantCount; index++)
+			{
+				VkShaderStageFlags shaderStageFlagBits;
+				switch (info.pushConstants[index].shaderStages)
+				{
+				case VERTEX_STAGE:
+					shaderStageFlagBits = VK_SHADER_STAGE_VERTEX_BIT;
+					break;
+				case FRAGMENT_STAGE:
+					shaderStageFlagBits = VK_SHADER_STAGE_FRAGMENT_BIT;
+					break;
+				case GEOMETRY_STAGE:
+					shaderStageFlagBits = VK_SHADER_STAGE_GEOMETRY_BIT;
+					break;
+				case VERTEX_FRAGMENT_STAGES:
+					shaderStageFlagBits = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
+					break;
+				case VERTEX_GEOMETRY_FRAGMENT_STAGES:
+					shaderStageFlagBits =
+							VK_SHADER_STAGE_FRAGMENT_BIT |
+							VK_SHADER_STAGE_VERTEX_BIT |
+							VK_SHADER_STAGE_GEOMETRY_BIT;
+					break;
+				default:
+					shaderStageFlagBits = VK_SHADER_STAGE_ALL;
+					break;
+				}
+
+				pushConstantRanges.push_back({
+					.stageFlags = shaderStageFlagBits,
+					.offset = info.pushConstants[index].offset,
+					.size = info.pushConstants[index].sizeOfBytes
+				});
+			}
+
+			layoutInfoCreateInfo.pushConstantRangeCount = info.pushConstantCount;
+			layoutInfoCreateInfo.pPushConstantRanges = pushConstantRanges.data();
+
+			VkResult result = vkCreatePipelineLayout(
 					info.device->getDevice(),
 					&layoutInfoCreateInfo,
 					nullptr,
 					&this->pipelineLayout);
-				coders::vulkanProcessingError(result);
-			}
+			coders::vulkanProcessingError(result);
 
 			//--------------------------------------------------------------------------------------------------
 			// Смешивание цветов
@@ -45,9 +80,9 @@ namespace core
 			colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
 			colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
 			colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
-				VK_COLOR_COMPONENT_G_BIT |
-				VK_COLOR_COMPONENT_B_BIT |
-				VK_COLOR_COMPONENT_A_BIT;
+												  VK_COLOR_COMPONENT_G_BIT |
+												  VK_COLOR_COMPONENT_B_BIT |
+												  VK_COLOR_COMPONENT_A_BIT;
 
 
 			VkPipelineColorBlendStateCreateInfo colorBlending = {};
@@ -88,7 +123,7 @@ namespace core
 				primitive = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
 				break;
 			}
-			
+
 			inputAssembly.topology = primitive;
 
 			//--------------------------------------------------------------------------------------------------
@@ -132,14 +167,14 @@ namespace core
 			// Растеризация
 			VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo = {};
 			rasterizationStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-			rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;	// Режим отсечения граней (отсекаем не лецивые грани)
+			rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_FRONT_BIT;//VK_CULL_MODE_BACK_BIT;    // Режим отсечения граней (отсекаем не лецивые грани)
 			rasterizationStateCreateInfo.depthBiasClamp = 0;
 			rasterizationStateCreateInfo.depthBiasConstantFactor = 0;
 			rasterizationStateCreateInfo.depthBiasEnable = VK_FALSE;
 			rasterizationStateCreateInfo.depthBiasSlopeFactor = 0;
 			rasterizationStateCreateInfo.depthClampEnable = VK_TRUE;
 			rasterizationStateCreateInfo.flags = 0;
-			rasterizationStateCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;	// ПРОТИВ ЧАСОВОЙ СТРЕЛКИ
+			rasterizationStateCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;    // ПРОТИВ ЧАСОВОЙ СТРЕЛКИ
 			rasterizationStateCreateInfo.lineWidth = 1.0f;
 			rasterizationStateCreateInfo.pNext = nullptr;
 			rasterizationStateCreateInfo.polygonMode = VK_POLYGON_MODE_FILL;
@@ -203,13 +238,13 @@ namespace core
 			pipelineCreateInfo.renderPass = info.renderPass->getVkRenderPass();
 			pipelineCreateInfo.subpass = 0;
 
-			VkResult result = vkCreateGraphicsPipelines(
-				info.device->getDevice(),
-				VK_NULL_HANDLE,
-				1,
-				&pipelineCreateInfo,
-				nullptr,
-				&this->pipeline);
+			result = vkCreateGraphicsPipelines(
+					info.device->getDevice(),
+					VK_NULL_HANDLE,
+					1,
+					&pipelineCreateInfo,
+					nullptr,
+					&this->pipeline);
 			coders::vulkanProcessingError(result);
 		}
 
@@ -244,6 +279,16 @@ namespace core
 		VkPipeline* Pipeline::getVkPtrPipeline()
 		{
 			return &this->pipeline;
+		}
+
+		VkPipelineLayout Pipeline::getVkPipelineLayout()
+		{
+			return this->pipelineLayout;
+		}
+
+		VkPipelineLayout* Pipeline::getVkPtrPipelineLayout()
+		{
+			return &this->pipelineLayout;
 		}
 	} // vulkan
 } // core

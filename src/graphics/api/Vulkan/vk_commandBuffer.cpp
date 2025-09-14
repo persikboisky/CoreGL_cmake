@@ -132,6 +132,43 @@ namespace core
 			return &this->commandBuffer;
 		}
 
+		void CommandBuffer::pushConstants(Pipeline& pipeline, pushConstantInfo& pci, void *push)
+		{
+			VkShaderStageFlags shaderStageFlagBits;
+			switch (pci.shaderStages)
+			{
+			case VERTEX_STAGE:
+				shaderStageFlagBits = VK_SHADER_STAGE_VERTEX_BIT;
+				break;
+			case FRAGMENT_STAGE:
+				shaderStageFlagBits = VK_SHADER_STAGE_FRAGMENT_BIT;
+				break;
+			case GEOMETRY_STAGE:
+				shaderStageFlagBits = VK_SHADER_STAGE_GEOMETRY_BIT;
+				break;
+			case VERTEX_FRAGMENT_STAGES:
+				shaderStageFlagBits = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
+				break;
+			case VERTEX_GEOMETRY_FRAGMENT_STAGES:
+				shaderStageFlagBits =
+						VK_SHADER_STAGE_FRAGMENT_BIT |
+						VK_SHADER_STAGE_VERTEX_BIT |
+						VK_SHADER_STAGE_GEOMETRY_BIT;
+				break;
+			default:
+				shaderStageFlagBits = VK_SHADER_STAGE_ALL;
+				break;
+			}
+
+			vkCmdPushConstants(
+					this->commandBuffer,
+					pipeline.getVkPipelineLayout(),
+					shaderStageFlagBits,
+					pci.offset,
+					pci.sizeOfBytes,
+					push);
+		}
+
 	} // vulkan
 } // core
 

@@ -16,16 +16,16 @@ namespace core
 	{
 		struct instanceInfo
 		{
-			const version3& VULKAN_API_VERSION = {1, 2, 0};
-			const version3& APP_VERSION = {1, 0, 0};
+			version3 VULKAN_API_VERSION = {1, 2, 0};
+			version3 APP_VERSION = {1, 4, 0};
 			const char* APP_NAME = "CoreGL";
-			const bool debugApiDump = false;
+			bool debugApiDump = false;
 		};
 
 		class Instance
 		{
 		 private:
-			VkInstance  instance;
+			VkInstance  instance{};
 
 			explicit Instance(const instanceInfo& info);
 

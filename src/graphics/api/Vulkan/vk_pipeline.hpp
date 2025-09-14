@@ -14,6 +14,13 @@ namespace core
 {
 	namespace vulkan
 	{
+		struct pushConstantInfo
+		{
+			SHADER_STAGES shaderStages = VERTEX_FRAGMENT_STAGES;
+			uint32_t sizeOfBytes = 0;
+			uint32_t offset = 0;
+		};
+
 		struct pipelineInfo
 		{
 			class Device* device = nullptr;
@@ -27,6 +34,9 @@ namespace core
 			float minDepth = 0.0;
 
 			vulkan::PRIMITIVE primirive = vulkan::TRIANGLE_STRIP;
+
+			uint32_t pushConstantCount = 0;
+			pushConstantInfo *pushConstants = nullptr;
 		};
 
 		class Pipeline
@@ -47,6 +57,9 @@ namespace core
 
 			VkPipeline getVkPipeline();
 			VkPipeline *getVkPtrPipeline();
+
+			VkPipelineLayout getVkPipelineLayout();
+			VkPipelineLayout *getVkPtrPipelineLayout();
 		};
 
 	} // vulkan
