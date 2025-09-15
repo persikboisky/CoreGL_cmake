@@ -44,7 +44,7 @@ namespace core
 			std::vector<image> getImages();
 			uint32_t getCountImage();
 
-			uint32_t getNextImageIndex(class Semaphore* semaphore, bool wait = true);
+			uint32_t getNextImageIndex(class Semaphore& semaphore, bool wait = true);
 
 			VkSwapchainKHR getVkSwapchainKHR();
 			VkSwapchainKHR *getVkPtrSwapchainKHR();

@@ -23,9 +23,9 @@ namespace core
 
 		struct pipelineInfo
 		{
-			class Device* device = nullptr;
-			class ShaderModule* shaderModule = nullptr;
-			class RenderPass* renderPass = nullptr;
+			class Device* ptrDevice = nullptr;
+			class ShaderModule* ptrShaderModule = nullptr;
+			class RenderPass* ptrRenderPass = nullptr;
 
 			size2i sizeViewport = {600, 600};
 			pos2i posViewport = {0, 0};
@@ -36,7 +36,10 @@ namespace core
 			vulkan::PRIMITIVE primirive = vulkan::TRIANGLE_STRIP;
 
 			uint32_t pushConstantCount = 0;
-			pushConstantInfo *pushConstants = nullptr;
+			pushConstantInfo *ptrPushConstants = nullptr;
+
+			uint32_t vertexBuffersCount = 0;
+			class VertexBuffer* ptrVertexBuffers = nullptr;
 		};
 
 		class Pipeline

@@ -15,14 +15,14 @@ namespace core
 	{
 		struct queueSubmitInfo
 		{
-			class Semaphore *waitPtrSemaphore = nullptr;
+			class Semaphore *ptrWaitPtrSemaphore = nullptr;
 			class CommandBuffer *PtrCommandBuffer = nullptr;
-			class Semaphore *finishSignalSemaphore = nullptr;
+			class Semaphore *ptrFinishSignalSemaphore = nullptr;
 		};
 
 		struct queuePresentInfo
 		{
-			class Semaphore *waitPtrSemaphore = nullptr;
+			class Semaphore *ptrWaitPtrSemaphore = nullptr;
 			class SwapChain *ptrSwapChain = nullptr;
 			uint32_t imageIndex = 0;
 		};
@@ -40,8 +40,8 @@ namespace core
 			static Queue get(class Device& device, uint32_t queueIndex);
 			static Queue ptrGet(class Device& device, uint32_t queueIndex);
 
-			void submit(const queueSubmitInfo* qs);
-			void present(const queuePresentInfo* qp);
+			void submit(const queueSubmitInfo& qs);
+			void present(const queuePresentInfo& qp);
 
 			void wait();
 

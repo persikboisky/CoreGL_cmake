@@ -8,6 +8,20 @@
 
 using namespace core;
 
+VkFormat vulkan::convertFormat(const FORMAT_VARIABLE& format)
+{
+	switch (format)
+	{
+	case vulkan::FLOAT: return VK_FORMAT_R32_SFLOAT;
+	case vulkan::INT: return VK_FORMAT_R32_SINT;
+	case vulkan::UINT: return VK_FORMAT_R32_UINT;
+	case vulkan::VEC2: return VK_FORMAT_R32G32_SFLOAT;
+	case vulkan::VEC3: return VK_FORMAT_R32G32B32_SFLOAT;
+	case vulkan::VEC4: return VK_FORMAT_R32G32B32A32_SFLOAT;
+	default: return VK_FORMAT_R32_SFLOAT;
+	}
+}
+
 int core::convertKeyCode(const KEY_CODE& keyCode)
 {
     switch (keyCode)

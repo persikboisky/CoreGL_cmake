@@ -26,6 +26,14 @@ namespace core
 			color::RGBA clearColor = color::BLACK;
 		};
 
+		struct bindVertexBuffersInfo
+		{
+			uint32_t firstBinding = 0;
+			uint32_t bindingCount = 0;
+			uint64_t *ptrOffsets = nullptr;
+			class VertexBuffer* ptrVertexBuffers = nullptr;
+		};
+
 		class CommandBuffer
 		{
 		 private:
@@ -48,6 +56,8 @@ namespace core
 			void endRenderPas();
 
 			void bindPipeline(class Pipeline& pipeline);
+			void bindVertexBuffers(const bindVertexBuffersInfo& info);
+
 			void pushConstants(class Pipeline& pipeline, struct pushConstantInfo& pci, void *push);
 
 			void draw(uint32_t firstVertex, uint32_t vertexCount, uint32_t instanceCount = 1, uint32_t firstInstance = 0);

@@ -8,12 +8,14 @@
 #include "../../../util/coders.hpp"
 #include "vk_shaderModule.hpp"
 #include "vk_renderPass.hpp"
+#include "vk_vertexBuffer.hpp"
+#include <array>
 
 namespace core
 {
 	namespace vulkan
 	{
-		Pipeline::Pipeline(const pipelineInfo& info) : ptrDevice(info.device->getPtrDevice())
+		Pipeline::Pipeline(const pipelineInfo& info) : ptrDevice(info.ptrDevice->getPtrDevice())
 		{
 			VkPipelineLayoutCreateInfo layoutInfoCreateInfo = {};
 			layoutInfoCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -27,7 +29,7 @@ namespace core
 			for (uint32_t index = 0; index < info.pushConstantCount; index++)
 			{
 				VkShaderStageFlags shaderStageFlagBits;
-				switch (info.pushConstants[index].shaderStages)
+				switch (info.ptrPushConstants[index].shaderStages)
 				{
 				case VERTEX_STAGE:
 					shaderStageFlagBits = VK_SHADER_STAGE_VERTEX_BIT;
@@ -54,8 +56,8 @@ namespace core
 
 				pushConstantRanges.push_back({
 					.stageFlags = shaderStageFlagBits,
-					.offset = info.pushConstants[index].offset,
-					.size = info.pushConstants[index].sizeOfBytes
+					.offset = info.ptrPushConstants[index].offset,
+					.size = info.ptrPushConstants[index].sizeOfBytes
 				});
 			}
 
@@ -63,7 +65,7 @@ namespace core
 			layoutInfoCreateInfo.pPushConstantRanges = pushConstantRanges.data();
 
 			VkResult result = vkCreatePipelineLayout(
-					info.device->getDevice(),
+					info.ptrDevice->getDevice(),
 					&layoutInfoCreateInfo,
 					nullptr,
 					&this->pipelineLayout);
@@ -100,6 +102,8 @@ namespace core
 			// Входной сборщик вершин
 			VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
 			inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+			inputAssembly.pNext = nullptr;
+			inputAssembly.flags = 0;
 
 			VkPrimitiveTopology primitive;
 			switch (info.primirive)
@@ -142,24 +146,24 @@ namespace core
 			VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
 			vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 			vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-			vertShaderStageInfo.module = info.shaderModule->getShaders()[0];
-			vertShaderStageInfo.pName = info.shaderModule->getNamesFuncToShaders()[0];
+			vertShaderStageInfo.module = info.ptrShaderModule->getShaders()[0];
+			vertShaderStageInfo.pName = info.ptrShaderModule->getNamesFuncToShaders()[0];
 
 			VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
 			fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 			fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-			fragShaderStageInfo.module = info.shaderModule->getShaders()[1];
-			fragShaderStageInfo.pName = info.shaderModule->getNamesFuncToShaders()[1];
+			fragShaderStageInfo.module = info.ptrShaderModule->getShaders()[1];
+			fragShaderStageInfo.pName = info.ptrShaderModule->getNamesFuncToShaders()[1];
 
 			std::vector<VkPipelineShaderStageCreateInfo> shaderStages = { vertShaderStageInfo, fragShaderStageInfo };
 
-			if (info.shaderModule->getShaders().size() > 2)
+			if (info.ptrShaderModule->getShaders().size() > 2)
 			{
 				VkPipelineShaderStageCreateInfo geomShaderStageInfo{};
 				fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 				fragShaderStageInfo.stage = VK_SHADER_STAGE_GEOMETRY_BIT;
-				fragShaderStageInfo.module = info.shaderModule->getShaders()[1];
-				fragShaderStageInfo.pName = info.shaderModule->getNamesFuncToShaders()[1];
+				fragShaderStageInfo.module = info.ptrShaderModule->getShaders()[1];
+				fragShaderStageInfo.pName = info.ptrShaderModule->getNamesFuncToShaders()[1];
 				shaderStages.push_back(geomShaderStageInfo);
 			}
 
@@ -167,7 +171,7 @@ namespace core
 			// Растеризация
 			VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo = {};
 			rasterizationStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-			rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_FRONT_BIT;//VK_CULL_MODE_BACK_BIT;    // Режим отсечения граней (отсекаем не лецивые грани)
+			rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_NONE;    // Режим отсечения граней (отсекаем не лецивые грани)
 			rasterizationStateCreateInfo.depthBiasClamp = 0;
 			rasterizationStateCreateInfo.depthBiasConstantFactor = 0;
 			rasterizationStateCreateInfo.depthBiasEnable = VK_FALSE;
@@ -206,14 +210,33 @@ namespace core
 
 			//--------------------------------------------------------------------------------------------------
 			// входные вершины
+			std::vector<VkVertexInputBindingDescription> bindingDescription = {};
+			bindingDescription.resize(info.vertexBuffersCount);
+			for (uint32_t i = 0; i < info.vertexBuffersCount; i++)
+			{
+				bindingDescription[i].binding = info.ptrVertexBuffers->getVkVertexInputBindingDescription().binding;
+				bindingDescription[i].stride = info.ptrVertexBuffers->getVkVertexInputBindingDescription().stride;
+				bindingDescription[i].inputRate = info.ptrVertexBuffers->getVkVertexInputBindingDescription().inputRate;
+			}
+
+			std::vector<VkVertexInputAttributeDescription> attributeDescriptions = {};
+			attributeDescriptions.resize(info.ptrVertexBuffers->getVkVertexInputAttributeDescriptions().size());
+			for (uint32_t i = 0; i < info.ptrVertexBuffers->getVkVertexInputAttributeDescriptions().size(); i++)
+			{
+				attributeDescriptions[i].binding = info.ptrVertexBuffers->getVkVertexInputAttributeDescriptions()[i].binding;
+				attributeDescriptions[i].location = info.ptrVertexBuffers->getVkVertexInputAttributeDescriptions()[i].location;
+				attributeDescriptions[i].format = info.ptrVertexBuffers->getVkVertexInputAttributeDescriptions()[i].format;
+				attributeDescriptions[i].offset = info.ptrVertexBuffers->getVkVertexInputAttributeDescriptions()[i].offset;
+			}
+
 			VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 			vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 			vertexInputInfo.flags = 0;
 			vertexInputInfo.pNext = nullptr;
-			vertexInputInfo.pVertexAttributeDescriptions = nullptr;
-			vertexInputInfo.pVertexBindingDescriptions = nullptr;
-			vertexInputInfo.vertexAttributeDescriptionCount = 0;
-			vertexInputInfo.vertexBindingDescriptionCount = 0;
+			vertexInputInfo.pVertexBindingDescriptions = bindingDescription.data();
+			vertexInputInfo.vertexBindingDescriptionCount = info.vertexBuffersCount;
+			vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+			vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
 
 			//--------------------------------------------------------------------------------------------------
 			// конвейер
@@ -235,11 +258,11 @@ namespace core
 			pipelineCreateInfo.pRasterizationState = &rasterizationStateCreateInfo;
 			pipelineCreateInfo.pVertexInputState = &vertexInputInfo;
 			pipelineCreateInfo.pViewportState = &viewportStateCreateInfo;
-			pipelineCreateInfo.renderPass = info.renderPass->getVkRenderPass();
+			pipelineCreateInfo.renderPass = info.ptrRenderPass->getVkRenderPass();
 			pipelineCreateInfo.subpass = 0;
 
 			result = vkCreateGraphicsPipelines(
-					info.device->getDevice(),
+					info.ptrDevice->getDevice(),
 					VK_NULL_HANDLE,
 					1,
 					&pipelineCreateInfo,

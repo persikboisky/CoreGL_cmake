@@ -58,6 +58,7 @@ const std::string INFO_CODERS[] = {
         "FAILED_SEARCH_TAG_HEAD_TO_TTF_FILE",       // 43
         "FAILED_THIS_FILE_DON'T_BE_TO_TTF",         // 44
         "VK_FAILED_YOUR_GPU_DON'T_HOLDING_VULKAN_API",	//45
+		"VK_FAILED_SEARCH_DEVICE_TYPE_MEMORY",  // 46
 		""
 };
 

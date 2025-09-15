@@ -18,21 +18,20 @@ namespace core
 {
 	namespace vulkan
 	{
-		Device::Device(const deviceInfo& info)
+		Device::Device(const deviceInfo& info) : physicalDevice(info.ptrPhDevices->getVkPhysicalDevice(info.idDevice))
 		{
-			VkPhysicalDevice phDevice = info.ptrPhDevices->getVkPhysicalDevice(info.idDevice);
-			vkGetPhysicalDeviceProperties(phDevice, &this->deviceProperties);
-			vkGetPhysicalDeviceFeatures(phDevice, &this->deviceFeatures);
+			vkGetPhysicalDeviceProperties(this->physicalDevice, &this->deviceProperties);
+			vkGetPhysicalDeviceFeatures(this->physicalDevice, &this->deviceFeatures);
 
 			std::vector<VkQueueFamilyProperties> queueFamilyProperties = {};
 			uint32_t count = 0;
 			vkGetPhysicalDeviceQueueFamilyProperties(
-				phDevice,
+					this->physicalDevice,
 				&count,
 				nullptr);
 			queueFamilyProperties.resize(count);
 			vkGetPhysicalDeviceQueueFamilyProperties(
-				phDevice,
+					this->physicalDevice,
 				&count,
 				queueFamilyProperties.data());
 
@@ -55,7 +54,7 @@ namespace core
 				{
 					VkBool32 flag = VK_FALSE;
 					VkResult result = vkGetPhysicalDeviceSurfaceSupportKHR(
-						phDevice,
+							this->physicalDevice,
 						count,
 						info.ptrSurface->getVkSurfaceKHR(),
 						&flag);
@@ -96,7 +95,7 @@ namespace core
 			deviceCreateInfo.queueCreateInfoCount = 1;
 
 			VkResult result = vkCreateDevice(
-				phDevice,
+					this->physicalDevice,
 				&deviceCreateInfo,
 				nullptr,
 				&this->device);
@@ -111,7 +110,7 @@ namespace core
 			count = 0;
 			std::vector<VkSurfaceFormatKHR> surfaceFormats = {};
 			result = vkGetPhysicalDeviceSurfaceFormatsKHR(
-				phDevice,
+					this->physicalDevice,
 				info.ptrSurface->getVkSurfaceKHR(),
 				&count,
 				nullptr);
@@ -119,7 +118,7 @@ namespace core
 
 			surfaceFormats.resize(count);
 			result = vkGetPhysicalDeviceSurfaceFormatsKHR(
-				phDevice,
+					this->physicalDevice,
 				info.ptrSurface->getVkSurfaceKHR(),
 				&count,
 				surfaceFormats.data());
@@ -136,7 +135,7 @@ namespace core
 			}
 
 			result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-				phDevice,
+					this->physicalDevice,
 				info.ptrSurface->getVkSurfaceKHR(),
 				&this->surfaceCapabilitiesFormat);
 			coders::vulkanProcessingError(result);
@@ -195,6 +194,21 @@ namespace core
 		uint32_t Device::getCountPresentQueue() const
 		{
 			return this->countPresentQueue;
+		}
+
+		uint32_t Device::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
+		{
+			VkPhysicalDeviceMemoryProperties memProperties;
+			vkGetPhysicalDeviceMemoryProperties(this->physicalDevice, &memProperties);
+
+			for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+				if ((typeFilter & (1 << i)) &&
+					((memProperties.memoryTypes[i].propertyFlags & properties) == properties)) {
+					return i;
+				}
+			}
+
+			throw coders(46);
 		}
 	} // vulkan
 } // core

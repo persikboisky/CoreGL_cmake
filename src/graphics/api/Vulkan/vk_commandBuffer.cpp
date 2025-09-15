@@ -9,6 +9,7 @@
 #include "vk_frameBuffer.hpp"
 #include "vk_pipeline.hpp"
 #include "vk_commandPool.hpp"
+#include "vk_vertexBuffer.hpp"
 #include "../../../util/coders.hpp"
 
 namespace core
@@ -167,6 +168,23 @@ namespace core
 					pci.offset,
 					pci.sizeOfBytes,
 					push);
+		}
+
+		void CommandBuffer::bindVertexBuffers(const bindVertexBuffersInfo& info)
+		{
+			std::vector<VkBuffer*> ptrVkBuffer = {};
+
+			for (uint32_t index = 0; index < info.bindingCount; index++)
+			{
+				ptrVkBuffer.push_back(info.ptrVertexBuffers->getPtrVkBuffer());
+			}
+
+			vkCmdBindVertexBuffers(
+					this->commandBuffer,
+					info.firstBinding,
+					info.bindingCount,
+					*ptrVkBuffer.data(),
+					info.ptrOffsets);
 		}
 
 	} // vulkan

@@ -24,7 +24,9 @@ namespace core
 		class Device
 		{
 		 private:
+			VkPhysicalDevice physicalDevice = {};
 			VkDevice device = {};
+
 			VkPhysicalDeviceProperties deviceProperties = {};
 			VkPhysicalDeviceFeatures deviceFeatures = {};
 
@@ -56,8 +58,10 @@ namespace core
 			VkDevice getDevice();
 			VkDevice *getPtrDevice();
 
-			uint32_t getCountGraphicsQueue() const;
-			uint32_t getCountPresentQueue() const;
+			[[nodiscard]] uint32_t getCountGraphicsQueue() const;
+			[[nodiscard]] uint32_t getCountPresentQueue() const;
+
+			uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 		};
 	} // vulkan
 } // core

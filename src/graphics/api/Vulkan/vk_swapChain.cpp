@@ -104,14 +104,14 @@ namespace core
 			return static_cast<uint32_t>(this->swapChainImages.size());
 		}
 
-		uint32_t SwapChain::getNextImageIndex(Semaphore* semaphore, bool wait)
+		uint32_t SwapChain::getNextImageIndex(Semaphore& semaphore, bool wait)
 		{
 			uint32_t index = 0;
 			vkAcquireNextImageKHR(
 				*this->ptrDevice,
 				this->swapChain,
 				UINT64_MAX,
-				semaphore->getVkSemaphore(),
+				semaphore.getVkSemaphore(),
 				VK_NULL_HANDLE,
 				&index);
 			return index;

@@ -7,6 +7,9 @@
 
 #include <string>
 #include "../modules.hpp"
+#if defined(CORE_INCLUDE_VULKAN)
+#include <vulkan/vulkan.h>
+#endif //defined(CORE_INCLUDE_VULKAN)
 
 namespace core
 {
@@ -119,6 +122,17 @@ namespace core
 			VERTEX_FRAGMENT_STAGES,
 			VERTEX_GEOMETRY_FRAGMENT_STAGES
 		};
+		enum FORMAT_VARIABLE : int
+		{
+			FLOAT,
+			VEC2,
+			VEC3,
+			VEC4,
+			UINT,
+			INT
+		};
+
+		VkFormat convertFormat(const FORMAT_VARIABLE& format);
 	}
 #endif //defined(CORE_INCLUDE_VULKAN)
 
