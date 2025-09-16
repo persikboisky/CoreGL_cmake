@@ -21,7 +21,9 @@ namespace core
 
 			pos2i offset = {0, 0};
 			size2i extent = {0, 0};
-			DepthSize depth = {1.0, 0.0};
+
+			float depth = 1.0f;
+			uint32_t stencil = 0.0f;
 
 			color::RGBA clearColor = color::BLACK;
 		};
@@ -30,8 +32,8 @@ namespace core
 		{
 			uint32_t firstBinding = 0;
 			uint32_t bindingCount = 0;
-			uint64_t *ptrOffsets = nullptr;
-			class VertexBuffer* ptrVertexBuffers = nullptr;
+			uint64_t *arrayOffsets = nullptr;
+			class VertexBuffer* arrayVertexBuffers = nullptr;
 		};
 
 		class CommandBuffer

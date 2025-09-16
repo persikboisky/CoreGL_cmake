@@ -11,6 +11,8 @@
 #include "vk_commandPool.hpp"
 #include "vk_vertexBuffer.hpp"
 #include "../../../util/coders.hpp"
+#include <iostream>
+#include <array>
 
 namespace core
 {
@@ -76,19 +78,22 @@ namespace core
 			renderPassInfo.renderArea.extent.width =  brpi.extent.width;
 			renderPassInfo.renderArea.extent.height = brpi.extent.height;
 
-			// Настройка значений очистки
 			std::vector<VkClearValue> clearValues = {};
+			if (brpi.renderPass->getStateDepth()) clearValues.resize(2);
+			else clearValues.resize(1);
 
-			VkClearValue clearValue = {};
-			clearValue.color = {{
-				brpi.clearColor.red,
-				brpi.clearColor.green,
-				brpi.clearColor.blue,
-				brpi.clearColor.alpha}};
-			clearValue.depthStencil.depth = brpi.depth.depth;
-			clearValue.depthStencil.depth = brpi.depth.stencil;
+			color::RGBA clearColor = color::normalize(brpi.clearColor);
+			clearValues[0].color = {{
+				clearColor.red,
+				clearColor.green,
+				clearColor.blue,
+				clearColor.alpha}};
 
-			clearValues.push_back(clearValue);
+			if (brpi.renderPass->getStateDepth())
+			{
+				clearValues[1].depthStencil.depth = brpi.depth;
+				clearValues[1].depthStencil.stencil = brpi.stencil;
+			}
 
 			renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 			renderPassInfo.pClearValues = clearValues.data();
@@ -172,19 +177,23 @@ namespace core
 
 		void CommandBuffer::bindVertexBuffers(const bindVertexBuffersInfo& info)
 		{
-			std::vector<VkBuffer*> ptrVkBuffer = {};
+			std::vector<VkBuffer> ptrVkBuffer = {};
+			std::vector<uint64_t> offset = {};
+			ptrVkBuffer.resize(info.bindingCount);
+			offset.resize(info.bindingCount);
 
 			for (uint32_t index = 0; index < info.bindingCount; index++)
 			{
-				ptrVkBuffer.push_back(info.ptrVertexBuffers->getPtrVkBuffer());
+				ptrVkBuffer[index] = info.arrayVertexBuffers->getVkBuffer();
+				offset[index] = info.arrayOffsets[index];
 			}
 
 			vkCmdBindVertexBuffers(
 					this->commandBuffer,
 					info.firstBinding,
 					info.bindingCount,
-					*ptrVkBuffer.data(),
-					info.ptrOffsets);
+					ptrVkBuffer.data(),
+					offset.data());
 		}
 
 	} // vulkan

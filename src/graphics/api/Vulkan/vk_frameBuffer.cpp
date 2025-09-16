@@ -8,19 +8,29 @@
 #include "vk_imageView.hpp"
 #include "vk_device.hpp"
 #include "vk_image.hpp"
+#include "vk_depthImageView.hpp"
 #include "../../../util/coders.hpp"
+#include <iostream>
 
 namespace core::vulkan
 {
-	FrameBuffer::FrameBuffer(Device& device, RenderPass& renderPass, class ImageView& img) :
+	FrameBuffer::FrameBuffer(Device& device, RenderPass& renderPass, ImageView& img, DepthImageView* ptrDIW) :
 		ptrDevice(device.getPtrDevice())
 	{
-		VkImageView Attachments[1] = { img.getVkImageView() };
+		std::vector<VkImageView> Attachments = {};
+		if (ptrDIW != nullptr && renderPass.getStateDepth())
+		{
+			Attachments.resize(2);
+			Attachments[1] = ptrDIW->getVkImageView();
+		}
+		else Attachments.resize(1);
+		Attachments[0] = img.getVkImageView();
+
 		VkFramebufferCreateInfo framebufferInfo = {};
 		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 		framebufferInfo.renderPass = renderPass.getVkRenderPass();
-		framebufferInfo.attachmentCount = 1;
-		framebufferInfo.pAttachments = Attachments;
+		framebufferInfo.attachmentCount = static_cast<uint32_t>(Attachments.size());
+		framebufferInfo.pAttachments = Attachments.data();
 		framebufferInfo.width = device.getVkSurfaceCapabilities().currentExtent.width;
 		framebufferInfo.height = device.getVkSurfaceCapabilities().currentExtent.height;
 		framebufferInfo.layers = 1;
@@ -33,14 +43,14 @@ namespace core::vulkan
 		coders::vulkanProcessingError(result);
 	}
 
-	FrameBuffer FrameBuffer::create(Device& device, RenderPass& renderPass, ImageView& image)
+	FrameBuffer FrameBuffer::create(Device& device, RenderPass& renderPass, ImageView& image, DepthImageView* ptrDIW)
 	{
-		return FrameBuffer(device, renderPass, image);
+		return FrameBuffer(device, renderPass, image, ptrDIW);
 	}
 
-	FrameBuffer* FrameBuffer::ptrCreate(Device& device, RenderPass& renderPass, ImageView& image)
+	FrameBuffer* FrameBuffer::ptrCreate(Device& device, RenderPass& renderPass, ImageView& image, DepthImageView* ptrDIW)
 	{
-		return new FrameBuffer(device, renderPass, image);
+		return new FrameBuffer(device, renderPass, image, ptrDIW);
 	}
 
 	FrameBuffer::~FrameBuffer()
@@ -61,12 +71,21 @@ namespace core::vulkan
 		return &this->fbo;
 	}
 
-	FrameBuffers::FrameBuffers(Device& device, RenderPass& renderPass, ImageViews& swapchainImageViews) :
+	FrameBuffers::FrameBuffers(Device& device, RenderPass& renderPass, ImageViews& swapchainImageViews, DepthImageViews* ptrDIWS) :
 		device(device.getPtrDevice())
 	{
+		uint32_t i = 0;
 		for (ImageView* image : swapchainImageViews.getPtrImagesView())
 		{
-			this->fbos.push_back(FrameBuffer::ptrCreate(device, renderPass, *image));
+			if (ptrDIWS != nullptr && renderPass.getStateDepth())
+			{
+				this->fbos.push_back(FrameBuffer::ptrCreate(device, renderPass, *image, ptrDIWS->getDepthImageViewsPtr()[i]));
+			}
+			else
+			{
+				this->fbos.push_back(FrameBuffer::ptrCreate(device, renderPass, *image));
+			}
+			i++;
 		}
 	}
 
@@ -79,14 +98,14 @@ namespace core::vulkan
 		this->fbos.clear();
 	}
 
-	FrameBuffers FrameBuffers::create(class Device& device, class RenderPass& renderPass, class ImageViews& swapchainImageViews)
+	FrameBuffers FrameBuffers::create(class Device& device, class RenderPass& renderPass, class ImageViews& swapchainImageViews, DepthImageViews* ptrDIWS)
 	{
-		return FrameBuffers(device, renderPass, swapchainImageViews);
+		return FrameBuffers(device, renderPass, swapchainImageViews, ptrDIWS);
 	}
 
-	FrameBuffers* FrameBuffers::ptrCreate(Device& device, RenderPass& renderPass, ImageViews& swapchainImageViews)
+	FrameBuffers* FrameBuffers::ptrCreate(Device& device, RenderPass& renderPass, ImageViews& swapchainImageViews, DepthImageViews* ptrDIWS)
 	{
-		return new FrameBuffers(device, renderPass, swapchainImageViews);
+		return new FrameBuffers(device, renderPass, swapchainImageViews, ptrDIWS);
 	}
 
 	std::vector<FrameBuffer*> FrameBuffers::getPtrFramebuffers()

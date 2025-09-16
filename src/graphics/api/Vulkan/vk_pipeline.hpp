@@ -32,6 +32,7 @@ namespace core
 
 			float maxDepth = 1.0f;
 			float minDepth = 0.0;
+			bool depthTest = false;
 
 			vulkan::PRIMITIVE primirive = vulkan::TRIANGLE_STRIP;
 

@@ -171,7 +171,7 @@ namespace core
 			// Растеризация
 			VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo = {};
 			rasterizationStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-			rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_NONE;    // Режим отсечения граней (отсекаем не лецивые грани)
+			rasterizationStateCreateInfo.cullMode = VK_CULL_MODE_FRONT_BIT;    // Режим отсечения граней (отсекаем не лецивые грани)
 			rasterizationStateCreateInfo.depthBiasClamp = 0;
 			rasterizationStateCreateInfo.depthBiasConstantFactor = 0;
 			rasterizationStateCreateInfo.depthBiasEnable = VK_FALSE;
@@ -181,7 +181,7 @@ namespace core
 			rasterizationStateCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;    // ПРОТИВ ЧАСОВОЙ СТРЕЛКИ
 			rasterizationStateCreateInfo.lineWidth = 1.0f;
 			rasterizationStateCreateInfo.pNext = nullptr;
-			rasterizationStateCreateInfo.polygonMode = VK_POLYGON_MODE_FILL;
+			rasterizationStateCreateInfo.polygonMode = VK_POLYGON_MODE_LINE;
 			rasterizationStateCreateInfo.rasterizerDiscardEnable = VK_FALSE;
 
 			//--------------------------------------------------------------------------------------------------
@@ -239,6 +239,18 @@ namespace core
 			vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
 
 			//--------------------------------------------------------------------------------------------------
+			// настройка теста глубины
+			VkPipelineDepthStencilStateCreateInfo depthStencil = {};
+			depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+			depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+			depthStencil.depthTestEnable = VK_TRUE;
+			depthStencil.depthWriteEnable = VK_TRUE;
+			depthStencil.depthBoundsTestEnable = VK_FALSE;
+			depthStencil.stencilTestEnable = VK_FALSE;
+			depthStencil.minDepthBounds = info.minDepth;
+			depthStencil.maxDepthBounds = info.maxDepth;
+
+			//--------------------------------------------------------------------------------------------------
 			// конвейер
 			VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
 			pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -249,7 +261,7 @@ namespace core
 			pipelineCreateInfo.pTessellationState = VK_NULL_HANDLE;
 			pipelineCreateInfo.layout = this->pipelineLayout;
 			pipelineCreateInfo.pColorBlendState = &colorBlending;
-			pipelineCreateInfo.pDepthStencilState = VK_NULL_HANDLE;
+			pipelineCreateInfo.pDepthStencilState = (info.depthTest == true) ? &depthStencil : VK_NULL_HANDLE;
 			pipelineCreateInfo.pDynamicState = VK_NULL_HANDLE;
 			pipelineCreateInfo.pInputAssemblyState = &inputAssembly;
 			pipelineCreateInfo.pMultisampleState = &multisampleStateCreateInfo;

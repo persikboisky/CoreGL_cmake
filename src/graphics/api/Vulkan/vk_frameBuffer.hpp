@@ -18,11 +18,20 @@ namespace core::vulkan
 		VkFramebuffer fbo = {};
 		VkDevice* ptrDevice = nullptr;
 
-		FrameBuffer(class Device& device, class RenderPass& renderPass, class ImageView& image);
+		FrameBuffer(class Device& device, class RenderPass& renderPass, class ImageView& image, class DepthImageView* ptrDIW);
 
 	 public:
-		static FrameBuffer create(class Device& device, class RenderPass& renderPass, class ImageView& image);
-		static FrameBuffer *ptrCreate(class Device& device, class RenderPass& renderPass, class ImageView& image);
+		static FrameBuffer create(
+				class Device& device,
+				class RenderPass& renderPass,
+				class ImageView& image,
+				class DepthImageView* ptrDIW = nullptr);
+
+		static FrameBuffer *ptrCreate(
+				class Device& device,
+				class RenderPass& renderPass,
+				class ImageView& image,
+				class DepthImageView* ptrDIW = nullptr);
 
 		~FrameBuffer();
 
@@ -36,13 +45,22 @@ namespace core::vulkan
 		std::vector<FrameBuffer*> fbos = {};
 		VkDevice *device = nullptr;
 
-		FrameBuffers(class Device& device, class RenderPass& renderPass, class ImageViews& swapchainImageViews);
+		FrameBuffers(class Device& device, class RenderPass& renderPass, class ImageViews& swapchainImageViews, class DepthImageViews* ptrDIWS);
 
 	 public:
 		~FrameBuffers();
 
-		static FrameBuffers create(class Device& device, class RenderPass& renderPass, class ImageViews& swapchainImageViews);
-		static FrameBuffers *ptrCreate(class Device& device, class RenderPass& renderPass, class ImageViews& swapchainImageViews);
+		static FrameBuffers create(
+				class Device& device,
+				class RenderPass& renderPass,
+				class ImageViews& swapchainImageViews,
+				class DepthImageViews* ptrDIWS = nullptr);
+
+		static FrameBuffers *ptrCreate(
+				class Device& device,
+				class RenderPass& renderPass,
+				class ImageViews& swapchainImageViews,
+				class DepthImageViews* ptrDIWS = nullptr);
 
 		std::vector<FrameBuffer*> getPtrFramebuffers();
 	};
