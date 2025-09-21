@@ -32,7 +32,7 @@ namespace core
         static void setColor(float red, float green, float blue, float alpha, bool normalize = true);
         static void setColor(const color::COLOR& color);
 
-        static void clearBuffers(Buffer buffer1, Buffer beffer2 = NONE, Buffer buffer3 = NONE);
+        static void clearBuffers(BUFFER buffer1, BUFFER beffer2 = NONE, BUFFER buffer3 = NONE);
     };
 
     class FBO

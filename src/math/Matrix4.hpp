@@ -39,6 +39,10 @@ namespace core
             [[nodiscard]] static Matrix4 getRotate(float angle, const Vector3& axises, const Matrix4& mat4 = Matrix4(1.0f));
             [[nodiscard]] static Matrix4 getPerspective(float fovToRadians, float aspect, float near, float far);
             [[nodiscard]] static Matrix4 getLookAt(Vector3 pos, Vector3 target, Vector3 up);
+
+			static Matrix4 getRotateX(float angle, const Matrix4& mat4 = Matrix4(1.0f));
+			static Matrix4 getRotateY(float angle, const Matrix4& mat4 = Matrix4(1.0f));
+			static Matrix4 getRotateZ(float angle, const Matrix4& mat4 = Matrix4(1.0f));
         };
     }
 }

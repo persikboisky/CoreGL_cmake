@@ -12,6 +12,14 @@
 
 namespace core::vulkan
 {
+	struct frameBuffersInfo 
+	{
+		class Device *ptrDevice = nullptr;
+		class RenderPass *ptrRenderPass = nullptr;
+		class ImageViews *ptrSwapchainImageViews = nullptr;
+		class DepthImageViews *ptrDepthImageViews = nullptr;
+	};
+
 	class FrameBuffer
 	{
 	 private:
@@ -45,22 +53,14 @@ namespace core::vulkan
 		std::vector<FrameBuffer*> fbos = {};
 		VkDevice *device = nullptr;
 
-		FrameBuffers(class Device& device, class RenderPass& renderPass, class ImageViews& swapchainImageViews, class DepthImageViews* ptrDIWS);
+		FrameBuffers(frameBuffersInfo& info);
 
 	 public:
 		~FrameBuffers();
 
-		static FrameBuffers create(
-				class Device& device,
-				class RenderPass& renderPass,
-				class ImageViews& swapchainImageViews,
-				class DepthImageViews* ptrDIWS = nullptr);
+		static FrameBuffers create(frameBuffersInfo& info);
 
-		static FrameBuffers *ptrCreate(
-				class Device& device,
-				class RenderPass& renderPass,
-				class ImageViews& swapchainImageViews,
-				class DepthImageViews* ptrDIWS = nullptr);
+		static FrameBuffers *ptrCreate(frameBuffersInfo& info);
 
 		std::vector<FrameBuffer*> getPtrFramebuffers();
 	};

@@ -187,3 +187,48 @@ Matrix4 Matrix4::getLookAt(Vector3 pos, Vector3 target, Vector3 up)
 
     return Matrix4(lookAT);
 }
+
+Matrix4 Matrix4::getRotateX(float angle, const Matrix4& mat4)
+{
+	const float SIN = static_cast<float>(sin(angle));
+	const float COS = static_cast<float>(cos(angle));
+
+	float rotate[16] = {
+		1, 0, 0, 0,
+		0, COS, -SIN, 0,
+		0, SIN, COS, 0,
+		0, 0, 0, 1
+	};
+
+	return Matrix4(rotate);
+}
+
+Matrix4 Matrix4::getRotateY(float angle, const Matrix4& mat4)
+{
+	const float SIN = static_cast<float>(sin(angle));
+	const float COS = static_cast<float>(cos(angle));
+
+	float rotate[16] = {
+		COS, 0, -SIN, 0,
+		0, 1, 0, 0,
+		SIN, 0, COS, 0,
+		0, 0, 0, 1
+	};
+
+	return Matrix4(rotate);
+}
+
+Matrix4 Matrix4::getRotateZ(float angle, const Matrix4& mat4)
+{
+	const float SIN = static_cast<float>(sin(angle));
+	const float COS = static_cast<float>(cos(angle));
+
+	float rotate[16] = {
+		COS, -SIN, 0, 0,
+		SIN, COS, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1
+	};
+
+	return Matrix4(rotate);
+}

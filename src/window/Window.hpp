@@ -9,6 +9,7 @@
 #include "../modules.hpp"
 
 struct GLFWwindow;
+struct GLFWmonitor;
 
 namespace core
 {
@@ -56,13 +57,14 @@ namespace core
         double time = 0.0;
         double deltaTime = 0.0;
 
+        void createWindow(int width, int height, const char *title, bool resizable, bool vkAPI, GLFWmonitor* ptrMon);
         void getSizeWindow();
         void Init();
 
         explicit Window(const windowInfo &winInfo = {});
         Window(int width, int height, const char *title, bool resizable, bool vkAPI);
 
-        void setMonitor(Monitor monitor);
+        void setMonitor(Monitor& monitor);
         void resetMonitor();
 
     public:

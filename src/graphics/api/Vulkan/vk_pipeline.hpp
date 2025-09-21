@@ -32,9 +32,10 @@ namespace core
 
 			float maxDepth = 1.0f;
 			float minDepth = 0.0;
-			bool depthTest = false;
 
 			vulkan::PRIMITIVE primirive = vulkan::TRIANGLE_STRIP;
+			TYPE_CULL_FACE typeCullFace = CULL_BACK;
+			POLYGON_MODE polygonMode = POLYGON_FILL;
 
 			uint32_t pushConstantCount = 0;
 			pushConstantInfo *ptrPushConstants = nullptr;

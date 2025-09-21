@@ -19,22 +19,26 @@
 #include <iostream>
 #if defined(CORE_INCLUDE_VULKAN)
 #include <vulkan/vulkan.h>
-#endif //defined(CORE_INCLUDE_VULKAN)
+#endif // defined(CORE_INCLUDE_VULKAN)
 
 constexpr int HEIGHT_HEAD_WINDOW = 30;
 
 bool core::Window::flagGladInit = true;
 
-static GLFWwindow *createWindow(int width, int height, const char *title, bool resizable, bool vkAPI)
+void core::Window::createWindow(int width, int height, const char *title, bool resizable, bool vkAPI, GLFWmonitor* ptrMon)
 {
 #if defined(CORE_INCLUDE_VULKAN)
-    if (vkAPI) glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-#endif //defined(CORE_INCLUDE_VULKAN)
-	else glfwWindowHint(GLFW_OPENGL_API, GLFW_OPENGL_CORE_PROFILE);
+    if (vkAPI)
+        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+#endif // defined(CORE_INCLUDE_VULKAN)
+    else
+        glfwWindowHint(GLFW_OPENGL_API, GLFW_OPENGL_CORE_PROFILE);
+        
     glfwWindowHint(GLFW_RESIZABLE, resizable);
-    GLFWwindow *window = glfwCreateWindow(width, height, title, nullptr, nullptr);
 
-    if (window == nullptr)
+    this->window = glfwCreateWindow(width, height, title, ptrMon, nullptr);
+
+    if (this->window == nullptr)
     {
         throw core::coders(1);
     }
@@ -44,8 +48,6 @@ static GLFWwindow *createWindow(int width, int height, const char *title, bool r
         core::console::printTime();
         std::cout << "Ok: create window" << std::endl;
     }
-
-    return window;
 }
 
 void core::Window::getSizeWindow()
@@ -57,56 +59,62 @@ void core::Window::Init()
 {
     this->event = new Event(*this->window);
     this->cursor = new Cursor(*this->window);
-    this->monitor = new Monitor();
 }
 
 core::Window::Window(const core::windowInfo &winInfo) : 
-    window(createWindow(winInfo.width, winInfo.height, winInfo.title, winInfo.resizable,
-#if defined(CORE_INCLUDE_VULKAN)
-    winInfo.VulkanAPI
-#else
-	false
-#endif //defined(CORE_INCLUDE_VULKAN)
-    )),
-    event(nullptr), width(winInfo.width), height(winInfo.height), posX(winInfo.posX), posY(winInfo.posY),
-    saveWidth(winInfo.width), saveHeight(winInfo.height), cursor(nullptr), monitor(nullptr),
-    VSfps(winInfo.VerticalSynchronization), flagFullScreen(winInfo.fullScreen), time(glfwGetTime()),
-    deltaTime(glfwGetTime())
+        window(nullptr),
+        event(nullptr), width(winInfo.width), height(winInfo.height), posX(winInfo.posX), posY(winInfo.posY),
+        saveWidth(winInfo.width), saveHeight(winInfo.height), cursor(nullptr), monitor(new Monitor()),
+        VSfps(winInfo.VerticalSynchronization), flagFullScreen(winInfo.fullScreen), time(glfwGetTime()),
+        deltaTime(glfwGetTime())
 {
 #if defined(CORE_INCLUDE_VULKAN)
     this->VulknanAPI = winInfo.VulkanAPI;
-#endif //defined(CORE_INCLUDE_VULKAN)
+#endif // defined(CORE_INCLUDE_VULKAN)
+
+    GLFWmonitor* ptrMon = nullptr;
+    if (winInfo.fullScreen) ptrMon = this->monitor->getGLFWObj();
+
+    this->createWindow(winInfo.width, winInfo.height, winInfo.title, winInfo.resizable,
+#if defined(CORE_INCLUDE_VULKAN)
+    winInfo.VulkanAPI,
+#else
+    false,
+#endif // defined(CORE_INCLUDE_VULKAN
+    ptrMon
+    );
 
     this->Init();
     if (winInfo.pathToIcon != nullptr)
     {
         this->setIcon(winInfo.pathToIcon);
     }
-
-	if (winInfo.fullScreen)  this->fullScreen(winInfo.fullScreen);
 }
 
-core::Window::Window(int width, int height, const char *title, bool resizable, bool vkAPI) :
-    window(createWindow(width, height, title, resizable, vkAPI)), cursor(nullptr), VSfps(true), monitor(nullptr),
+core::Window::Window(int width, int height, const char *title, bool resizable, bool vkAPI) : 
+    window(nullptr), cursor(nullptr), VSfps(true), monitor(nullptr),
     event(nullptr), width(width), height(height), posX(0), posY(0), saveWidth(width), saveHeight(height),
     time(glfwGetTime()), deltaTime(glfwGetTime())
 {
+    GLFWmonitor *ptrMon = nullptr;
+    this->createWindow(width, height, title, resizable, vkAPI, ptrMon);
+
 #if defined(CORE_INCLUDE_VULKAN)
     this->VulknanAPI = vkAPI;
-#endif //defined(CORE_INCLUDE_VULKAN)
+#endif // defined(CORE_INCLUDE_VULKAN)
 
     this->Init();
 }
 
-void core::Window::setMonitor(core::Monitor monitor)
+void core::Window::setMonitor(core::Monitor& monitor)
 {
-    glfwSetWindowMonitor(
-        this->window,
-        monitor.getGLFWObj(),
-        0, 0,
-        monitor.getSize().width,
-        monitor.getSize().height,
-        GLFW_DONT_CARE);
+	glfwSetWindowMonitor(
+			this->window,
+			monitor.getGLFWObj(),
+			0, 0,
+			monitor.getSize().width,
+			monitor.getSize().height,
+			GLFW_DONT_CARE);
 }
 
 void core::Window::resetMonitor()
@@ -136,16 +144,16 @@ GLFWwindow *core::Window::getWindowOBJ()
 
 bool core::Window::isContext()
 {
-	if (this->VulknanAPI)
-	{
-		if (this->window == glfwGetCurrentContext())
-		{
-			return true;
-		}
-		return false;
-	}
+    if (this->VulknanAPI)
+    {
+        if (this->window == glfwGetCurrentContext())
+        {
+            return true;
+        }
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 core::Window::~Window()
@@ -178,7 +186,7 @@ void core::Window::setContext()
 #if defined(CORE_INCLUDE_VULKAN)
     if (!this->VulknanAPI)
     {
-#endif //defined(CORE_INCLUDE_VULKAN)
+#endif // defined(CORE_INCLUDE_VULKAN)
         glfwMakeContextCurrent(this->window);
 
         if (this->flagGladInit)
@@ -186,31 +194,26 @@ void core::Window::setContext()
             gladInit();
             this->flagGladInit = false;
         }
-
-        gl::setDirectFronFace(core::DIRECT_FRONT_FACE{OPENGL_FRONT_FACE});
-        gl::enableCullFace(OPENGL_CULL_FACE_FUNCTION);
-
-        if (OPENGL_CULL_FACE_FUNCTION)
-        {
-            gl::setTypeCullFace(core::TYPE_CULL_FACE{OPENGL_CULL_FACE});
-        }
-        gl::enableDepthTest(OPENGL_DEPTH_FUNCTION);
 #if defined(CORE_INCLUDE_VULKAN)
     }
-#endif //defined(CORE_INCLUDE_VULKAN)
+#endif // defined(CORE_INCLUDE_VULKAN)
 }
 
 void core::Window::swapBuffers()
 {
-    (this->VSfps) ? glfwSwapInterval(1) : glfwSwapInterval(0);
-    
-    glfwSwapBuffers(this->window);
-    this->getSizeWindow();
+    if (!this->VulknanAPI)
+    {
+        (this->VSfps) ? glfwSwapInterval(1) : glfwSwapInterval(0);
 
-    if (!this->flagFullScreen) glfwGetWindowPos(this->window, &this->posX, &this->posY);
+        glfwSwapBuffers(this->window);
+        this->getSizeWindow();
 
-    this->deltaTime = glfwGetTime() - this->time;
-    this->time = glfwGetTime();
+        if (!this->flagFullScreen)
+            glfwGetWindowPos(this->window, &this->posX, &this->posY);
+
+        this->deltaTime = glfwGetTime() - this->time;
+        this->time = glfwGetTime();
+    }
 }
 
 void core::Window::enableZBuffer()
@@ -261,7 +264,8 @@ void core::Window::setSizeFrameBuffer(int width, int height)
         this->setContext();
     }
 
-	if (!this->VulknanAPI) core::fbo::setSize(width, height);
+    if (!this->VulknanAPI)
+        core::fbo::setSize(width, height);
 }
 
 void core::Window::setSizeFrameBuffer(const core::size2i &size)
@@ -404,7 +408,7 @@ void core::Window::setSize(const size2i &size)
 void core::Window::fullScreen(bool flag)
 {
     this->flagFullScreen = flag;
-    
+
     if (flag)
     {
         this->saveWidth = this->width;
@@ -415,12 +419,20 @@ void core::Window::fullScreen(bool flag)
     }
     else
     {
-        this->width = this->saveWidth;
-        this->height = this->saveHeight;
+        if (this->flagGladInit)
+        {
+            this->width = this->saveWidth;
+            this->height = this->saveHeight;
+        }
+
         this->resetMonitor();
-        this->setPos(this->posX, this->posY);
-        this->setPosFrameBuffer(0, 0);
-        this->setSizeFrameBuffer(this->width, this->height);
+
+        if (this->flagGladInit)
+        {
+            this->setPos(this->posX, this->posY);
+            this->setPosFrameBuffer(0, 0);
+            this->setSizeFrameBuffer(this->width, this->height);
+        }
     }
 }
 
@@ -428,4 +440,3 @@ double core::Window::getDeltaTime() const
 {
     return this->deltaTime;
 }
-

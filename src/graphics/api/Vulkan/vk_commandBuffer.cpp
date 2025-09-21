@@ -79,7 +79,12 @@ namespace core
 			renderPassInfo.renderArea.extent.height = brpi.extent.height;
 
 			std::vector<VkClearValue> clearValues = {};
-			if (brpi.renderPass->getStateDepth()) clearValues.resize(2);
+			if (brpi.renderPass->getStateDepth())
+			{
+				clearValues.resize(2);
+				clearValues[1].depthStencil.depth = brpi.depth;
+				clearValues[1].depthStencil.stencil = brpi.stencil;
+			} 
 			else clearValues.resize(1);
 
 			color::RGBA clearColor = color::normalize(brpi.clearColor);
@@ -88,12 +93,6 @@ namespace core
 				clearColor.green,
 				clearColor.blue,
 				clearColor.alpha}};
-
-			if (brpi.renderPass->getStateDepth())
-			{
-				clearValues[1].depthStencil.depth = brpi.depth;
-				clearValues[1].depthStencil.stencil = brpi.stencil;
-			}
 
 			renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 			renderPassInfo.pClearValues = clearValues.data();

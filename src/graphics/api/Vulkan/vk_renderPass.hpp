@@ -16,7 +16,7 @@ namespace core
 		struct renderPassInfo
 		{
 			class Device* device = nullptr;
-			bool depthAttachment = false;
+			bool depthTest = false;
 		};
 
 		class RenderPass

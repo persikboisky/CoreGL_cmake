@@ -8,62 +8,88 @@
 #include "../../../util/coders.hpp"
 #include <vector>
 #include <iostream>
+#include <array>
 
 namespace core
 {
 	namespace vulkan
 	{
-		RenderPass::RenderPass(const renderPassInfo& info) :
-			device(info.device->getPtrDevice()), depthAttachment(info.depthAttachment)
+		RenderPass::RenderPass(const renderPassInfo &info) : device(info.device->getPtrDevice()), depthAttachment(info.depthTest)
 		{
-			// 1. Описание attachment (цветового буфера)
+			// Цветовой attachment
 			VkAttachmentDescription colorAttachment{};
 			colorAttachment.format = info.device->getVkSurfaceFormat().format;
-			colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;   					// Без мультисэмплинга
-			colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;     			// Очищаем перед рендером
-			colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;   			// Сохраняем после рендера
-			colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;   	// Не используем станциль
-			colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE; 	// Не используем станциль
-			colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;         	// Начальное состояние не важно
-			colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;     	// Для отображения в swapchain
+			colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+			colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+			colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
-			// 2. Ссылка на attachment (для subpass)
-			VkAttachmentReference colorAttachmentRef{};
-			colorAttachmentRef.attachment = 0;  // Индекс attachment'а в массиве
-			colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;  // Оптимальный layout для рендера
+			// Depth attachment
+			VkAttachmentDescription depthAttachment{};
+			depthAttachment.format = VK_FORMAT_D32_SFLOAT;
+			depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+			depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-			// 3. Описание subpass
-			VkSubpassDescription subpass{};
-			subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;  // Графический pipeline
+			// Attachment references
+			VkAttachmentReference colorAttachmentRef = {};
+			colorAttachmentRef.attachment = 0;
+			colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+			VkAttachmentReference depthAttachmentRef = {};
+			depthAttachmentRef.attachment = 1;
+			depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+			// Subpass
+			VkSubpassDescription subpass = {};
+			subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 			subpass.colorAttachmentCount = 1;
-			subpass.pColorAttachments = &colorAttachmentRef;  // Цветовые attachment'ы
-			subpass.pDepthStencilAttachment = VK_NULL_HANDLE;
-
-			std::vector<VkAttachmentDescription> attachments = {
-				colorAttachment
-			};
-
-			// атачмент для теста глубины
-			if (info.depthAttachment)
-			{
-				VkAttachmentDescription depthAttachment{};
-				depthAttachment.format = VK_FORMAT_D32_SFLOAT;
-				depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-				depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-				depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-				depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-				depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-				depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-				depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-				VkAttachmentReference depthAttachmentRef{};
-				depthAttachmentRef.attachment = 1; // Индекс после color attachment
-				depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
+			subpass.pColorAttachments = &colorAttachmentRef;
+			if (info.depthTest)
 				subpass.pDepthStencilAttachment = &depthAttachmentRef;
+			else
+				subpass.pDepthStencilAttachment = VK_NULL_HANDLE;
 
-				attachments.push_back(depthAttachment);
+			// // Зависимости subpass
+			// std::array<VkSubpassDependency, 2> dependencies;
+
+			// // Зависимость для color attachment
+			// dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
+			// dependencies[0].dstSubpass = 0;
+			// dependencies[0].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+			// dependencies[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+			// dependencies[0].srcAccessMask = 0;
+			// dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+			// dependencies[0].dependencyFlags = 0;
+
+			// // Зависимость для depth attachment
+			// dependencies[1].srcSubpass = VK_SUBPASS_EXTERNAL;
+			// dependencies[1].dstSubpass = 0;
+			// dependencies[1].srcStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT |
+			// 							   VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+			// dependencies[1].dstStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT |
+			// 							   VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+			// dependencies[1].srcAccessMask = 0;
+			// dependencies[1].dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+			// dependencies[1].dependencyFlags = 0;
+
+			// Создание render pass
+			std::vector<VkAttachmentDescription> attachments = {};
+			if (info.depthTest)
+			{
+				attachments.resize(2);
+				attachments[1] = depthAttachment;
 			}
+			else
+				attachments.resize(1);
+			attachments[0] = colorAttachment;
 
 			// 4. Создание render pass
 			VkRenderPassCreateInfo renderPassInfo{};
@@ -71,7 +97,9 @@ namespace core
 			renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
 			renderPassInfo.pAttachments = attachments.data();
 			renderPassInfo.subpassCount = 1;
-			renderPassInfo.pSubpasses = &subpass;           // Массив subpass'ов
+			renderPassInfo.pSubpasses = &subpass; // Массив subpass'ов
+			// renderPassInfo.pDependencies = dependencies.data();
+			// renderPassInfo.dependencyCount = 2;
 
 			VkResult result = vkCreateRenderPass(
 				info.device->getDevice(),
@@ -89,12 +117,12 @@ namespace core
 				nullptr);
 		}
 
-		RenderPass RenderPass::create(const renderPassInfo& info)
+		RenderPass RenderPass::create(const renderPassInfo &info)
 		{
 			return RenderPass(info);
 		}
 
-		RenderPass* RenderPass::ptrCreate(const renderPassInfo& info)
+		RenderPass *RenderPass::ptrCreate(const renderPassInfo &info)
 		{
 			return new RenderPass(info);
 		}
@@ -104,7 +132,7 @@ namespace core
 			return this->renderPass;
 		}
 
-		VkRenderPass* RenderPass::getVkPtrRenderPass()
+		VkRenderPass *RenderPass::getVkPtrRenderPass()
 		{
 			return &this->renderPass;
 		}
@@ -116,4 +144,4 @@ namespace core
 	} // vulkan
 } // core
 
-#endif //defined(CORE_INCLUDE_VULKAN)
+#endif // defined(CORE_INCLUDE_VULKAN)

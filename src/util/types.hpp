@@ -146,10 +146,12 @@ namespace core
     {
         CULL_BACK,
         CULL_FRONT,
-        CULL_FRONT_AND_BACK
+        CULL_FRONT_AND_BACK,
+        CULL_NONE
     };
     enum DIRECT_FRONT_FACE : int 
     {
+		//
         DIRECT_CCW,
         DIRECT_CW
     };
@@ -179,11 +181,18 @@ namespace core
         POSITIVE_WINDOW_COORD,
         WINDOW_COORD
     };
-	enum Buffer : int
+	enum BUFFER : int
 	{
 		COLOR_BUFFER = 1,
 		DEPTH_BUFFER = 2,
 		NONE = 0
+	};
+	enum VALUE_TYPE : int
+	{
+		INT,
+		UNSIGNED_INT,
+		FLOAT,
+		DOUBLE
 	};
 
     int convertKeyCode(const KEY_CODE& keyCode);

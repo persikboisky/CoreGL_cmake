@@ -103,9 +103,9 @@ void fbo::setColor(const color::COLOR& color)
     fbo::setColor(color::RGB(color));
 }
 
-void fbo::clearBuffers(Buffer buffer1, Buffer buffer2, Buffer buffer3)
+void fbo::clearBuffers(BUFFER buffer1, BUFFER buffer2, BUFFER buffer3)
 {
-    Buffer array[3] = { buffer1, buffer2, buffer3 };
+    BUFFER array[3] = { buffer1, buffer2, buffer3 };
     for (unsigned int index = 0; index < 3; index++)
     {
         switch (array[index])
