@@ -12,7 +12,6 @@
 #include "../config.hpp"
 #include "../util/types.hpp"
 #include "../graphics/commons/fbo.hpp"
-#include "../graphics/commons/gl.hpp"
 #include "../file/image.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -214,17 +213,6 @@ void core::Window::swapBuffers()
         this->deltaTime = glfwGetTime() - this->time;
         this->time = glfwGetTime();
     }
-}
-
-void core::Window::enableZBuffer()
-{
-    if (!isContext())
-    {
-        this->setContext();
-    }
-
-    if (OPENGL_DEPTH_FUNCTION != true)
-        gl::enableDepthTest();
 }
 
 void core::Window::setClearColor(const color::RGBA &color)

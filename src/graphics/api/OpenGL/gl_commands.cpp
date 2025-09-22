@@ -29,7 +29,7 @@ namespace core
 				glDisable(GL_DEPTH_TEST);
 		}
 
-		void setPolygonMode(DIRECT_FACE_POLYGONS fp, POLYGON_MODE mode)
+		void setPolygonMode(POLYGONS fp, POLYGON_MODE mode)
 		{
 			int glDFP = 0;
 			int glPM = 0;
@@ -65,6 +65,38 @@ namespace core
 			}
 
 			glPolygonMode(glDFP, glPM);
+		}
+
+		void setStateCullFace(bool flag)
+		{
+			if (flag)
+				glEnable(GL_CULL_FACE);
+			else
+				glDisable(GL_CULL_FACE);
+		}
+
+		void setCullFace(const POLYGONS& fp)
+		{
+			switch(fp)
+			{
+			case POLYGON_BACK:
+				glCullFace(GL_BACK);
+				break;
+			case POLYGON_FRONT:
+				glCullFace(GL_FRONT);
+				break;
+			default:
+				glCullFace(GL_FRONT_AND_BACK);
+				break;
+			}
+		}
+
+		void setFacePolygons(const FRONT_FACE & dfp)
+		{
+			if (dfp == FRONT_FACE_CLOCKWISE)
+				glFrontFace(GL_CW);
+			else
+				glFrontFace(GL_CCW);
 		}
 
 		void clearDepthBuffer()

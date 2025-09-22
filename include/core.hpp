@@ -20,7 +20,6 @@
 #include "../src/graphics/commons/Camera.hpp"
 #include "../src/graphics/commons/ebo.hpp"
 #include "../src/graphics/commons/texture.hpp"
-#include "../src/graphics/commons/gl.hpp"
 #include "../src/graphics/renderer/Rect.hpp"
 #include "../src/graphics/api/Vulkan/vk_Instance.hpp"
 #include "../src/graphics/api/Vulkan/vk_physicalDevices.hpp"

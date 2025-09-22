@@ -8,8 +8,9 @@
 namespace core
 {
 	enum PRIMITIVE : int;
+	enum FRONT_FACE : int;
 	enum POLYGON_MODE : int;
-	enum DIRECT_FACE_POLYGONS : int;
+	enum POLYGONS : int;
 
 	namespace opengl
 	{
@@ -19,7 +20,11 @@ namespace core
 				int countVert);
 
 		void setStateDepthTest(bool flag);
-		void setPolygonMode(DIRECT_FACE_POLYGONS fp, POLYGON_MODE mode);
+		void setStateCullFace(bool flag);
+
+		void setPolygonMode(POLYGONS fp, POLYGON_MODE mode);
+		void setCullFace(const POLYGONS& fp);
+		void setFacePolygons(const FRONT_FACE& dfp);
 
 		void clearDepthBuffer();
 		void clearFrameBuffer();

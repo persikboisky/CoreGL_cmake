@@ -149,11 +149,10 @@ namespace core
         CULL_FRONT_AND_BACK,
         CULL_NONE
     };
-    enum DIRECT_FRONT_FACE : int 
+    enum FRONT_FACE : int
     {
-		//
-        DIRECT_CCW,
-        DIRECT_CW
+		FRONT_FACE_COUNTER_CLOCKWISE,
+		FRONT_FACE_CLOCKWISE
     };
     enum TYPE_WRAPPING_TEXTURE : int
     {
@@ -168,7 +167,7 @@ namespace core
         POLYGON_LINE,
         POLYGON_FILL
     };
-    enum DIRECT_FACE_POLYGONS : int
+    enum POLYGONS : int
     {
         POLYGON_FRONT,
         POLYGON_BACK,

@@ -83,7 +83,6 @@ namespace core
         void setContext();
         void swapBuffers();
 
-        void enableZBuffer();
         void setClearColor(const color::RGBA &color);
         void clearFrameBuffer();
         void clearZBuffer();
