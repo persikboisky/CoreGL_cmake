@@ -13,7 +13,7 @@
 #include "../util/types.hpp"
 #include "../graphics/commons/fbo.hpp"
 #include "../file/image.hpp"
-#include <glad/glad.h>
+#include "../../package/glew-2.1.0-master/include/GL/glew.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #if defined(CORE_INCLUDE_VULKAN)
@@ -24,7 +24,7 @@ constexpr int HEIGHT_HEAD_WINDOW = 30;
 
 bool core::Window::flagGladInit = true;
 
-void core::Window::createWindow(int width, int height, const char *title, bool resizable, bool vkAPI, GLFWmonitor* ptrMon)
+void core::Window::createWindow(int width, int height, const char *title, bool resizable, bool vkAPI, GLFWmonitor *ptrMon)
 {
 #if defined(CORE_INCLUDE_VULKAN)
     if (vkAPI)
@@ -32,7 +32,7 @@ void core::Window::createWindow(int width, int height, const char *title, bool r
 #endif // defined(CORE_INCLUDE_VULKAN)
     else
         glfwWindowHint(GLFW_OPENGL_API, GLFW_OPENGL_CORE_PROFILE);
-        
+
     glfwWindowHint(GLFW_RESIZABLE, resizable);
 
     this->window = glfwCreateWindow(width, height, title, ptrMon, nullptr);
@@ -60,28 +60,27 @@ void core::Window::Init()
     this->cursor = new Cursor(*this->window);
 }
 
-core::Window::Window(const core::windowInfo &winInfo) : 
-        window(nullptr),
-        event(nullptr), width(winInfo.width), height(winInfo.height), posX(winInfo.posX), posY(winInfo.posY),
-        saveWidth(winInfo.width), saveHeight(winInfo.height), cursor(nullptr), monitor(new Monitor()),
-        VSfps(winInfo.VerticalSynchronization), flagFullScreen(winInfo.fullScreen), time(glfwGetTime()),
-        deltaTime(glfwGetTime())
+core::Window::Window(const core::windowInfo &winInfo) : window(nullptr),
+                                                        event(nullptr), width(winInfo.width), height(winInfo.height), posX(winInfo.posX), posY(winInfo.posY),
+                                                        saveWidth(winInfo.width), saveHeight(winInfo.height), cursor(nullptr), monitor(new Monitor()),
+                                                        VSfps(winInfo.VerticalSynchronization), flagFullScreen(winInfo.fullScreen), time(glfwGetTime()),
+                                                        deltaTime(glfwGetTime())
 {
 #if defined(CORE_INCLUDE_VULKAN)
     this->VulknanAPI = winInfo.VulkanAPI;
 #endif // defined(CORE_INCLUDE_VULKAN)
 
-    GLFWmonitor* ptrMon = nullptr;
-    if (winInfo.fullScreen) ptrMon = this->monitor->getGLFWObj();
+    GLFWmonitor *ptrMon = nullptr;
+    if (winInfo.fullScreen)
+        ptrMon = this->monitor->getGLFWObj();
 
     this->createWindow(winInfo.width, winInfo.height, winInfo.title, winInfo.resizable,
 #if defined(CORE_INCLUDE_VULKAN)
-    winInfo.VulkanAPI,
+                       winInfo.VulkanAPI,
 #else
-    false,
+                       false,
 #endif // defined(CORE_INCLUDE_VULKAN
-    ptrMon
-    );
+                       ptrMon);
 
     this->Init();
     if (winInfo.pathToIcon != nullptr)
@@ -90,10 +89,9 @@ core::Window::Window(const core::windowInfo &winInfo) :
     }
 }
 
-core::Window::Window(int width, int height, const char *title, bool resizable, bool vkAPI) : 
-    window(nullptr), cursor(nullptr), VSfps(true), monitor(nullptr),
-    event(nullptr), width(width), height(height), posX(0), posY(0), saveWidth(width), saveHeight(height),
-    time(glfwGetTime()), deltaTime(glfwGetTime())
+core::Window::Window(int width, int height, const char *title, bool resizable, bool vkAPI) : window(nullptr), cursor(nullptr), VSfps(true), monitor(nullptr),
+                                                                                             event(nullptr), width(width), height(height), posX(0), posY(0), saveWidth(width), saveHeight(height),
+                                                                                             time(glfwGetTime()), deltaTime(glfwGetTime())
 {
     GLFWmonitor *ptrMon = nullptr;
     this->createWindow(width, height, title, resizable, vkAPI, ptrMon);
@@ -105,15 +103,15 @@ core::Window::Window(int width, int height, const char *title, bool resizable, b
     this->Init();
 }
 
-void core::Window::setMonitor(core::Monitor& monitor)
+void core::Window::setMonitor(core::Monitor &monitor)
 {
-	glfwSetWindowMonitor(
-			this->window,
-			monitor.getGLFWObj(),
-			0, 0,
-			monitor.getSize().width,
-			monitor.getSize().height,
-			GLFW_DONT_CARE);
+    glfwSetWindowMonitor(
+        this->window,
+        monitor.getGLFWObj(),
+        0, 0,
+        monitor.getSize().width,
+        monitor.getSize().height,
+        GLFW_DONT_CARE);
 }
 
 void core::Window::resetMonitor()
@@ -162,9 +160,12 @@ core::Window::~Window()
     glfwDestroyWindow(this->window);
 }
 
-static void gladInit()
+static void glInit()
 {
-    if (!gladLoadGL())
+
+    glewExperimental = GL_TRUE;
+    GLenum err = glewInit();
+    if (err != GLEW_OK)
     {
         throw core::coders(2);
     }
@@ -172,7 +173,7 @@ static void gladInit()
     if (CORE_INFO)
     {
         core::console::printTime();
-        std::cout << "Ok: init glad" << std::endl;
+        std::cout << "Ok: init glew" << std::endl;
         core::console::printTime();
         std::cout << "GPU: " << glGetString(GL_RENDERER) << std::endl;
         core::console::printTime();
@@ -190,7 +191,7 @@ void core::Window::setContext()
 
         if (this->flagGladInit)
         {
-            gladInit();
+            glInit();
             this->flagGladInit = false;
         }
 #if defined(CORE_INCLUDE_VULKAN)

@@ -5,6 +5,8 @@
 #ifndef GL_SHADERPROGRAM_HPP
 #define GL_SHADERPROGRAM_HPP
 
+typedef unsigned int uint32_t;
+
 namespace core
 {
 	enum TYPE_SHADER : int;
@@ -12,6 +14,9 @@ namespace core
 	namespace math
 	{
 		class Matrix4;
+		class Vector2;
+		class Vector3;
+		class Vector4;
 	}
 
 	namespace opengl
@@ -32,30 +37,28 @@ namespace core
 			[[nodiscard]] unsigned int getId() const;
 		};
 
-		struct ShaderProgramInfo
-		{
-			Shader *ptrVertexShader = nullptr;
-			Shader *ptrFragmentShader = nullptr;
-			Shader *ptrGeometryShader = nullptr;
-		};
-
 		class ShaderProgram
 		{
 		private:
 			unsigned int id = 0;
 
-			explicit ShaderProgram(const ShaderProgramInfo& info);
+			ShaderProgram(Shader *shaders, uint32_t count);
 
 		public:
 			~ShaderProgram();
 
-			static ShaderProgram create(const ShaderProgramInfo& info);
-			static ShaderProgram *ptrCreate(const ShaderProgramInfo& info);
+			static ShaderProgram create(Shader* shaders, uint32_t count);
+			static ShaderProgram *ptrCreate(Shader* shaders, uint32_t count);
 
 			void use();
 			void unUse();
 
+			void setUniform1f(float value, const char* name);
+			void setUniform2f(const math::Vector2& vec2, const char* name);
+			void setUniform3f(const math::Vector3& vec3, const char* name);
+			void setUniform4f(const math::Vector4& vec4, const char* name);
 			void setUniformMat4(math::Matrix4 matrix, const char* name);
+			void setUniformSampler2D(class Texture& text, const char* name);
 		};
 	} // opengl
 } // core

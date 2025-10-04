@@ -14,7 +14,7 @@ const std::string INFO_CODERS[] = {
     //          информация                          // код
         "FAILED_INIT_GLFW",                     // 0
         "FAILED_INIT_WINDOW",                   // 1
-        "FAILED_INIT_GLAD",                     // 2
+        "FAILED_INIT_GLEW",                     // 2
         "FAILED_LOAD_IMAGE",                    // 3
         "FAILED_CHECK_KEY",                     // 4
         "FAILED_CREATE_CUSTOM_CURSOR",          // 5

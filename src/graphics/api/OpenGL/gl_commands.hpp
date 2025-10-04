@@ -19,6 +19,15 @@ namespace core
 				int firstVert,
 				int countVert);
 
+		void drawElement(
+				const PRIMITIVE& primitive,
+				int countVert);
+
+		void drawElementArray(
+			const PRIMITIVE& primitive,
+			int countVert,
+			unsigned int* array);
+
 		void setStateDepthTest(bool flag);
 		void setStateCullFace(bool flag);
 

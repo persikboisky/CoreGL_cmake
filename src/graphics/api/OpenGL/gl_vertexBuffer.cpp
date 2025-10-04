@@ -5,7 +5,7 @@
 #include "gl_vertexBuffer.hpp"
 #include "../../../util/coders.hpp"
 #include "../../../util/types.hpp"
-#include <glad/glad.h>
+#include "../../../package/glew-2.1.0-master/include/GL/glew.h"
 
 namespace core
 {
@@ -19,7 +19,7 @@ namespace core
 			glGenVertexArrays(1, &this->VAO);
 			glGenBuffers(1, &this->VBO);
 
-			if (VAO == -1)
+			if (this->VAO == -1)
 			{
 				throw coders(13);
 			}
@@ -88,8 +88,7 @@ namespace core
 			glBindVertexArray(0);
 		}
 
-		void VertexBuffer::
-		addAttribute(unsigned int location, int nElement, int offset)
+		void VertexBuffer::addAttribute(unsigned int location, int nElement, int offset)
 		{
 			int type = 0;
 			switch (this->type)
@@ -117,7 +116,7 @@ namespace core
 						type,
 						GL_FALSE,
 						this->countElementToVertex * this->byteToElement,
-						(void*)(offset * this->byteToElement));
+						(void*)(offset * static_cast<unsigned long long>(this->byteToElement)));
 				glEnableVertexAttribArray(location);
 				this->unBind();
 			}
@@ -126,6 +125,16 @@ namespace core
 				throw coders(15);
 			}
 			this->unBind();
+		}
+
+		unsigned int VertexBuffer::getSizeOfByte() const
+		{
+			return this->sizeOfByte;
+		}
+
+		unsigned int VertexBuffer::getCountVertex()
+		{
+			return this->sizeOfByte / this->byteToElement / this->countElementToVertex;
 		}
 
 

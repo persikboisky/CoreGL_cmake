@@ -25,8 +25,8 @@ namespace core
 			unsigned int VAO;
 			unsigned int VBO;
 			unsigned int countElementToVertex;
-			unsigned long long int byteToElement;
-			unsigned long long int sizeOfByte = 0;
+			unsigned int byteToElement;
+			unsigned int sizeOfByte = 0;
 			VALUE_TYPE type;
 
 			VertexBuffer(const VertexBufferInfo& info);
@@ -41,6 +41,9 @@ namespace core
 			void unBind();
 
 			void addAttribute(unsigned int location, int nElement, int offset);
+
+			unsigned int getSizeOfByte() const;
+			unsigned int getCountVertex();
 		};
 	} // opengl
 } // core

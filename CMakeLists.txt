@@ -41,6 +41,8 @@ set(CoreGL_source
         src/graphics/api/OpenGL/gl_vertexBuffer.cpp
         src/graphics/api/OpenGL/gl_shaderProgram.cpp
         src/graphics/api/OpenGL/gl_commands.cpp
+        src/graphics/api/OpenGL/gl_texture.cpp
+        src/graphics/api/OpenGL/gl_elementBuffers.cpp
         src/file/code.cpp
         src/file/mtl.cpp
         src/file/obj.cpp
@@ -72,10 +74,12 @@ add_subdirectory(package/glfw)
 target_link_libraries(${PROJECT_NAME} glfw)
 target_include_directories(${PROJECT_NAME} PRIVATE package/glfw/include)
 
-# link glad
-add_library(glad STATIC package/glad/include/glad/glad.h package/glad/src/glad.c)
-target_link_libraries(${PROJECT_NAME} glad)
-target_include_directories(${PROJECT_NAME} PRIVATE package/glad/include)
+# link glew
+set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build shared libraries")
+set(BUILD_UTILS OFF CACHE INTERNAL "Build utilities")
+add_subdirectory(package/glew-2.1.0-master/build/cmake)
+target_link_libraries(${PROJECT_NAME} glew_s)
+target_link_directories(${PROJECT_NAME} PRIVATE package/glew-2.1.0-master/include)
 
 # link stb_image
 target_include_directories(${PROJECT_NAME} PRIVATE package/stb)

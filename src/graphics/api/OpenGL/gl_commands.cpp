@@ -4,7 +4,7 @@
 
 #include "gl_commands.hpp"
 #include "../../../util/types.hpp"
-#include <glad/glad.h>
+#include "../../../package/glew-2.1.0-master/include/GL/glew.h"
 
 namespace core
 {
@@ -19,6 +19,29 @@ namespace core
 					convertPrimitive(primitive),
 					firstVert,
 					countVert);
+		}
+
+		void drawElement(
+				const PRIMITIVE& primitive,
+				int countVert)
+		{
+			glDrawElements(
+					convertPrimitive(primitive),
+					countVert,
+					GL_UNSIGNED_INT,
+					(void*)0);
+		}
+
+		void drawElementArray(
+				const PRIMITIVE& primitive,
+				int countVert,
+				unsigned int* array)
+		{
+			glDrawElements(
+					convertPrimitive(primitive),
+					countVert,
+					GL_UNSIGNED_INT,
+					array);
 		}
 
 		void setStateDepthTest(bool flag)

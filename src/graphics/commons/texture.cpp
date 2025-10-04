@@ -9,7 +9,7 @@
 #include "../../util/coders.hpp"
 #include "../../util/console.hpp"
 #include "../../util/types.hpp"
-#include <glad/glad.h>
+#include "../../../package/glew-2.1.0-master/include/GL/glew.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <vector>

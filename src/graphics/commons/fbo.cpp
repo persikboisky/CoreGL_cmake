@@ -5,7 +5,7 @@
 #include "texture.hpp"
 #include "../../util/coders.hpp"
 #include "../../util/types.hpp"
-#include <glad/glad.h>
+#include "../../../package/glew-2.1.0-master/include/GL/glew.h"
 
 using namespace core;
 

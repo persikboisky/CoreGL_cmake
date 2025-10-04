@@ -6,7 +6,7 @@
 #include "../../util/vector.hpp"
 #include "../../util/types.hpp"
 #include "../../util/coders.hpp"
-#include <glad/glad.h>
+#include "../../../package/glew-2.1.0-master/include/GL/glew.h"
 #include <vector>
 #include <string>
 

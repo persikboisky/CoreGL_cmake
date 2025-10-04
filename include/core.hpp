@@ -41,6 +41,8 @@
 #include "../src/graphics/api/OpenGL/gl_vertexBuffer.hpp"
 #include "../src/graphics/api/OpenGL/gl_shaderProgram.hpp"
 #include "../src/graphics/api/OpenGL/gl_commands.hpp"
+#include "../src/graphics/api/OpenGL/gl_texture.hpp"
+#include "../src/graphics/api/OpenGL/gl_elementBuffers.hpp"
 #include "../src/file/image.hpp"
 #include "../src/file/code.hpp"
 #include "../src/file/mtl.hpp"

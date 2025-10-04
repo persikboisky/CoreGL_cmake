@@ -9,7 +9,9 @@
 #include "../../../file/code.hpp"
 #include "../../../config.hpp"
 #include "../../../math/Matrix4.hpp"
-#include <glad/glad.h>
+#include "../../../math/Vectors.hpp"
+#include "gl_texture.hpp"
+#include "../../../package/glew-2.1.0-master/include/GL/glew.h"
 #include <string>
 #include <iostream>
 
@@ -117,18 +119,17 @@ namespace core
 			return this->id;
 		}
 
-		ShaderProgram::ShaderProgram(const ShaderProgramInfo& info)
+		ShaderProgram::ShaderProgram(Shader *shaders, uint32_t count)
 		{
+			this->id = glCreateProgram();
+			for (uint32_t index = 0; index < count; index++)
+			{
+				glAttachShader(this->id, shaders[index].getId());
+			}
+
 			GLint result = GL_FALSE;
 			int infoLogLength;
 
-			this->id = glCreateProgram();
-			if (info.ptrVertexShader != nullptr)
-				glAttachShader(this->id, info.ptrVertexShader->getId());
-			if (info.ptrFragmentShader != nullptr)
-				glAttachShader(this->id, info.ptrFragmentShader->getId());
-			if (info.ptrGeometryShader != nullptr)
-				glAttachShader(this->id, info.ptrGeometryShader->getId());
 			glLinkProgram(this->id);
 
 			glGetProgramiv(this->id, GL_LINK_STATUS, &result);
@@ -155,14 +156,14 @@ namespace core
 			glDeleteProgram(this->id);
 		}
 
-		ShaderProgram ShaderProgram::create(const ShaderProgramInfo& info)
+		ShaderProgram ShaderProgram::create(Shader* shaders, uint32_t count)
 		{
-			return ShaderProgram(info);
+			return ShaderProgram(shaders, count);
 		}
 
-		ShaderProgram* ShaderProgram::ptrCreate(const ShaderProgramInfo& info)
+		ShaderProgram* ShaderProgram::ptrCreate(Shader* shaders, uint32_t count)
 		{
-			return new ShaderProgram(info);
+			return new ShaderProgram(shaders, count);
 		}
 
 		void ShaderProgram::use()
@@ -175,6 +176,26 @@ namespace core
 			glUseProgram(0);
 		}
 
+		void ShaderProgram::setUniform1f(float value, const char* name)
+		{
+			glUniform1f(getLocateUniform(this->id, name), value);
+		}
+
+		void ShaderProgram::setUniform2f(const math::Vector2& vec2, const char* name)
+		{
+			glUniform2f(getLocateUniform(this->id, name), vec2.x, vec2.y);
+		}
+
+		void ShaderProgram::setUniform3f(const math::Vector3& vec3, const char* name)
+		{
+			glUniform3f(getLocateUniform(this->id, name), vec3.x, vec3.y, vec3.z);
+		}
+
+		void ShaderProgram::setUniform4f(const math::Vector4& vec4, const char* name)
+		{
+			glUniform4f(getLocateUniform(this->id, name), vec4.x, vec4.y, vec4.z, vec4.w);
+		}
+
 		void ShaderProgram::setUniformMat4(math::Matrix4 matrix, const char* name)
 		{
 			glUniformMatrix4fv(
@@ -182,6 +203,11 @@ namespace core
 					1,
 					GL_FALSE,
 					matrix.getArray());
+		}
+
+		void ShaderProgram::setUniformSampler2D(Texture& text, const char* name)
+		{
+			glUniform1ui(getLocateUniform(this->id, name), text.getId());
 		}
 	} // opengl
 } // core
