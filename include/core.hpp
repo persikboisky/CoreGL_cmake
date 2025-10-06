@@ -38,6 +38,7 @@
 #include "../src/graphics/api/Vulkan/vk_commandPool.hpp"
 #include "../src/graphics/api/Vulkan/vk_vertexBuffer.hpp"
 #include "../src/graphics/api/Vulkan/vk_depthImageView.hpp"
+#include "../src/graphics/api/Vulkan/vk_fence.hpp"
 #include "../src/graphics/api/OpenGL/gl_vertexBuffer.hpp"
 #include "../src/graphics/api/OpenGL/gl_shaderProgram.hpp"
 #include "../src/graphics/api/OpenGL/gl_commands.hpp"

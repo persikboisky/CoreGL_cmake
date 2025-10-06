@@ -14,10 +14,10 @@ namespace core
 {
 	namespace vulkan
 	{
-		RenderPass::RenderPass(const renderPassInfo &info) : device(info.device->getPtrDevice()), depthAttachment(info.depthTest)
+		RenderPass::RenderPass(const RenderPassInfo &info) : device(info.device->getPtrDevice()), depthAttachment(info.depthTest)
 		{
 			// Цветовой attachment
-			VkAttachmentDescription colorAttachment{};
+			VkAttachmentDescription colorAttachment = {};
 			colorAttachment.format = info.device->getVkSurfaceFormat().format;
 			colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
 			colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
@@ -28,7 +28,7 @@ namespace core
 			colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 			// Depth attachment
-			VkAttachmentDescription depthAttachment{};
+			VkAttachmentDescription depthAttachment = {};
 			depthAttachment.format = VK_FORMAT_D32_SFLOAT;
 			depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
 			depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
@@ -57,29 +57,6 @@ namespace core
 			else
 				subpass.pDepthStencilAttachment = VK_NULL_HANDLE;
 
-			// // Зависимости subpass
-			// std::array<VkSubpassDependency, 2> dependencies;
-
-			// // Зависимость для color attachment
-			// dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
-			// dependencies[0].dstSubpass = 0;
-			// dependencies[0].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-			// dependencies[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-			// dependencies[0].srcAccessMask = 0;
-			// dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-			// dependencies[0].dependencyFlags = 0;
-
-			// // Зависимость для depth attachment
-			// dependencies[1].srcSubpass = VK_SUBPASS_EXTERNAL;
-			// dependencies[1].dstSubpass = 0;
-			// dependencies[1].srcStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT |
-			// 							   VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-			// dependencies[1].dstStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT |
-			// 							   VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-			// dependencies[1].srcAccessMask = 0;
-			// dependencies[1].dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-			// dependencies[1].dependencyFlags = 0;
-
 			// Создание render pass
 			std::vector<VkAttachmentDescription> attachments = {};
 			if (info.depthTest)
@@ -98,8 +75,8 @@ namespace core
 			renderPassInfo.pAttachments = attachments.data();
 			renderPassInfo.subpassCount = 1;
 			renderPassInfo.pSubpasses = &subpass; // Массив subpass'ов
-			// renderPassInfo.pDependencies = dependencies.data();
-			// renderPassInfo.dependencyCount = 2;
+			// RenderPassInfo.pDependencies = dependencies.data();
+			// RenderPassInfo.dependencyCount = 2;
 
 			VkResult result = vkCreateRenderPass(
 				info.device->getDevice(),
@@ -117,12 +94,12 @@ namespace core
 				nullptr);
 		}
 
-		RenderPass RenderPass::create(const renderPassInfo &info)
+		RenderPass RenderPass::create(const RenderPassInfo &info)
 		{
 			return RenderPass(info);
 		}
 
-		RenderPass *RenderPass::ptrCreate(const renderPassInfo &info)
+		RenderPass *RenderPass::ptrCreate(const RenderPassInfo &info)
 		{
 			return new RenderPass(info);
 		}

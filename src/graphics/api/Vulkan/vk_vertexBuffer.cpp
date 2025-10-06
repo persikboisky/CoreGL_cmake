@@ -13,7 +13,7 @@ namespace core
 {
 	namespace vulkan
 	{
-		VertexBuffer::VertexBuffer(vertexBufferInfo& info) : ptrDevice(info.ptrDevice->getPtrDevice()), binding(info.binding)
+		VertexBuffer::VertexBuffer(VertexBufferInfo& info) : ptrDevice(info.ptrDevice->getPtrDevice()), binding(info.binding)
 		{
 			VkBufferCreateInfo bufferInfo = {};
 			bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -77,12 +77,12 @@ namespace core
 			this->bindingDescription.stride = info.countElementForVertex * this->nByteToOneElement;
 		}
 
-		VertexBuffer VertexBuffer::create(vertexBufferInfo& info)
+		VertexBuffer VertexBuffer::create(VertexBufferInfo& info)
 		{
 			return VertexBuffer(info);
 		}
 
-		VertexBuffer* VertexBuffer::ptrCreate(vertexBufferInfo& info)
+		VertexBuffer* VertexBuffer::ptrCreate(VertexBufferInfo& info)
 		{
 			return new VertexBuffer(info);
 		}

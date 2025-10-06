@@ -9,13 +9,14 @@
 #include "vk_imageView.hpp"
 #include "vk_image.hpp"
 #include "vk_semaphore.hpp"
+#include "vk_fence.hpp"
 #include "../../../util/coders.hpp"
 
 namespace core
 {
 	namespace vulkan
 	{
-		SwapChain::SwapChain(const swapChainInfo& info) : ptrDevice(info.ptrDevice->getPtrDevice())
+		SwapChain::SwapChain(const SwapChainInfo& info) : ptrDevice(info.ptrDevice->getPtrDevice())
 		{
 			uint32_t FamilyIndices = info.ptrDevice->getPresentQueueFamilyIndex();
 
@@ -76,12 +77,12 @@ namespace core
 			}
 		}
 
-		SwapChain SwapChain::create(const swapChainInfo& info)
+		SwapChain SwapChain::create(const SwapChainInfo& info)
 		{
 			return SwapChain(info);
 		}
 
-		SwapChain* SwapChain::ptrCreate(const swapChainInfo& info)
+		SwapChain* SwapChain::ptrCreate(const SwapChainInfo& info)
 		{
 			return new SwapChain(info);
 		}
@@ -104,16 +105,45 @@ namespace core
 			return static_cast<uint32_t>(this->swapChainImages.size());
 		}
 
-		uint32_t SwapChain::getNextImageIndex(Semaphore& semaphore, bool wait)
+		uint32_t SwapChain::getNextImageIndex(class Semaphore& semaphore)
 		{
 			uint32_t index = 0;
-			vkAcquireNextImageKHR(
+			VkResult result = vkAcquireNextImageKHR(
+					*this->ptrDevice,
+					this->swapChain,
+					UINT64_MAX,
+					semaphore.getVkSemaphore(),
+					VK_NULL_HANDLE,
+					&index);
+			coders::vulkanProcessingError(result);
+			return index;
+		}
+
+		uint32_t SwapChain::getNextImageIndex(Fence& fence)
+		{
+			uint32_t index = 0;
+			VkResult result = vkAcquireNextImageKHR(
+					*this->ptrDevice,
+					this->swapChain,
+					UINT64_MAX,
+					VK_NULL_HANDLE,
+					fence.getVkFence(),
+					&index);
+			coders::vulkanProcessingError(result);
+			return index;
+		}
+
+		uint32_t SwapChain::getNextImageIndex(Semaphore& semaphore, Fence& fence)
+		{
+			uint32_t index = 0;
+			VkResult result = vkAcquireNextImageKHR(
 				*this->ptrDevice,
 				this->swapChain,
 				UINT64_MAX,
 				semaphore.getVkSemaphore(),
-				VK_NULL_HANDLE,
+					fence.getVkFence(),
 				&index);
+			coders::vulkanProcessingError(result);
 			return index;
 		}
 
@@ -126,6 +156,7 @@ namespace core
 		{
 			return &this->swapChain;
 		}
+
 	} // vulkan
 } // core
 

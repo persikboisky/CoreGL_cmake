@@ -19,13 +19,13 @@ namespace core
 			VkCommandPool commandPool;
 			VkDevice* ptrDevice = nullptr;
 
-			explicit CommandPool(class Device& device);
+			explicit CommandPool(class Device& device, bool flagMayReset);
 
 		 public:
 			~CommandPool();
 
-			static CommandPool create(class Device& device);
-			static CommandPool *ptrCreate(class Device& device);
+			static CommandPool create(class Device& device, bool flagMayReset = false);
+			static CommandPool *ptrCreate(class Device& device, bool flagMayReset = false);
 
 			VkCommandPool getVkCommandPool();
 			VkCommandPool *getVkPtrCommandPool();

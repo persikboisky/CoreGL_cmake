@@ -38,6 +38,7 @@ set(CoreGL_source
         src/graphics/api/Vulkan/vk_commandPool.cpp
         src/graphics/api/Vulkan/vk_vertexBuffer.cpp
         src/graphics/api/Vulkan/vk_depthImageView.cpp
+        src/graphics/api/Vulkan/vk_fence.cpp
         src/graphics/api/OpenGL/gl_vertexBuffer.cpp
         src/graphics/api/OpenGL/gl_shaderProgram.cpp
         src/graphics/api/OpenGL/gl_commands.cpp

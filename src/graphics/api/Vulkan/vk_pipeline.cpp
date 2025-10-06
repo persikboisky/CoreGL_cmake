@@ -11,12 +11,13 @@
 #include "vk_vertexBuffer.hpp"
 #include <array>
 #include <iostream>
+#include <cstring>
 
 namespace core
 {
 	namespace vulkan
 	{
-		Pipeline::Pipeline(const pipelineInfo &info) : ptrDevice(info.ptrDevice->getPtrDevice())
+		Pipeline::Pipeline(const PipelineInfo &info) : ptrDevice(info.ptrDevice->getPtrDevice())
 		{
 			VkPipelineLayoutCreateInfo layoutInfoCreateInfo = {};
 			layoutInfoCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -148,32 +149,6 @@ namespace core
 			multisampleStateCreateInfo.alphaToOneEnable = VK_FALSE;
 
 			//--------------------------------------------------------------------------------------------------
-			// Шейдерные стадии
-			VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
-			vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-			vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-			vertShaderStageInfo.module = info.ptrShaderModule->getShaders()[0];
-			vertShaderStageInfo.pName = info.ptrShaderModule->getNamesFuncToShaders()[0];
-
-			VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
-			fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-			fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-			fragShaderStageInfo.module = info.ptrShaderModule->getShaders()[1];
-			fragShaderStageInfo.pName = info.ptrShaderModule->getNamesFuncToShaders()[1];
-
-			std::vector<VkPipelineShaderStageCreateInfo> shaderStages = {vertShaderStageInfo, fragShaderStageInfo};
-
-			if (info.ptrShaderModule->getShaders().size() > 2)
-			{
-				VkPipelineShaderStageCreateInfo geomShaderStageInfo{};
-				geomShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-				geomShaderStageInfo.stage = VK_SHADER_STAGE_GEOMETRY_BIT;
-				geomShaderStageInfo.module = info.ptrShaderModule->getShaders()[2];
-				geomShaderStageInfo.pName = info.ptrShaderModule->getNamesFuncToShaders()[2];
-				shaderStages.push_back(geomShaderStageInfo);
-			}
-
-			//--------------------------------------------------------------------------------------------------
 			// Растеризация
 			VkCullModeFlags cullMode;
 			switch (info.typeCullFace)
@@ -218,8 +193,10 @@ namespace core
 			rasterizationStateCreateInfo.depthBiasSlopeFactor = 0;
 			rasterizationStateCreateInfo.depthClampEnable = VK_TRUE;
 			rasterizationStateCreateInfo.flags = 0;
-//			rasterizationStateCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE; // ПРОТИВ ЧАСОВОЙ СТРЕЛКИ
-			rasterizationStateCreateInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
+			rasterizationStateCreateInfo.frontFace = {
+				(info.frontFace == FRONT_FACE_CLOCKWISE) ?
+				VK_FRONT_FACE_CLOCKWISE :
+				VK_FRONT_FACE_COUNTER_CLOCKWISE };
 			rasterizationStateCreateInfo.lineWidth = 1.0f;
 			rasterizationStateCreateInfo.pNext = nullptr;
 			rasterizationStateCreateInfo.polygonMode = polygonMode;
@@ -303,6 +280,17 @@ namespace core
 			depthStencil.front = {};
 
 			//--------------------------------------------------------------------------------------------------
+			// Шейдерные стадии
+			std::vector<VkPipelineShaderStageCreateInfo> shaderStageCreateInfos = {};
+			shaderStageCreateInfos.resize(info.ptrShaderProgram->getVkPipelineShaderStageCreateInfos().size());
+			for (unsigned int i = 0; i < info.ptrShaderProgram->getVkPipelineShaderStageCreateInfos().size(); i++)
+			{
+				shaderStageCreateInfos[i] = info.ptrShaderProgram->getVkPipelineShaderStageCreateInfos()[i];
+			}
+
+//			shaderStageCreateInfos[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+			//--------------------------------------------------------------------------------------------------
 			// конвейер
 			VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
 			pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -317,8 +305,8 @@ namespace core
 			pipelineCreateInfo.pDynamicState = VK_NULL_HANDLE;
 			pipelineCreateInfo.pInputAssemblyState = &inputAssembly;
 			pipelineCreateInfo.pMultisampleState = &multisampleStateCreateInfo;
-			pipelineCreateInfo.pStages = shaderStages.data();
-			pipelineCreateInfo.stageCount = static_cast<uint32_t>(shaderStages.size());
+			pipelineCreateInfo.stageCount = static_cast<uint32_t>(shaderStageCreateInfos.size());
+			pipelineCreateInfo.pStages = shaderStageCreateInfos.data();
 			pipelineCreateInfo.pRasterizationState = &rasterizationStateCreateInfo;
 			pipelineCreateInfo.pVertexInputState = &vertexInputInfo;
 			pipelineCreateInfo.pViewportState = &viewportStateCreateInfo;
@@ -335,12 +323,12 @@ namespace core
 			coders::vulkanProcessingError(result);
 		}
 
-		Pipeline Pipeline::create(const pipelineInfo &info)
+		Pipeline Pipeline::create(const PipelineInfo &info)
 		{
 			return Pipeline(info);
 		}
 
-		Pipeline *Pipeline::ptrCreate(const pipelineInfo &info)
+		Pipeline *Pipeline::ptrCreate(const PipelineInfo &info)
 		{
 			return new Pipeline(info);
 		}

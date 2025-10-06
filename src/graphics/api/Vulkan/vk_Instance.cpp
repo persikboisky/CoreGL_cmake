@@ -16,7 +16,7 @@ namespace core
 {
 	namespace vulkan
 	{
-		Instance::Instance(const instanceInfo& info)
+		Instance::Instance(const InstanceInfo& info)
 		{
 			VkApplicationInfo appInfo = {};
 			appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -59,12 +59,12 @@ namespace core
 			}
 		}
 
-		Instance Instance::create(const instanceInfo& info)
+		Instance Instance::create(const InstanceInfo& info)
 		{
 			return Instance(info);
 		}
 
-		[[maybe_unused]] Instance* Instance::PtrCreate(const instanceInfo& info)
+		[[maybe_unused]] Instance* Instance::PtrCreate(const InstanceInfo& info)
 		{
 			return new Instance(info);
 		}

@@ -13,7 +13,7 @@ namespace core
 {
 	namespace vulkan
 	{
-		struct renderPassInfo
+		struct RenderPassInfo
 		{
 			class Device* device = nullptr;
 			bool depthTest = false;
@@ -26,13 +26,13 @@ namespace core
 			VkDevice* device = nullptr;
 			bool depthAttachment = false;
 
-			RenderPass(const renderPassInfo& info);
+			RenderPass(const RenderPassInfo& info);
 
 		 public:
 			~RenderPass();
 
-			static RenderPass create(const renderPassInfo& info);
-			static RenderPass *ptrCreate(const renderPassInfo& info);
+			static RenderPass create(const RenderPassInfo& info);
+			static RenderPass *ptrCreate(const RenderPassInfo& info);
 
 			VkRenderPass getVkRenderPass();
 			VkRenderPass *getVkPtrRenderPass();

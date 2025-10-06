@@ -14,24 +14,40 @@ namespace core
 {
 	namespace vulkan
 	{
-		struct instanceInfo
+		/// @brief структура с информацией для создания экземпляра Vulkan
+		struct InstanceInfo
 		{
+			/// @brief объект структуры version3 (версия Vulkan)
 			version3 VULKAN_API_VERSION = {1, 2, 0};
-			version3 APP_VERSION = {1, 4, 0};
+
+			/// @brief объект структуры version3 (версия приложения, необязательный пармаетр)
+			version3 APP_VERSION = {1, 0, 0};
+
+			/// @brief название приложения (необязатяльный параметр)
 			const char* APP_NAME = "CoreGL";
+
+			/// @brief разрешить выводить дерево ресурсов vulkan при вызове функций
 			bool debugApiDump = false;
 		};
 
+		/// @brief класс экземпляр Vulkan
 		class Instance
 		{
 		 private:
 			VkInstance  instance{};
 
-			explicit Instance(const instanceInfo& info);
+			explicit Instance(const InstanceInfo& info);
 
 		 public:
-			static Instance create(const instanceInfo& info = {});
-			static Instance *PtrCreate(const instanceInfo& info = {});
+			/// @brief создаёт экземпляр Vulkan
+			/// @param info объект структуры vulkan::InstanceInfo
+			/// @return объект класса vulkan::Instance
+			static Instance create(const InstanceInfo& info = {});
+
+			/// @brief создаёт экземпляр Vulkan
+			/// @param info объект структуры vulkan::InstanceInfo
+			/// @return указатель на объект класса vulkan::Instance
+			static Instance *PtrCreate(const InstanceInfo& info = {});
 
 			~Instance();
 

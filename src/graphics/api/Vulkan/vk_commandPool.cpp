@@ -11,13 +11,13 @@ namespace core
 {
 	namespace vulkan
 	{
-		CommandPool::CommandPool(struct Device& device) : ptrDevice(device.getPtrDevice())
+		CommandPool::CommandPool(struct Device& device, bool flagMayReset) : ptrDevice(device.getPtrDevice())
 		{
 			VkCommandPoolCreateInfo poolInfo = {};
 			poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 			poolInfo.queueFamilyIndex = device.getGraphicsQueueFamilyIndex();
 			poolInfo.pNext = nullptr;
-			poolInfo.flags = 0;
+			poolInfo.flags = (flagMayReset) ? VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT : 0;
 
 			VkResult result = vkCreateCommandPool(
 				device.getDevice(),
@@ -32,14 +32,14 @@ namespace core
 			vkDestroyCommandPool(*this->ptrDevice, this->commandPool, nullptr);
 		}
 
-		CommandPool CommandPool::create(Device& device)
+		CommandPool CommandPool::create(Device& device, bool flagMayReset)
 		{
-			return CommandPool(device);
+			return CommandPool(device, flagMayReset);
 		}
 
-		CommandPool* CommandPool::ptrCreate(Device& device)
+		CommandPool* CommandPool::ptrCreate(Device& device, bool flagMayReset)
 		{
-			return new CommandPool(device);
+			return new CommandPool(device, flagMayReset);
 		}
 
 		VkCommandPool CommandPool::getVkCommandPool()

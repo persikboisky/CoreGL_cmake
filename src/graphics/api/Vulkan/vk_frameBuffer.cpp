@@ -73,7 +73,7 @@ namespace core::vulkan
 		return &this->fbo;
 	}
 
-	FrameBuffers::FrameBuffers(frameBuffersInfo &info) : device(info.ptrDevice->getPtrDevice())
+	FrameBuffers::FrameBuffers(FrameBuffersInfo &info) : device(info.ptrDevice->getPtrDevice())
 	{
 		uint32_t i = 0;
 		for (ImageView *image : info.ptrSwapchainImageViews->getPtrImagesView())
@@ -97,12 +97,12 @@ namespace core::vulkan
 		this->fbos.clear();
 	}
 
-	FrameBuffers FrameBuffers::create(frameBuffersInfo &info)
+	FrameBuffers FrameBuffers::create(FrameBuffersInfo &info)
 	{
 		return FrameBuffers(info);
 	}
 
-	FrameBuffers *FrameBuffers::ptrCreate(frameBuffersInfo &info)
+	FrameBuffers *FrameBuffers::ptrCreate(FrameBuffersInfo &info)
 	{
 		return new FrameBuffers(info);
 	}

@@ -12,7 +12,7 @@
 
 namespace core::vulkan
 {
-	struct frameBuffersInfo 
+	struct FrameBuffersInfo
 	{
 		class Device *ptrDevice = nullptr;
 		class RenderPass *ptrRenderPass = nullptr;
@@ -53,14 +53,14 @@ namespace core::vulkan
 		std::vector<FrameBuffer*> fbos = {};
 		VkDevice *device = nullptr;
 
-		FrameBuffers(frameBuffersInfo& info);
+		FrameBuffers(FrameBuffersInfo& info);
 
 	 public:
 		~FrameBuffers();
 
-		static FrameBuffers create(frameBuffersInfo& info);
+		static FrameBuffers create(FrameBuffersInfo& info);
 
-		static FrameBuffers *ptrCreate(frameBuffersInfo& info);
+		static FrameBuffers *ptrCreate(FrameBuffersInfo& info);
 
 		std::vector<FrameBuffer*> getPtrFramebuffers();
 	};

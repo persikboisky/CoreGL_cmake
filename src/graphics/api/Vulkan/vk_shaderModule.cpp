@@ -4,120 +4,126 @@
 
 #include "vk_shaderModule.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
+#include <shaderc/shaderc.hpp>
 #include "../../../util/coders.hpp"
 #include "../../../config.hpp"
 #include "../../../util/console.hpp"
+#include "../../../file/code.hpp"
 #include "vk_device.hpp"
 #include <fstream>
 #include <iostream>
 
 namespace core::vulkan
 {
-	VkShaderModule ShaderModule::createShaderModule(VkDevice device, const char* path)
+	ShaderModule::ShaderModule(ShaderModuleInfo& info) :
+		typeShader(info.typeShader), ptrDevice(info.ptrDevice->getPtrDevice()),
+		mainFuncName(info.mainFuncName)
 	{
-		std::ifstream file(path, std::ios::ate | std::ios::binary);
+		VkShaderModuleCreateInfo createInfo = {};
+		std::ifstream file(info.path, std::ios::ate | std::ios::binary);
 
-		if (!file.is_open()) {
-			throw coders(6, path);
+		if (!file.is_open())
+		{
+			throw coders(6, info.path);
 		}
 
 		size_t fileSize = (size_t)file.tellg();
 		std::vector<char> buffer(fileSize);
 
 		file.seekg(0);
-		file.read(buffer.data(), fileSize);
+		file.read(buffer.data(), (std::streamsize)fileSize);
 		file.close();
 
-		VkShaderModuleCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		createInfo.codeSize = buffer.size();
 		createInfo.pCode = reinterpret_cast<const uint32_t*>(buffer.data());
 		createInfo.flags = 0;
 		createInfo.pNext = nullptr;
 
-		VkShaderModule shaderModule;
 		VkResult result = vkCreateShaderModule(
-			device,
+			info.ptrDevice->getDevice(),
 			&createInfo,
 			nullptr,
-			&shaderModule);
+			&this->shader);
 		coders::vulkanProcessingError(result);
 
 		if (CORE_INFO)
 		{
 			console::printTime();
-			std::cout << "Ok: create shader from path: " << path << std::endl;
-		}
-
-		return shaderModule;
-	}
-
-	ShaderModule::ShaderModule(const ShaderModuleInfo& info) : device(info.device->getPtrDevice())
-	{
-		if (info.pathToVertexShaderCode != nullptr)
-		{
-
-			this->shader.push_back(this->createShaderModule(info.device->getDevice(), info.pathToVertexShaderCode));
-			this->nameFunc.push_back(info.nameMainFuncToVertexShader);
-
-			if (CORE_INFO)
-			{
-				console::printTime();
-				std::cout << "Ok: create vertex shader module" << std::endl;
-			}
-		}
-
-		if (info.pathToFragmentShaderCode != nullptr)
-		{
-			this->shader.push_back(this->createShaderModule(info.device->getDevice(), info.pathToFragmentShaderCode));
-			this->nameFunc.push_back(info.nameMainFuncToFragmentShader);
-
-			if (CORE_INFO)
-			{
-				console::printTime();
-				std::cout << "Ok: create fragment shader module" << std::endl;
-			}
-		}
-
-		if (info.pathToGeometryShaderCode != nullptr)
-		{
-			this->shader.push_back(this->createShaderModule(info.device->getDevice(), info.pathToGeometryShaderCode));
-			this->nameFunc.push_back(info.nameMainFuncToGeometryShader);
-
-			if (CORE_INFO)
-			{
-				console::printTime();
-				std::cout << "Ok: create geometry shader module" << std::endl;
-			}
+			std::cout << "Ok: compile shader module, path: " << info.path << std::endl;
 		}
 	}
 
-	ShaderModule ShaderModule::create(const ShaderModuleInfo& info)
+	ShaderModule ShaderModule::create(ShaderModuleInfo& info)
 	{
 		return ShaderModule(info);
 	}
 
-	ShaderModule* ShaderModule::ptrCreate(const ShaderModuleInfo& info)
+	ShaderModule* ShaderModule::ptrCreate(ShaderModuleInfo& info)
 	{
 		return new ShaderModule(info);
 	}
 
 	ShaderModule::~ShaderModule()
 	{
-		for (const VkShaderModule &shader : this->shader)
-		{
-			vkDestroyShaderModule(*this->device, shader, nullptr);
-		}
+		vkDestroyShaderModule(
+				*this->ptrDevice,
+				this->shader,
+				nullptr);
 	}
 
-	std::vector<VkShaderModule> ShaderModule::getShaders()
+	const char* ShaderModule::getNameMainFunc()
+	{
+		return this->mainFuncName;
+	}
+
+	VkShaderModule ShaderModule::getVkShaderModule() const
 	{
 		return this->shader;
 	}
 
-	std::vector<const char*> ShaderModule::getNamesFuncToShaders()
+	TYPE_SHADER ShaderModule::getTypeShader() const
 	{
-		return this->nameFunc;
+		return this->typeShader;
+	}
+
+	ShaderProgram::ShaderProgram(ShaderProgramInfo& info)
+	{
+		this->shaderStages.resize(info.count);
+		for (unsigned int i = 0; i < info.count; i++)
+		{
+			this->shaderStages[i].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+			this->shaderStages[i].module = info.ptrShaders[i]->getVkShaderModule();
+			this->shaderStages[i].pName = info.ptrShaders[i]->getNameMainFunc();
+
+			switch (TYPE_SHADER(info.ptrShaders[i]->getTypeShader()))
+			{
+			case FRAGMENT:
+				this->shaderStages[i].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+				break;
+			case GEOMETRY:
+				this->shaderStages[i].stage = VK_SHADER_STAGE_GEOMETRY_BIT;
+				break;
+			case VERTEX:
+				this->shaderStages[i].stage = VK_SHADER_STAGE_VERTEX_BIT;
+				break;
+			}
+		}
+	}
+
+	ShaderProgram ShaderProgram::create(ShaderProgramInfo& info)
+	{
+		return ShaderProgram(info);
+	}
+
+	std::vector<VkPipelineShaderStageCreateInfo> ShaderProgram::getVkPipelineShaderStageCreateInfos()
+	{
+		return this->shaderStages;
+	}
+
+	ShaderProgram *ShaderProgram::ptrCreate(ShaderProgramInfo& info)
+	{
+		return new ShaderProgram(info);
 	}
 }
 

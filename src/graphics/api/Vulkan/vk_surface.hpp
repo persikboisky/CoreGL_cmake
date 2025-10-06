@@ -14,6 +14,7 @@ namespace core
 	class Window;
 	namespace vulkan
 	{
+		/// @brief класс поверхности окна(холст)
 		class Surface
 		{
 		 private:
@@ -23,7 +24,16 @@ namespace core
 			Surface(class Instance& instance, Window& window);
 
 		 public:
+			/// @brief создаёт поверхность окна
+			/// @param instance объект класса vulkan::Instance
+			/// @param window объект класса Window
+			/// @return объект класса vulkan::Surface
 			static Surface create(class Instance& instance, Window& window);
+
+			/// @brief создаёт поверхность окна
+			/// @param instance объект класса vulkan::Instance
+			/// @param window объект класса Window
+			/// @return указатель на объект класса vulkan::Surface
 			static Surface *ptrCreate(class Instance& instance, Window& window);
 
 			~Surface();

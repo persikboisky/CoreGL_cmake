@@ -16,7 +16,7 @@ namespace core
 	{
 		enum FORMAT_VARIABLE : int;
 
-		struct vertexBufferInfo
+		struct VertexBufferInfo
 		{
 			class Device* ptrDevice = nullptr;
 			float* arrayVertices = nullptr;
@@ -39,11 +39,11 @@ namespace core
 			VkVertexInputBindingDescription bindingDescription = {};
 			std::vector<VkVertexInputAttributeDescription> attributeDescriptions = {};
 
-			VertexBuffer(vertexBufferInfo& info);
+			VertexBuffer(VertexBufferInfo& info);
 
 		public:
-			static VertexBuffer create(vertexBufferInfo& info);
-			static VertexBuffer* ptrCreate(vertexBufferInfo& info);
+			static VertexBuffer create(VertexBufferInfo& info);
+			static VertexBuffer* ptrCreate(VertexBufferInfo& info);
 
 			~VertexBuffer();
 

@@ -53,7 +53,7 @@ namespace core
 			return new CommandBuffer(device, commandPool);
 		}
 
-		void CommandBuffer::begin()
+		void CommandBuffer::beginWriteCommands()
 		{
 			VkCommandBufferBeginInfo beginInfo = {};
 			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -62,46 +62,46 @@ namespace core
 			coders::vulkanProcessingError(result);
 		}
 
-		void CommandBuffer::end()
+		void CommandBuffer::endWriteCommands()
 		{
 			VkResult result = vkEndCommandBuffer(this->commandBuffer);
 			coders::vulkanProcessingError(result);
 		}
 
-		void CommandBuffer::beginRenderPass(beginRenderPassInfo& brpi)
+		void CommandBuffer::beginRenderPass(BeginRenderPassInfo& brpi)
 		{
 			VkRenderPassBeginInfo renderPassInfo{};
 			renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-			renderPassInfo.renderPass = brpi.renderPass->getVkRenderPass();
-			renderPassInfo.framebuffer = brpi.frameBuffer->getVkFramebuffer();
-			renderPassInfo.renderArea.offset = {0, 0};
-			renderPassInfo.renderArea.extent.width =  brpi.extent.width;
+			renderPassInfo.renderPass = brpi.ptrRenderPass->getVkRenderPass();
+			renderPassInfo.framebuffer = brpi.ptrFrameBuffer->getVkFramebuffer();
+			renderPassInfo.renderArea.offset = { 0, 0 };
+			renderPassInfo.renderArea.extent.width = brpi.extent.width;
 			renderPassInfo.renderArea.extent.height = brpi.extent.height;
 
 			std::vector<VkClearValue> clearValues = {};
-			if (brpi.renderPass->getStateDepth())
+			if (brpi.ptrRenderPass->getStateDepth())
 			{
 				clearValues.resize(2);
 				clearValues[1].depthStencil.depth = brpi.depth;
 				clearValues[1].depthStencil.stencil = brpi.stencil;
-			} 
+			}
 			else clearValues.resize(1);
 
 			color::RGBA clearColor = color::normalize(brpi.clearColor);
 			clearValues[0].color = {{
-				clearColor.red,
-				clearColor.green,
-				clearColor.blue,
-				clearColor.alpha}};
+											clearColor.red,
+											clearColor.green,
+											clearColor.blue,
+											clearColor.alpha }};
 
 			renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 			renderPassInfo.pClearValues = clearValues.data();
 
 //			// Начало render pass
 			vkCmdBeginRenderPass(
-				this->commandBuffer,
-				&renderPassInfo,
-				VK_SUBPASS_CONTENTS_INLINE  // Команды будут записываться непосредственно
+					this->commandBuffer,
+					&renderPassInfo,
+					VK_SUBPASS_CONTENTS_INLINE  // Команды будут записываться непосредственно
 			);
 		}
 
@@ -137,7 +137,7 @@ namespace core
 			return &this->commandBuffer;
 		}
 
-		void CommandBuffer::pushConstants(Pipeline& pipeline, pushConstantInfo& pci, void *push)
+		void CommandBuffer::pushConstants(Pipeline& pipeline, PushConstantInfo& pci, void *push)
 		{
 			VkShaderStageFlags shaderStageFlagBits;
 			switch (pci.shaderStages)
@@ -174,7 +174,7 @@ namespace core
 					push);
 		}
 
-		void CommandBuffer::bindVertexBuffers(const bindVertexBuffersInfo& info)
+		void CommandBuffer::bindVertexBuffers(const BindVertexBuffersInfo& info)
 		{
 			std::vector<VkBuffer> ptrVkBuffer = {};
 			std::vector<uint64_t> offset = {};

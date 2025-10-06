@@ -200,7 +200,7 @@ Matrix4 Matrix4::getRotateX(float angle, const Matrix4& mat4)
 		0, 0, 0, 1
 	};
 
-	return Matrix4(rotate);
+	return Matrix4(rotate) * mat4;
 }
 
 Matrix4 Matrix4::getRotateY(float angle, const Matrix4& mat4)
@@ -215,7 +215,7 @@ Matrix4 Matrix4::getRotateY(float angle, const Matrix4& mat4)
 		0, 0, 0, 1
 	};
 
-	return Matrix4(rotate);
+	return Matrix4(rotate) * mat4;
 }
 
 Matrix4 Matrix4::getRotateZ(float angle, const Matrix4& mat4)
@@ -230,5 +230,5 @@ Matrix4 Matrix4::getRotateZ(float angle, const Matrix4& mat4)
 		0, 0, 0, 1
 	};
 
-	return Matrix4(rotate);
+	return Matrix4(rotate) * mat4;
 }

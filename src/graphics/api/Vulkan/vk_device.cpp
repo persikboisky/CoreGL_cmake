@@ -18,7 +18,7 @@ namespace core
 {
 	namespace vulkan
 	{
-		Device::Device(const deviceInfo& info) : physicalDevice(info.ptrPhDevices->getVkPhysicalDevice(info.idDevice))
+		Device::Device(const DeviceInfo& info) : physicalDevice(info.ptrPhDevices->getVkPhysicalDevice(info.idDevice))
 		{
 			vkGetPhysicalDeviceProperties(this->physicalDevice, &this->deviceProperties);
 			vkGetPhysicalDeviceFeatures(this->physicalDevice, &this->deviceFeatures);
@@ -141,12 +141,12 @@ namespace core
 			coders::vulkanProcessingError(result);
 		}
 
-		Device Device::create(const deviceInfo& info)
+		Device Device::create(const DeviceInfo& info)
 		{
 			return Device(info);
 		}
 
-		Device* Device::ptrCreate(const deviceInfo& info)
+		Device* Device::ptrCreate(const DeviceInfo& info)
 		{
 			return new Device(info);
 		}

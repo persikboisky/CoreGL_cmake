@@ -14,7 +14,7 @@ namespace core
 {
 	namespace vulkan
 	{
-		struct swapChainInfo
+		struct SwapChainInfo
 		{
 			class Surface *ptrSurface = nullptr;
 			class Device *ptrDevice = nullptr;
@@ -28,7 +28,7 @@ namespace core
 		class SwapChain
 		{
 		private:
-			SwapChain(const swapChainInfo &info);
+			SwapChain(const SwapChainInfo &info);
 
 			VkSwapchainKHR swapChain = {};
 			VkDevice *ptrDevice = nullptr;
@@ -36,15 +36,17 @@ namespace core
 			std::vector<image> swapChainImages = {};
 
 		public:
-			static SwapChain create(const swapChainInfo &info);
-			static SwapChain *ptrCreate(const swapChainInfo &info);
+			static SwapChain create(const SwapChainInfo &info);
+			static SwapChain *ptrCreate(const SwapChainInfo &info);
 
 			~SwapChain();
 
 			std::vector<image> getImages();
 			uint32_t getCountImage();
 
-			uint32_t getNextImageIndex(class Semaphore& semaphore, bool wait = true);
+			uint32_t getNextImageIndex(class Semaphore& semaphore);
+			uint32_t getNextImageIndex(class Fence& fence);
+			uint32_t getNextImageIndex(class Semaphore& semaphore, class Fence& fence);
 
 			VkSwapchainKHR getVkSwapchainKHR();
 			VkSwapchainKHR *getVkPtrSwapchainKHR();

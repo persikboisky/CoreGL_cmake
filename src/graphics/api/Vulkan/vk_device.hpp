@@ -13,11 +13,19 @@ namespace core
 {
 	namespace vulkan
 	{
-		struct deviceInfo
+		/// @brief информация для создания vulkan::Device
+		struct DeviceInfo
 		{
+			/// @brief указатель на объект класса vulkan::Instance
 			class Instance* ptrInstance = nullptr;
+
+			/// @brief указатель на объект класса vulkan::PhysicalDevices
 			class PhysicalDevices* ptrPhDevices = nullptr;
+
+			/// @brief указатель на объект класса vulkan::Surface
 			class Surface* ptrSurface = nullptr;
+
+			/// @brief индекс выбранной видиокарты согласно списку vulkan::PhysicalDevices
 			unsigned int idDevice = 0;
 		};
 
@@ -41,11 +49,11 @@ namespace core
 
 			const float queuePriorities = 1.0f;
 
-			explicit Device(const deviceInfo& info);
+			explicit Device(const DeviceInfo& info);
 
 		 public:
-			static Device create(const deviceInfo& info);
-			static Device* ptrCreate(const deviceInfo& info);
+			static Device create(const DeviceInfo& info);
+			static Device* ptrCreate(const DeviceInfo& info);
 
 			~Device();
 

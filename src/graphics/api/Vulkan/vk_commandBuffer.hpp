@@ -14,10 +14,10 @@ namespace core
 {
 	namespace vulkan
 	{
-		struct beginRenderPassInfo
+		struct BeginRenderPassInfo
 		{
-			class RenderPass* renderPass = nullptr;
-			class FrameBuffer* frameBuffer = nullptr;
+			class RenderPass* ptrRenderPass = nullptr;
+			class FrameBuffer* ptrFrameBuffer = nullptr;
 
 			pos2i offset = {0, 0};
 			size2i extent = {0, 0};
@@ -28,7 +28,7 @@ namespace core
 			color::RGBA clearColor = color::BLACK;
 		};
 
-		struct bindVertexBuffersInfo
+		struct BindVertexBuffersInfo
 		{
 			uint32_t firstBinding = 0;
 			uint32_t bindingCount = 0;
@@ -51,16 +51,16 @@ namespace core
 			static CommandBuffer create(class Device& device, class CommandPool &commandPool);
 			static CommandBuffer *ptrCreate(class Device& device, class CommandPool &commandPool);
 
-			void begin();
-			void end();
+			void beginWriteCommands();
+			void endWriteCommands();
 
-			void beginRenderPass(beginRenderPassInfo& brpi);
+			void beginRenderPass(BeginRenderPassInfo& brpi);
 			void endRenderPas();
 
 			void bindPipeline(class Pipeline& pipeline);
-			void bindVertexBuffers(const bindVertexBuffersInfo& info);
+			void bindVertexBuffers(const BindVertexBuffersInfo& info);
 
-			void pushConstants(class Pipeline& pipeline, struct pushConstantInfo& pci, void *push);
+			void pushConstants(class Pipeline& pipeline, struct PushConstantInfo& pci, void *push);
 
 			void draw(uint32_t firstVertex, uint32_t vertexCount, uint32_t instanceCount = 1, uint32_t firstInstance = 0);
 

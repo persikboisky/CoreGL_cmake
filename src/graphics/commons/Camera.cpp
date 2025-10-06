@@ -3,11 +3,8 @@
 //
 
 #include "Camera.hpp"
-#include "../../math/Vectors.hpp"
-#include "../../math/Matrix4.hpp"
 #include "../../math/math.hpp"
 #include "../../window/Window.hpp"
-#include "../../util/types.hpp"
 
 using namespace core;
 using namespace math;

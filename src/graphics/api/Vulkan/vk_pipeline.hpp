@@ -14,17 +14,17 @@ namespace core
 {
 	namespace vulkan
 	{
-		struct pushConstantInfo
+		struct PushConstantInfo
 		{
 			SHADER_STAGES shaderStages = VERTEX_FRAGMENT_STAGES;
 			uint32_t sizeOfBytes = 0;
 			uint32_t offset = 0;
 		};
 
-		struct pipelineInfo
+		struct PipelineInfo
 		{
 			class Device* ptrDevice = nullptr;
-			class ShaderModule* ptrShaderModule = nullptr;
+			class ShaderProgram* ptrShaderProgram = nullptr;
 			class RenderPass* ptrRenderPass = nullptr;
 
 			size2i sizeViewport = {600, 600};
@@ -36,9 +36,10 @@ namespace core
 			vulkan::PRIMITIVE primirive = vulkan::TRIANGLE_STRIP;
 			TYPE_CULL_FACE typeCullFace = CULL_BACK;
 			POLYGON_MODE polygonMode = POLYGON_FILL;
+			FRONT_FACE frontFace = FRONT_FACE_COUNTER_CLOCKWISE;
 
 			uint32_t pushConstantCount = 0;
-			pushConstantInfo *ptrPushConstants = nullptr;
+			PushConstantInfo *ptrPushConstants = nullptr;
 
 			uint32_t vertexBuffersCount = 0;
 			class VertexBuffer* ptrVertexBuffers = nullptr;
@@ -52,11 +53,11 @@ namespace core
 
 			VkDevice *ptrDevice = nullptr;
 
-			explicit Pipeline(const pipelineInfo& info);
+			explicit Pipeline(const PipelineInfo& info);
 
 		 public:
-			static Pipeline create(const pipelineInfo& info);
-			static Pipeline *ptrCreate(const pipelineInfo& info);
+			static Pipeline create(const PipelineInfo& info);
+			static Pipeline *ptrCreate(const PipelineInfo& info);
 
 			~Pipeline();
 

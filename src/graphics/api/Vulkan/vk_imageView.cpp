@@ -94,9 +94,9 @@ namespace core
 
 		ImageViews::~ImageViews()
 		{
-			for (ImageView* imgVeiw : this->imagesView)
+			for (ImageView* imgView : this->imagesView)
 			{
-				delete imgVeiw;
+				delete imgView;
 			}
 			this->imagesView.clear();
 		}
@@ -115,9 +115,6 @@ namespace core
 		{
 			return this->imagesView;
 		}
-
-
-
 	} // vulkan
 } // core
 

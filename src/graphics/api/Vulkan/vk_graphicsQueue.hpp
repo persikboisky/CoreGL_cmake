@@ -13,14 +13,29 @@ namespace core
 {
 	namespace vulkan
 	{
-		struct queueSubmitInfo
+		struct QueueSubmitInfo
 		{
-			class Semaphore *ptrWaitPtrSemaphore = nullptr;
+			class Semaphore *ptrWaitSemaphore = nullptr;
 			class CommandBuffer *PtrCommandBuffer = nullptr;
 			class Semaphore *ptrFinishSignalSemaphore = nullptr;
+			class Fence *ptrFence = nullptr;
 		};
 
-		struct queuePresentInfo
+		struct QueueSubmitsInfo
+		{
+			uint32_t countWaitSemaphores = 0;
+			class Semaphore** ptrWaitSemaphores = nullptr;
+
+			uint32_t countCommandBuffers = 0;
+			class CommandBuffer** PtrCommandBuffers = nullptr;
+
+			uint32_t countFinishSignalSemaphores = 0;
+			class Semaphore** ptrFinishSignalSemaphores = nullptr;
+
+			class Fence *ptrFence = nullptr;
+		};
+
+		struct QueuePresentInfo
 		{
 			class Semaphore *ptrWaitPtrSemaphore = nullptr;
 			class SwapChain *ptrSwapChain = nullptr;
@@ -40,12 +55,13 @@ namespace core
 			static Queue get(class Device& device, uint32_t queueIndex);
 			static Queue ptrGet(class Device& device, uint32_t queueIndex);
 
-			void submit(const queueSubmitInfo& qs);
-			void present(const queuePresentInfo& qp);
+			void submit(const QueueSubmitInfo& qs) const;
+			void submits(const QueueSubmitsInfo& qs);
+			void present(const QueuePresentInfo& qp) const;
 
-			void wait();
+			void wait() const;
 
-			VkQueue getVkQueue();
+			VkQueue getVkQueue() const;
 			VkQueue *getVkPtrQueue();
 		};
 	} // vulkan
