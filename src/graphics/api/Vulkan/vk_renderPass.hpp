@@ -15,8 +15,9 @@ namespace core
 	{
 		struct RenderPassInfo
 		{
-			class Device* device = nullptr;
+			class Device* ptrDevice = nullptr;
 			bool depthTest = false;
+			bool clearBuffers = true;
 		};
 
 		class RenderPass
@@ -25,6 +26,7 @@ namespace core
 			VkRenderPass renderPass;
 			VkDevice* device = nullptr;
 			bool depthAttachment = false;
+			bool clearBuffers = true;
 
 			RenderPass(const RenderPassInfo& info);
 
@@ -38,6 +40,7 @@ namespace core
 			VkRenderPass *getVkPtrRenderPass();
 
 			bool getStateDepth() const;
+			bool getStateClear() const;
 		};
 	} // vulkan
 } // core

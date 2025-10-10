@@ -9,8 +9,6 @@
 #include "../config.hpp"
 #include "../util/console.hpp"
 #include "../util/coders.hpp"
-#include "../graphics/commons/texture.hpp"
-#include "../graphics/commons/vao.hpp"
 #include <string>
 #include <vector>
 #include <map>
@@ -22,7 +20,12 @@
 
 namespace core
 {
-    void obj::read(const char *path)
+    infoObject::~infoObject()
+    {
+        delete[] this->ptrTexture;  
+    }
+
+    void obj::read(const char *path, bool flagVulkanApi)
     {
         std::string code = code::loadStr(path);
 
@@ -109,7 +112,7 @@ namespace core
             flagMtl = false;
         }
 
-        std::map<std::string, unsigned int> idTexture = {};
+        std::map<std::string, Image*> ptrArrayTextureCode = {};
         if (flagMtl)
         {
             for (auto nameResource : mtlObj->getListMtlRes())
@@ -118,12 +121,9 @@ namespace core
                 pathToTexture += mtlObj->getPathToKdTexture(nameResource);
 
                 if (mtlObj->getPathToKdTexture(nameResource) == "")
-                    idTexture[nameResource] = 0;
+                    ptrArrayTextureCode[nameResource] = nullptr;
                 else
-                {
-                    core::image textureImage = core::image::load(pathToTexture.c_str());
-                    idTexture[nameResource] = texture::load(textureImage);
-                }
+                    ptrArrayTextureCode[nameResource] = core::Image::ptrLoad(pathToTexture.c_str());
             }
         }
 
@@ -293,7 +293,7 @@ namespace core
                     else if (code[index] == '\n')
                     {
                         selectNameResource = resourceName;
-                        this->objects[selectNameObejct].texture = idTexture[selectNameResource];
+                        this->objects[selectNameObejct].ptrTexture = ptrArrayTextureCode[selectNameResource];
                         break;
                     }
                     resourceName += code[index];
@@ -354,11 +354,18 @@ namespace core
 
                             int indexElementToVertex = (value != "") ? std::stoi(value) : 0;
                             if (indexElementToVertex > 0)
-                            {
-                                this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3]);
-                                this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3 + 1]);
-                                this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3 + 2]);
-                            }
+							{
+								this->objects[selectNameObejct].vertexes.push_back(
+										vertexes[(indexElementToVertex - 1) * 3]);
+								if (!flagVulkanApi)
+									this->objects[selectNameObejct].vertexes.push_back(
+											vertexes[(indexElementToVertex - 1) * 3 + 1]);
+								else
+									this->objects[selectNameObejct].vertexes.push_back(
+											-vertexes[(indexElementToVertex - 1) * 3 + 1]);
+								this->objects[selectNameObejct].vertexes.push_back(
+										vertexes[(indexElementToVertex - 1) * 3 + 2]);
+							}
                             else
                             {
                                 this->objects[selectNameObejct].vertexes.push_back(0);
@@ -406,11 +413,18 @@ namespace core
                             {
                                 int indexElementToVertex = (value != "") ? std::stoi(value) : 0;
                                 if (indexElementToVertex > 0)
-                                {
-                                    this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3]);
-                                    this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3 + 1]);
-                                    this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3 + 2]);
-                                }
+								{
+									this->objects[selectNameObejct].vertexes.push_back(
+											vertexes[(indexElementToVertex - 1) * 3]);
+									if (!flagVulkanApi)
+										this->objects[selectNameObejct].vertexes.push_back(
+												vertexes[(indexElementToVertex - 1) * 3 + 1]);
+									else
+										this->objects[selectNameObejct].vertexes.push_back(
+												-vertexes[(indexElementToVertex - 1) * 3 + 1]);
+									this->objects[selectNameObejct].vertexes.push_back(
+											vertexes[(indexElementToVertex - 1) * 3 + 2]);
+								}
                                 else
                                 {
                                     this->objects[selectNameObejct].vertexes.push_back(0);
@@ -475,11 +489,18 @@ namespace core
                             {
                                 int indexElementToVertex = (value != "") ? std::stoi(value) : 0;
                                 if (indexElementToVertex > 0)
-                                {
-                                    this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3]);
-                                    this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3 + 1]);
-                                    this->objects[selectNameObejct].vertexes.push_back(vertexes[(indexElementToVertex - 1) * 3 + 2]);
-                                }
+								{
+									this->objects[selectNameObejct].vertexes.push_back(
+											vertexes[(indexElementToVertex - 1) * 3]);
+									if (!flagVulkanApi)
+										this->objects[selectNameObejct].vertexes.push_back(
+												vertexes[(indexElementToVertex - 1) * 3 + 1]);
+									else
+										this->objects[selectNameObejct].vertexes.push_back(
+												-vertexes[(indexElementToVertex - 1) * 3 + 1]);
+									this->objects[selectNameObejct].vertexes.push_back(
+											vertexes[(indexElementToVertex - 1) * 3 + 2]);
+								}
                                 else
                                 {
                                     this->objects[selectNameObejct].vertexes.push_back(0);
@@ -555,22 +576,22 @@ namespace core
         vertexes.clear();
         normals.clear();
         texutresCoord.clear();
-        idTexture.clear();
+        ptrArrayTextureCode.clear();
     }
 
-    obj::obj(const char *path)
+    obj::obj(const char *path, bool flagVulkanApi)
     {
-        this->read(path);
+        this->read(path, flagVulkanApi);
     }
 
-    obj obj::load(const char *path)
+    obj obj::load(const char *path, bool flagVulkanApi)
     {
-        return obj(path);
+        return obj(path, flagVulkanApi);
     }
 
-    obj *obj::ptrLoad(const char *path)
+    obj *obj::ptrLoad(const char *path, bool flagVulkanApi)
     {
-        return new obj(path);
+        return new obj(path, flagVulkanApi);
     }
 
     std::vector<std::string> obj::getListNamesObjects()

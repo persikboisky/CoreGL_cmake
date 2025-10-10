@@ -14,6 +14,8 @@ namespace core
 {
 	namespace vulkan
 	{
+		class PhysicalDevices;
+
 		/// @brief структура с информацией для создания экземпляра Vulkan
 		struct InstanceInfo
 		{
@@ -51,8 +53,8 @@ namespace core
 
 			~Instance();
 
-			[[maybe_unused]] VkInstance getVkInstance();
-			[[maybe_unused]] VkInstance *getVkPtrInstance();
+			VkInstance getVkInstance();
+			VkInstance *getVkPtrInstance();
 		};
 	} // vulkan
 } // core

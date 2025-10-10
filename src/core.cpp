@@ -3,10 +3,6 @@
 //
 
 #include "../include/core.hpp"
-#include "graphics/commons/vao.hpp"
-#include "graphics/commons/ebo.hpp"
-#include "graphics/commons/shader.hpp"
-#include "graphics/commons/texture.hpp"
 #include "config.hpp"
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -37,11 +33,6 @@ void core::Core::Init()
 
 void core::Core::Terminate()
 {
-    ebo::DeleteALL();
-    vao::DeleteALL();
-    shader::DeleteALL();
-    texture::DeleteALL();
-    
     glfwTerminate();
 }
 

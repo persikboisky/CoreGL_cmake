@@ -7,6 +7,7 @@
 
 struct GLFWwindow;
 struct GLFWcursor;
+struct GLFWimage;
 
 namespace core
 {
@@ -17,6 +18,7 @@ namespace core
     private:
         GLFWcursor* cursor_objs;
         GLFWwindow& addrWindow;
+        GLFWimage* ptrImg = nullptr;
 
     public:
         CustomCursor(const char* pathToImg, int x, int y, GLFWwindow* window);

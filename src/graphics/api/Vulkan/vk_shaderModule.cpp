@@ -4,12 +4,12 @@
 
 #include "vk_shaderModule.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
-#include <shaderc/shaderc.hpp>
 #include "../../../util/coders.hpp"
 #include "../../../config.hpp"
 #include "../../../util/console.hpp"
 #include "../../../file/code.hpp"
 #include "vk_device.hpp"
+//#include <shaderc/shaderc.hpp>
 #include <fstream>
 #include <iostream>
 
@@ -20,31 +20,51 @@ namespace core::vulkan
 		mainFuncName(info.mainFuncName)
 	{
 		VkShaderModuleCreateInfo createInfo = {};
-		std::ifstream file(info.path, std::ios::ate | std::ios::binary);
+		std::vector<char> buffer = {};
+		std::vector<uint32_t> spirv = {};
 
-		if (!file.is_open())
+		if (!info.flagCompile)
 		{
-			throw coders(6, info.path);
+			std::ifstream file(info.path, std::ios::ate | std::ios::binary);
+
+			if (!file.is_open())
+			{
+				throw coders(6, info.path);
+			}
+
+			size_t fileSize = (size_t)file.tellg();
+			buffer.resize(fileSize);
+
+			file.seekg(0);
+			file.read(buffer.data(), (std::streamsize)fileSize);
+			file.close();
+		}
+		else
+		{
+//			shaderc::Compiler compiler;
+//			shaderc::CompileOptions options;
+//
+//			options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_0);
+//			options.SetOptimizationLevel(shaderc_optimization_level_performance);
 		}
 
-		size_t fileSize = (size_t)file.tellg();
-		std::vector<char> buffer(fileSize);
-
-		file.seekg(0);
-		file.read(buffer.data(), (std::streamsize)fileSize);
-		file.close();
-
 		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		createInfo.codeSize = buffer.size();
-		createInfo.pCode = reinterpret_cast<const uint32_t*>(buffer.data());
+		createInfo.codeSize = { (!info.flagCompile) ?
+								buffer.size() :
+								spirv.size()
+		};
+		createInfo.pCode = { (!info.flagCompile) ?
+							 reinterpret_cast<const uint32_t*>(buffer.data()) :
+							 spirv.data()
+		};
 		createInfo.flags = 0;
 		createInfo.pNext = nullptr;
 
 		VkResult result = vkCreateShaderModule(
-			info.ptrDevice->getDevice(),
-			&createInfo,
-			nullptr,
-			&this->shader);
+				info.ptrDevice->getDevice(),
+				&createInfo,
+				nullptr,
+				&this->shader);
 		coders::vulkanProcessingError(result);
 
 		if (CORE_INFO)

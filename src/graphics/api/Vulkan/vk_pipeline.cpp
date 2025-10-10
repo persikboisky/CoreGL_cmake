@@ -301,7 +301,7 @@ namespace core
 			pipelineCreateInfo.pTessellationState = VK_NULL_HANDLE;
 			pipelineCreateInfo.layout = this->pipelineLayout;
 			pipelineCreateInfo.pColorBlendState = &colorBlending;
-			pipelineCreateInfo.pDepthStencilState = (info.ptrRenderPass->getStateDepth() == true) ? &depthStencil : VK_NULL_HANDLE;
+			pipelineCreateInfo.pDepthStencilState = info.ptrRenderPass->getStateDepth() ? &depthStencil : VK_NULL_HANDLE;
 			pipelineCreateInfo.pDynamicState = VK_NULL_HANDLE;
 			pipelineCreateInfo.pInputAssemblyState = &inputAssembly;
 			pipelineCreateInfo.pMultisampleState = &multisampleStateCreateInfo;

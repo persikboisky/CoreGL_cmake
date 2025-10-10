@@ -13,11 +13,11 @@
 #include <iostream>
 #include <vector>
 
-unsigned char *core::image::load(const char *path, int &width, int &height, int &channels, bool rotateImg, bool info)
+unsigned char *core::Image::load(const char *path, int &width, int &height, int &channels, bool rotateImg, bool info)
 {
     stbi_set_flip_vertically_on_load(rotateImg);
     stbi_uc *image = stbi_load(path, &width, &height, &channels, STBI_default);
-    if (image == 0)
+    if (image == 0 || image == nullptr)
     {
         throw core::coders(3, "Path: " + std::string(path));
     }
@@ -31,57 +31,62 @@ unsigned char *core::image::load(const char *path, int &width, int &height, int 
     return image;
 }
 
-core::image::image(const char *path, bool rotateImg, bool info) : path(path), width(0), height(0), channels(0)
+core::Image::Image(const char *path, bool rotateImg, bool info) : path(path), width(0), height(0), channels(0)
 {
-    this->imageCode = image::load(path, this->width, this->height, this->channels, rotateImg, info);
+    this->ptrImageCode = Image::load(path, this->width, this->height, this->channels, rotateImg, info);
 }
 
-core::image core::image::load(const char *path, bool rotateImg, bool info)
+core::Image core::Image::load(const char *path, bool rotateImg, bool info)
 {
-    return core::image(path, rotateImg, info);
+    return core::Image(path, rotateImg, info);
 }
 
-void core::image::free(image& image)
+core::Image *core::Image::ptrLoad(const char* path, bool rotateImg, bool info)
 {
-    image.~image();
+    return new core::Image(path, rotateImg, info);
 }
 
-void core::image::free(unsigned char *img)
+void core::Image::free(Image& img)
+{
+    img.~Image();
+}
+
+void core::Image::free(unsigned char *img)
 {
     stbi_image_free(img);
 }
 
-core::image::~image()
+core::Image::~Image()
 {
-    core::image::free(this->imageCode);
+    core::Image::free(this->ptrImageCode);
 }
 
-int core::image::getChannels() const
+int core::Image::getChannels() const
 {
     return this->channels;
 }
 
-int core::image::getHeight() const
+int core::Image::getHeight() const
 {
     return this->height;
 }
 
-int core::image::getWidth() const
+int core::Image::getWidth() const
 {
     return this->width;
 }
 
-const char *core::image::getPath()
+const char *core::Image::getPath()
 {
     return this->path;
 }
 
-unsigned char *core::image::getImageCode()
+unsigned char *core::Image::getImageCode()
 {
-    return this->imageCode;
+    return this->ptrImageCode;
 }
 
-std::vector<unsigned char> core::image::getVectorImageCode()
+std::vector<unsigned char> core::Image::getVectorImageCode()
 {
     return vector::arrayToVector_uchar(this->getImageCode(), this->height * this->channels * this->width);
 }

@@ -14,28 +14,46 @@ namespace core
 {
 	namespace vulkan
 	{
-		RenderPass::RenderPass(const RenderPassInfo &info) : device(info.device->getPtrDevice()), depthAttachment(info.depthTest)
+		RenderPass::RenderPass(const RenderPassInfo& info) :
+				device(info.ptrDevice->getPtrDevice()), depthAttachment(info.depthTest),
+				clearBuffers(info.clearBuffers)
 		{
 			// Цветовой attachment
 			VkAttachmentDescription colorAttachment = {};
-			colorAttachment.format = info.device->getVkSurfaceFormat().format;
+			colorAttachment.format = info.ptrDevice->getVkSurfaceFormat().format;
 			colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-			colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			colorAttachment.loadOp = {
+					(info.clearBuffers) ?
+					VK_ATTACHMENT_LOAD_OP_CLEAR :
+					VK_ATTACHMENT_LOAD_OP_LOAD
+			};
 			colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 			colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-			colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			colorAttachment.initialLayout = {
+					(info.clearBuffers) ?
+					VK_IMAGE_LAYOUT_UNDEFINED :
+					VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+			};
 			colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 			// Depth attachment
 			VkAttachmentDescription depthAttachment = {};
 			depthAttachment.format = VK_FORMAT_D32_SFLOAT;
 			depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-			depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			depthAttachment.loadOp = {
+					(info.clearBuffers) ?
+					VK_ATTACHMENT_LOAD_OP_CLEAR :
+					VK_ATTACHMENT_LOAD_OP_LOAD
+			};
 			depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 			depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-			depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			depthAttachment.initialLayout = {
+					(info.clearBuffers) ?
+					VK_IMAGE_LAYOUT_UNDEFINED :
+					VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL
+			};
 			depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 			// Attachment references
@@ -79,27 +97,27 @@ namespace core
 			// RenderPassInfo.dependencyCount = 2;
 
 			VkResult result = vkCreateRenderPass(
-				info.device->getDevice(),
-				&renderPassInfo,
-				nullptr,
-				&renderPass);
+					info.ptrDevice->getDevice(),
+					&renderPassInfo,
+					nullptr,
+					&renderPass);
 			coders::vulkanProcessingError(result);
 		}
 
 		RenderPass::~RenderPass()
 		{
 			vkDestroyRenderPass(
-				*this->device,
-				this->renderPass,
-				nullptr);
+					*this->device,
+					this->renderPass,
+					nullptr);
 		}
 
-		RenderPass RenderPass::create(const RenderPassInfo &info)
+		RenderPass RenderPass::create(const RenderPassInfo& info)
 		{
 			return RenderPass(info);
 		}
 
-		RenderPass *RenderPass::ptrCreate(const RenderPassInfo &info)
+		RenderPass* RenderPass::ptrCreate(const RenderPassInfo& info)
 		{
 			return new RenderPass(info);
 		}
@@ -109,7 +127,7 @@ namespace core
 			return this->renderPass;
 		}
 
-		VkRenderPass *RenderPass::getVkPtrRenderPass()
+		VkRenderPass* RenderPass::getVkPtrRenderPass()
 		{
 			return &this->renderPass;
 		}
@@ -118,7 +136,12 @@ namespace core
 		{
 			return this->depthAttachment;
 		}
-	} // vulkan
+
+		bool RenderPass::getStateClear() const
+		{
+			return this->clearBuffers;
+		}
+	}// vulkan
 } // core
 
 #endif // defined(CORE_INCLUDE_VULKAN)

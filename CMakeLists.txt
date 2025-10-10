@@ -14,13 +14,7 @@ set(CoreGL_source
         src/window/Cursor.cpp
         src/window/Monitor.cpp
         src/graphics/commons/fbo.cpp
-        src/graphics/commons/shader.cpp
         src/graphics/commons/Camera.cpp
-        src/graphics/commons/vao.cpp
-        src/graphics/commons/ebo.cpp
-        src/graphics/commons/texture.cpp
-        src/graphics/renderer/gResource.cpp
-        src/graphics/renderer/Rect.cpp
         src/graphics/api/Vulkan/vk_Instance.cpp
         src/graphics/api/Vulkan/vk_physicalDevices.cpp
         src/graphics/api/Vulkan/vk_surface.cpp
@@ -95,3 +89,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE package/openal-soft/include)
 find_package(Vulkan REQUIRED)
 target_link_libraries(${PROJECT_NAME} ${Vulkan_LIBRARIES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
+
+## link gslang
+#find_package(Shaderc REQUIRED)
+#target_link_libraries(${PROJECT_NAME} shaderc)
+
+

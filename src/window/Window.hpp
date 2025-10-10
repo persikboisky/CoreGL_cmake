@@ -83,16 +83,6 @@ namespace core
         void setContext();
         void swapBuffers();
 
-        void setClearColor(const color::RGBA &color);
-        void clearFrameBuffer();
-        void clearZBuffer();
-
-        void setSizeFrameBuffer(int width, int height);
-        void setSizeFrameBuffer(const size2i &size);
-
-        void setPosFrameBuffer(int posX, int posY);
-        void setPosFrameBuffer(const pos2i &pos);
-
         void setIcon(const char *pathToImg);
 
         [[nodiscard]] int getWidth() const;

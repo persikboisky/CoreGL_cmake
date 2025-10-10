@@ -9,6 +9,7 @@
 
 namespace core
 {
+    /// @brief класс для чтения текста из файла
     class code
     {
     private:
@@ -18,12 +19,26 @@ namespace core
         code(const char* path);
 
     public:
+        /// @brief читает файл
+        /// @param path путь к файлу
+        /// @return строку текста прочитанную из файла
         static std::string loadStr(const char* path);
+
+        /// @brief читает файл
+        /// @param path путь к файлу
+        /// @return объект класса code
         static code load(const char* path);
 
+        /// @brief получает прочитанную строку
+        /// @return строку
         std::string getStr();
+
+        /// @brief получает прочитанную строку
+        /// @return си-строку
         const char* getCStr();
 
+        /// @brief получает путь к прочтённому файлу
+        /// @return си-строка, путь
         const char* getPath();
     };
 } 

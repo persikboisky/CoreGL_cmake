@@ -9,17 +9,19 @@
 
 namespace core
 {
-    class image
+    /// @brief класс для считывания изображений, форматы:
+    /// @brief JPEG, PNG, TGA, BMP, PSD, GIF (не анимация), HDR, PIC, PNM
+    class Image
     {
     private:
         int width;
         int height;
         int channels;
-        unsigned char* imageCode;
+        unsigned char* ptrImageCode;
 
         const char* path;
 
-        image(const char* path, bool rotateImg, bool info);
+        Image(const char* path, bool rotateImg, bool info);
 
     public:
         static unsigned char* load(
@@ -30,12 +32,14 @@ namespace core
                 bool rotateImg = true,
                 bool info = true
         );
+        
+        static Image load(const char* path, bool rotateImg = true, bool info = true);
+        static Image *ptrLoad(const char* path, bool rotateImg = true, bool info = true);
+
         static void free(unsigned char* imgCode);
+        static void free(Image& img);
 
-        static image load(const char* path, bool rotateImg = true, bool info = true);
-        static void free(image& img);
-
-        ~image();
+        ~Image();
 
         [[nodiscard]] int getWidth() const;
         [[nodiscard]] int getHeight() const;

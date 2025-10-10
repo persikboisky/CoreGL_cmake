@@ -11,13 +11,15 @@
 
 namespace core
 {
-    class img;
+    class Image;
 
     struct infoObject 
     {
         float smoothingPoligons = 0;
-        unsigned int texture = 0;
+        Image* ptrTexture = nullptr;
         std::vector<float> vertexes = {};
+
+        ~infoObject();
     };
 
     class obj
@@ -27,13 +29,13 @@ namespace core
         std::map<std::string, infoObject> objects = {};
         std::vector<std::string> listNamesObjects = {};
         
-        void read(const char *path);
+        void read(const char *path, bool flagVulkanApi);
 
-        obj(const char *path);
+        obj(const char *path, bool flagVulkanApi);
 
     public:
-        static obj load(const char *path);
-        static obj *ptrLoad(const char *path);
+        static obj load(const char *path, bool flagVulkanApi = false);
+        static obj *ptrLoad(const char *path, bool flagVulkanApi = false);
 
         std::vector<std::string> getListNamesObjects();
         std::map<std::string, infoObject> getObjects();

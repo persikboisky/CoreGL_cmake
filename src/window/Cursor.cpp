@@ -12,15 +12,13 @@
 #include <iostream>
 
 core::CustomCursor::CustomCursor(const char* pathToImg, int x, int y, GLFWwindow* window) :
-    cursor_objs(nullptr), addrWindow(*window)
+    cursor_objs(nullptr), addrWindow(*window), ptrImg(new GLFWimage)
 {
     int ch;
-    GLFWimage* img = new GLFWimage;
+    unsigned char* codeImg = Image::load(pathToImg, this->ptrImg->width, this->ptrImg->height, ch);
+    this->ptrImg->pixels = this->ptrImg->pixels = &codeImg[0];
 
-    unsigned char* codeImg = image::load(pathToImg, img->width, img->height, ch);
-    img->pixels = img->pixels = &codeImg[0];
-
-    this->cursor_objs = glfwCreateCursor(img, x, y);
+    this->cursor_objs = glfwCreateCursor(this->ptrImg, x, y);
     if (this->cursor_objs == nullptr)
     {
         throw core::coders(5);
@@ -37,6 +35,7 @@ core::CustomCursor::~CustomCursor()
 {
     this->unUse();
     glfwDestroyCursor(this->cursor_objs);
+    delete this->ptrImg;
 }
 
 void core::CustomCursor::use()

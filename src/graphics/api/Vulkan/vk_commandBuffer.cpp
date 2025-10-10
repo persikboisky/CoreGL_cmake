@@ -94,8 +94,13 @@ namespace core
 											clearColor.blue,
 											clearColor.alpha }};
 
-			renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 			renderPassInfo.pClearValues = clearValues.data();
+
+			if (brpi.ptrRenderPass->getStateClear())
+				renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+			else
+				renderPassInfo.clearValueCount = 0;
+
 
 //			// Начало render pass
 			vkCmdBeginRenderPass(

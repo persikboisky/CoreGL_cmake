@@ -11,8 +11,8 @@
 #include "../util/coders.hpp"
 #include "../config.hpp"
 #include "../util/types.hpp"
-#include "../graphics/commons/fbo.hpp"
 #include "../file/image.hpp"
+#include "../graphics/api/OpenGL/gl_commands.hpp"
 #include "../../package/glew-2.1.0-master/include/GL/glew.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -216,72 +216,12 @@ void core::Window::swapBuffers()
     }
 }
 
-void core::Window::setClearColor(const color::RGBA &color)
-{
-    if (!isContext())
-    {
-        this->setContext();
-    }
-
-    core::fbo::setColor(color);
-}
-
-void core::Window::clearFrameBuffer()
-{
-    if (!isContext())
-    {
-        this->setContext();
-    }
-
-    core::fbo::clearBuffers(COLOR_BUFFER);
-}
-
-void core::Window::clearZBuffer()
-{
-    if (!isContext())
-    {
-        this->setContext();
-    }
-
-    core::fbo::clearBuffers(DEPTH_BUFFER);
-}
-
-void core::Window::setSizeFrameBuffer(int width, int height)
-{
-    if (!isContext())
-    {
-        this->setContext();
-    }
-
-    if (!this->VulknanAPI)
-        core::fbo::setSize(width, height);
-}
-
-void core::Window::setSizeFrameBuffer(const core::size2i &size)
-{
-    this->setSizeFrameBuffer(size.width, size.height);
-}
-
-void core::Window::setPosFrameBuffer(int x, int y)
-{
-    if (!this->isContext())
-    {
-        this->setContext();
-    }
-    fbo::setPos(x, y);
-}
-
-void core::Window::setPosFrameBuffer(const pos2i &pos)
-{
-    this->setSizeFrameBuffer(pos.x, pos.y);
-}
-
 void core::Window::setIcon(const char *pathToImg)
 {
     GLFWimage images[1] = {};
 
     int channels = 0;
-    images[0].pixels = core::image::load(pathToImg, images[0].width, images[0].height, channels, false);
+    images[0].pixels = core::Image::load(pathToImg, images[0].width, images[0].height, channels, false);
 
     glfwSetWindowIcon(this->window, 1, images);
     free(images[0].pixels);
@@ -403,8 +343,6 @@ void core::Window::fullScreen(bool flag)
         this->saveWidth = this->width;
         this->saveHeight = this->height;
         this->setMonitor(*this->monitor);
-        this->setPosFrameBuffer(0, 0);
-        this->setSizeFrameBuffer(this->width, this->height);
     }
     else
     {
@@ -419,8 +357,6 @@ void core::Window::fullScreen(bool flag)
         if (this->flagGladInit)
         {
             this->setPos(this->posX, this->posY);
-            this->setPosFrameBuffer(0, 0);
-            this->setSizeFrameBuffer(this->width, this->height);
         }
     }
 }
