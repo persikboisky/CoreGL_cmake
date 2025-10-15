@@ -70,7 +70,7 @@ namespace core
 			submitInfo.signalSemaphoreCount = qs.countFinishSignalSemaphores;
 			submitInfo.commandBufferCount = qs.countCommandBuffers;
 
-			std::vector<VkCommandBuffer> vecCommandBuffes = {};
+			std::vector<VkCommandBuffer> vecCommandBuffers = {};
 			std::vector<VkPipelineStageFlags> vecWaitStages = {};
 			std::vector<VkSemaphore> waitSemaphores = {};
 			std::vector<VkSemaphore> finishSemaphores = {};
@@ -79,7 +79,7 @@ namespace core
 			vecWaitStages.resize(qs.countWaitSemaphores);
 			waitSemaphores.resize(qs.countWaitSemaphores);
 			finishSemaphores.resize(qs.countFinishSignalSemaphores);
-			vecCommandBuffes.resize(qs.countCommandBuffers);
+			vecCommandBuffers.resize(qs.countCommandBuffers);
 
 			for (size_t i = 0; i < vecWaitStages.size(); i++)
 			{
@@ -92,15 +92,15 @@ namespace core
 				finishSemaphores[i] = qs.ptrFinishSignalSemaphores[i]->getVkSemaphore();
 			}
 
-			for (size_t i = 0; i < vecCommandBuffes.size(); i++)
+			for (size_t i = 0; i < vecCommandBuffers.size(); i++)
 			{
-				vecCommandBuffes[i] = qs.PtrCommandBuffers[i]->getVkCommandBuffer();
+				vecCommandBuffers[i] = qs.PtrCommandBuffers[i]->getVkCommandBuffer();
 			}
 			
 			submitInfo.pSignalSemaphores = finishSemaphores.data();
 			submitInfo.pWaitSemaphores = waitSemaphores.data();
 			submitInfo.pWaitDstStageMask = vecWaitStages.data();
-			submitInfo.pCommandBuffers = vecCommandBuffes.data();
+			submitInfo.pCommandBuffers = vecCommandBuffers.data();
 
 			VkResult result = vkQueueSubmit(
 					this->queue,

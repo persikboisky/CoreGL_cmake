@@ -7,7 +7,7 @@
 
 namespace core
 {
-	namespace openGL
+	namespace opengl
 	{
 		class ElementBuffers
 		{
@@ -17,10 +17,12 @@ namespace core
 			ElementBuffers(unsigned int *array, unsigned int sizeOfByte);
 
 		public:
+			~ElementBuffers();
+
 			static ElementBuffers create(unsigned int *array, unsigned int sizeOfByte);
 			static ElementBuffers* ptrCreate(unsigned int *array, unsigned int sizeOfByte);
 
-			void bind();
+			void bind() const;
 			void unBind();
 		};
 	} // openGL

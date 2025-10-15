@@ -56,8 +56,14 @@ namespace core
 {
     namespace Core
     {
+        /// @brief функция для инициализации библиотеки
         void Init();
+
+        /// @brief функция для уничтожения данных библиотеки
         void Terminate();
+
+        /// @brief возвращает время с момента инициализации библиотеки
+        /// @return милисекунды
         [[nodiscard]] double getTime();
     }
 }

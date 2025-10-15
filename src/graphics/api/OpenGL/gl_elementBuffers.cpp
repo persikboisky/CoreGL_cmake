@@ -1,3 +1,4 @@
+#include "gl_elementBuffers.hpp"
 //
 // Created by kisly on 04.10.2025.
 //
@@ -8,7 +9,7 @@
 
 namespace core
 {
-	namespace openGL
+	namespace opengl
 	{
 		ElementBuffers::ElementBuffers(unsigned int* array, unsigned int sizeOfByte) : id(0)
 		{
@@ -23,6 +24,11 @@ namespace core
 			this->unBind();
 		}
 
+		ElementBuffers::~ElementBuffers()
+		{
+			glDeleteBuffers(1, &this->id);
+		}
+
 		ElementBuffers ElementBuffers::create(unsigned int* array, unsigned int sizeOfByte)
 		{
 			return ElementBuffers(array, sizeOfByte);
@@ -33,7 +39,7 @@ namespace core
 			return new ElementBuffers(array, sizeOfByte);
 		}
 
-		void ElementBuffers::bind()
+		void ElementBuffers::bind() const
 		{
 			try
 			{
@@ -49,6 +55,5 @@ namespace core
 		{
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		}
-
 	} // openGL
 } // core

@@ -100,7 +100,7 @@ namespace core
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
-		unsigned int Texture::getId()
+		unsigned int Texture::getId() const
 		{
 			return this->id;
 		}

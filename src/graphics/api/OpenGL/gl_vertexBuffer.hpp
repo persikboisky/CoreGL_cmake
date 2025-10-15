@@ -37,13 +37,13 @@ namespace core
 			static VertexBuffer create(const VertexBufferInfo& info);
 			static VertexBuffer *ptrCreate(const VertexBufferInfo& info);
 
-			void bind();
+			void bind() const;
 			void unBind();
 
 			void addAttribute(unsigned int location, int nElement, int offset);
 
 			unsigned int getSizeOfByte() const;
-			unsigned int getCountVertex();
+			unsigned int getCountVertex() const;
 		};
 	} // opengl
 } // core

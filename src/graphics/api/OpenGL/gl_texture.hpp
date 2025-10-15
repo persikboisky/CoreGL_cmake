@@ -35,7 +35,7 @@ namespace core
 			void bind(unsigned int sampler);
 			void unBind();
 
-			unsigned int getId();
+			unsigned int getId() const;
 		};
 	} // opengl
 } // core

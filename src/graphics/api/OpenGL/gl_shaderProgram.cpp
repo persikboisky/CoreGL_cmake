@@ -119,12 +119,12 @@ namespace core
 			return this->id;
 		}
 
-		ShaderProgram::ShaderProgram(Shader *shaders, uint32_t count)
+		ShaderProgram::ShaderProgram(Shader **ptrShaders, uint32_t count)
 		{
 			this->id = glCreateProgram();
 			for (uint32_t index = 0; index < count; index++)
 			{
-				glAttachShader(this->id, shaders[index].getId());
+				glAttachShader(this->id, ptrShaders[index]->getId());
 			}
 
 			GLint result = GL_FALSE;
@@ -156,17 +156,17 @@ namespace core
 			glDeleteProgram(this->id);
 		}
 
-		ShaderProgram ShaderProgram::create(Shader* shaders, uint32_t count)
+		ShaderProgram ShaderProgram::create(Shader** ptrShaders, uint32_t count)
 		{
-			return ShaderProgram(shaders, count);
+			return ShaderProgram(ptrShaders, count);
 		}
 
-		ShaderProgram* ShaderProgram::ptrCreate(Shader* shaders, uint32_t count)
+		ShaderProgram* ShaderProgram::ptrCreate(Shader** ptrShaders, uint32_t count)
 		{
-			return new ShaderProgram(shaders, count);
+			return new ShaderProgram(ptrShaders, count);
 		}
 
-		void ShaderProgram::use()
+		void ShaderProgram::use() const
 		{
 			glUseProgram(this->id);
 		}

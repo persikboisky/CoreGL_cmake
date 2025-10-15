@@ -113,7 +113,7 @@ namespace core
 			inputAssembly.flags = 0;
 
 			VkPrimitiveTopology primitive;
-			switch (info.primirive)
+			switch (info.primitive)
 			{
 			case TRIANGLE_STRIP:
 				primitive = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
@@ -186,7 +186,7 @@ namespace core
 
 			VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo = {};
 			rasterizationStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-			rasterizationStateCreateInfo.cullMode = cullMode; // Режим отсечения граней (отсекаем не лецивые грани)
+			rasterizationStateCreateInfo.cullMode = cullMode; 
 			rasterizationStateCreateInfo.depthBiasClamp = 0;
 			rasterizationStateCreateInfo.depthBiasConstantFactor = 0;
 			rasterizationStateCreateInfo.depthBiasEnable = VK_FALSE;

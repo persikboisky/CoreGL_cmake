@@ -42,15 +42,15 @@ namespace core
 		private:
 			unsigned int id = 0;
 
-			ShaderProgram(Shader *shaders, uint32_t count);
+			ShaderProgram(Shader** ptrShaders, uint32_t count);
 
 		public:
 			~ShaderProgram();
 
-			static ShaderProgram create(Shader* shaders, uint32_t count);
-			static ShaderProgram *ptrCreate(Shader* shaders, uint32_t count);
+			static ShaderProgram create(Shader** ptrShaders, uint32_t count);
+			static ShaderProgram *ptrCreate(Shader** ptrShaders, uint32_t count);
 
-			void use();
+			void use() const;
 			void unUse();
 
 			void setUniform1f(float value, const char* name);

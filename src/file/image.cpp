@@ -13,7 +13,13 @@
 #include <iostream>
 #include <vector>
 
-unsigned char *core::Image::load(const char *path, int &width, int &height, int &channels, bool rotateImg, bool info)
+unsigned char *core::Image::load(
+    const char *path, 
+    int &width, 
+    int &height, 
+    int &channels, 
+    bool rotateImg, 
+    bool info)
 {
     stbi_set_flip_vertically_on_load(rotateImg);
     stbi_uc *image = stbi_load(path, &width, &height, &channels, STBI_default);

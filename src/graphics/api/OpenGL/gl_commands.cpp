@@ -1,3 +1,4 @@
+#include "gl_commands.hpp"
 //
 // Created by kisly on 19.09.2025.
 //
@@ -10,7 +11,7 @@ namespace core
 {
 	namespace opengl
 	{
-		void drawVertexArray(
+		void drawVertex(
 				const PRIMITIVE& primitive,
 				int firstVert,
 				int countVert)
@@ -124,14 +125,24 @@ namespace core
 
 		void clearDepthBuffer()
 		{
-			glClear(GL_COLOR_BUFFER_BIT);
+			glClear(GL_DEPTH_BUFFER_BIT);
 		}
 
 		void clearFrameBuffer()
 		{
-			glClear(GL_DEPTH_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT);
 		}
 
-
+		void setClearColor(const color::RGBA& color, bool normalize)
+		{
+			color::RGBA normalColor = color;
+			if (normalize) normalColor.normalize();
+			glClearColor(
+				normalColor.red,
+				normalColor.green,
+				normalColor.blue,
+				normalColor.alpha
+			);
+		}
 	} // opengl
 } // core

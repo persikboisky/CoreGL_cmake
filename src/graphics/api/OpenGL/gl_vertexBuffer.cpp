@@ -71,7 +71,7 @@ namespace core
 			return new VertexBuffer(info);
 		}
 
-		void VertexBuffer::bind()
+		void VertexBuffer::bind() const
 		{
 			try
 			{
@@ -132,7 +132,7 @@ namespace core
 			return this->sizeOfByte;
 		}
 
-		unsigned int VertexBuffer::getCountVertex()
+		unsigned int VertexBuffer::getCountVertex() const
 		{
 			return this->sizeOfByte / this->byteToElement / this->countElementToVertex;
 		}

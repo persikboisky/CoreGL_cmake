@@ -33,7 +33,7 @@ namespace core
 			float maxDepth = 1.0f;
 			float minDepth = 0.0;
 
-			vulkan::PRIMITIVE primirive = vulkan::TRIANGLE_STRIP;
+			vulkan::PRIMITIVE primitive = vulkan::TRIANGLE_STRIP;
 			TYPE_CULL_FACE typeCullFace = CULL_BACK;
 			POLYGON_MODE polygonMode = POLYGON_FILL;
 			FRONT_FACE frontFace = FRONT_FACE_COUNTER_CLOCKWISE;
