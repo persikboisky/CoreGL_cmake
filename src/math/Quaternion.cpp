@@ -4,7 +4,6 @@
 
 #include "Quaternion.hpp"
 #include <cmath>
-#include <glm/ext.hpp>
 
 namespace core
 {
