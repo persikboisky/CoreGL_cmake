@@ -49,6 +49,7 @@ set(CoreGL_source
         src/math/Vector3.cpp
         src/math/Vector4.cpp
         src/math/Matrix4.cpp
+        src/math/Quaternion.cpp
         src/audio/aDevice.cpp
         src/audio/aBuffer.cpp
         src/audio/aSource.cpp

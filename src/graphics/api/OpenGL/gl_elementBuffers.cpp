@@ -51,7 +51,7 @@ namespace core
 			}
 		}
 
-		void ElementBuffers::unBind()
+		void ElementBuffers::unBind() const
 		{
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		}

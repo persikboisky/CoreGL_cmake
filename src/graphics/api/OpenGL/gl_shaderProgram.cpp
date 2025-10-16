@@ -171,32 +171,32 @@ namespace core
 			glUseProgram(this->id);
 		}
 
-		void ShaderProgram::unUse()
+		void ShaderProgram::unUse() const
 		{
 			glUseProgram(0);
 		}
 
-		void ShaderProgram::setUniform1f(float value, const char* name)
+		void ShaderProgram::setUniform1f(float value, const char* name) const
 		{
 			glUniform1f(getLocateUniform(this->id, name), value);
 		}
 
-		void ShaderProgram::setUniform2f(const math::Vector2& vec2, const char* name)
+		void ShaderProgram::setUniform2f(const math::Vector2& vec2, const char* name) const
 		{
 			glUniform2f(getLocateUniform(this->id, name), vec2.x, vec2.y);
 		}
 
-		void ShaderProgram::setUniform3f(const math::Vector3& vec3, const char* name)
+		void ShaderProgram::setUniform3f(const math::Vector3& vec3, const char* name) const
 		{
 			glUniform3f(getLocateUniform(this->id, name), vec3.x, vec3.y, vec3.z);
 		}
 
-		void ShaderProgram::setUniform4f(const math::Vector4& vec4, const char* name)
+		void ShaderProgram::setUniform4f(const math::Vector4& vec4, const char* name) const
 		{
 			glUniform4f(getLocateUniform(this->id, name), vec4.x, vec4.y, vec4.z, vec4.w);
 		}
 
-		void ShaderProgram::setUniformMat4(math::Matrix4 matrix, const char* name)
+		void ShaderProgram::setUniformMat4(math::Matrix4 matrix, const char* name) const
 		{
 			glUniformMatrix4fv(
 					getLocateUniform(this->id, name),
@@ -205,9 +205,56 @@ namespace core
 					matrix.getArray());
 		}
 
-		void ShaderProgram::setUniformSampler2D(Texture& text, const char* name)
+		void ShaderProgram::setUniformSampler2D(unsigned int sampler, const char* name) const
+		{
+			glUniform1ui(getLocateUniform(this->id, name), sampler);
+		}
+
+		void ShaderProgram::setUniformTextureSampler2D(class core::opengl::Texture& text, const char* name) const
 		{
 			glUniform1ui(getLocateUniform(this->id, name), text.getId());
+		}
+
+		void ShaderProgram::setUniformRGB(const color::RGB& color, const char* name, bool normalize) const
+		{
+			if (normalize)
+			{
+				this->setUniform3f(
+						{ color.red / 255.0f,
+						  color.green / 255.0f,
+						  color.blue / 255.0f },
+						name);
+			}
+			else
+			{
+				this->setUniform3f(
+						{ color.red,
+						  color.green,
+						  color.blue },
+						name);
+			}
+		}
+
+		void ShaderProgram::setUniformRGBA(const color::RGBA& color, const char* name, bool normalize) const
+		{
+			if (normalize)
+			{
+				this->setUniform4f(
+						{ color.red / 255.0f,
+						  color.green / 255.0f,
+						  color.blue / 255.0f,
+						  color.alpha / 255.0f},
+						name);
+			}
+			else
+			{
+				this->setUniform4f(
+						{ color.red,
+						  color.green,
+						  color.blue,
+						  color.alpha},
+						name);
+			}
 		}
 	} // opengl
 } // core
