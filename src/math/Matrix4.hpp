@@ -43,6 +43,16 @@ namespace core
 			static Matrix4 getRotateX(float angle, const Matrix4& mat4 = Matrix4(1.0f));
 			static Matrix4 getRotateY(float angle, const Matrix4& mat4 = Matrix4(1.0f));
 			static Matrix4 getRotateZ(float angle, const Matrix4& mat4 = Matrix4(1.0f));
+
+            void scale(const Vector3& vecScale);
+            void translate(const Vector3& vecTranslate);
+            void rotateX(float angle);
+            void rotateY(float angle);
+            void rotateZ(float angle);
+            void perspective(float fovToRadians, float aspect, float near, float far);
+            void lookAt(Vector3 pos, Vector3 target, Vector3 up);
+
+            void reset();
         };
     }
 }

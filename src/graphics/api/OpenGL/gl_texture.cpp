@@ -12,7 +12,7 @@ namespace core
 {
 	namespace opengl
 	{
-		Texture::Texture(const TextureInfo& info) : id(0), sampler(0)
+		Texture::Texture(const TextureInfo& info) : sampler(0)
 		{
 			glGenTextures(1, &this->id);
 
@@ -95,7 +95,7 @@ namespace core
 			this->sampler = sampler;
 		}
 
-		void Texture::unBind()
+		void Texture::unBind() const
 		{
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}

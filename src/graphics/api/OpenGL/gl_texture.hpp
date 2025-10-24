@@ -5,6 +5,8 @@
 #ifndef GL_TEXTURE_HPP
 #define GL_TEXTURE_HPP
 
+#include "gl_descriptorContainer.hpp"
+
 namespace core
 {
 	namespace opengl
@@ -18,13 +20,14 @@ namespace core
 			bool debugInfo = false;
 		};
 
-		class Texture
+		class Texture : public DescriptorContainer
 		{
 		private:
-			unsigned int id;
 			unsigned int sampler;
 
 			explicit Texture(const TextureInfo& info);
+
+			void bind() const override {}
 
 		public:
 			~Texture();
@@ -33,7 +36,7 @@ namespace core
 			static Texture *ptrCreate(const TextureInfo& info);
 
 			void bind(unsigned int sampler);
-			void unBind();
+			void unBind() const override;
 
 			unsigned int getId() const;
 		};

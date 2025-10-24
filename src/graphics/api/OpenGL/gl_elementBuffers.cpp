@@ -11,7 +11,7 @@ namespace core
 {
 	namespace opengl
 	{
-		ElementBuffers::ElementBuffers(unsigned int* array, unsigned int sizeOfByte) : id(0)
+		ElementBuffers::ElementBuffers(unsigned int* array, unsigned int sizeOfByte)
 		{
 			glGenBuffers(1, &this->id);
 			if (this->id <= 0)

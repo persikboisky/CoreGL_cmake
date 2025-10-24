@@ -1,3 +1,9 @@
+#include "Matrix4.hpp"
+#include "Matrix4.hpp"
+#include "Matrix4.hpp"
+#include "Matrix4.hpp"
+#include "Matrix4.hpp"
+#include "Matrix4.hpp"
 //
 // Created by kisly on 14.07.2025.
 //
@@ -231,4 +237,44 @@ Matrix4 Matrix4::getRotateZ(float angle, const Matrix4& mat4)
 	};
 
 	return Matrix4(rotate) * mat4;
+}
+
+void core::math::Matrix4::scale(const Vector3& vecScale)
+{
+    *this = Matrix4::getScale(vecScale, *this);
+}
+
+void core::math::Matrix4::translate(const Vector3& vecTranslate)
+{
+    *this = Matrix4::getTranslate(vecTranslate, *this);
+}
+
+void core::math::Matrix4::rotateX(float angle)
+{
+    *this = Matrix4::getRotateX(angle, *this);
+}
+
+void core::math::Matrix4::rotateY(float angle)
+{
+    *this = Matrix4::getRotateY(angle, *this);
+}
+
+void core::math::Matrix4::rotateZ(float angle)
+{
+    *this = Matrix4::getRotateZ(angle, *this);
+}
+
+void core::math::Matrix4::perspective(float fovToRadians, float aspect, float near, float far)
+{
+    *this = Matrix4::getPerspective(fovToRadians, aspect, near, far) * *this;
+}
+
+void core::math::Matrix4::lookAt(Vector3 pos, Vector3 target, Vector3 up)
+{
+    *this = Matrix4::getLookAt(pos, target, up) * *this;
+}
+
+void core::math::Matrix4::reset()
+{
+    *this = Matrix4(1.0);
 }

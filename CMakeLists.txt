@@ -38,6 +38,7 @@ set(CoreGL_source
         src/graphics/api/OpenGL/gl_commands.cpp
         src/graphics/api/OpenGL/gl_texture.cpp
         src/graphics/api/OpenGL/gl_elementBuffers.cpp
+        src/graphics/api/OpenGL/gl_FrameBuffer.cpp
         src/file/code.cpp
         src/file/mtl.cpp
         src/file/obj.cpp

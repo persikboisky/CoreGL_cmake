@@ -5,6 +5,8 @@
 #ifndef GL_VERTEXBUFFER_HPP
 #define GL_VERTEXBUFFER_HPP
 
+#include "gl_descriptorContainer.hpp"
+
 namespace core
 {
 	enum VALUE_TYPE : int;
@@ -19,10 +21,9 @@ namespace core
 			VALUE_TYPE valueType;
 		};
 
-		class VertexBuffer
+		class VertexBuffer : public DescriptorContainer
 		{
 		private:
-			unsigned int VAO;
 			unsigned int VBO;
 			unsigned int countElementToVertex;
 			unsigned int byteToElement;
@@ -37,10 +38,10 @@ namespace core
 			static VertexBuffer create(const VertexBufferInfo& info);
 			static VertexBuffer *ptrCreate(const VertexBufferInfo& info);
 
-			void bind() const;
-			void unBind();
+			void bind() const override;
+			void unBind() const override;
 
-			void addAttribute(unsigned int location, int nElement, int offset);
+			void addAttribute(unsigned int location, int nElement, int offset) const;
 
 			unsigned int getSizeOfByte() const;
 			unsigned int getCountVertex() const;

@@ -5,16 +5,16 @@
 #ifndef GL_ELEMENTBUFFERS_HPP
 #define GL_ELEMENTBUFFERS_HPP
 
+#include "gl_descriptorContainer.hpp"
+
 namespace core
 {
 	namespace opengl
 	{
 		/// @brief буфер индексов
-		class ElementBuffers
+		class ElementBuffers : public DescriptorContainer
 		{
 		private:
-			unsigned int id;
-
 			ElementBuffers(unsigned int *array, unsigned int sizeOfByte);
 
 		public:
@@ -33,10 +33,10 @@ namespace core
 			static ElementBuffers* ptrCreate(unsigned int *array, unsigned int sizeOfByte);
 
 			/// @brief прикрепляет буфер индексов
-			void bind() const;
+			void bind() const override;
 
 			/// @brief открепляет буфер индексов
-			void unBind() const;
+			void unBind() const override;
 		};
 	} // openGL
 } // core

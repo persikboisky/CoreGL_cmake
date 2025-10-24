@@ -5,6 +5,8 @@
 #ifndef GL_SHADERPROGRAM_HPP
 #define GL_SHADERPROGRAM_HPP
 
+#include "gl_descriptorContainer.hpp"
+
 typedef unsigned int uint32_t;
 
 namespace core
@@ -28,12 +30,13 @@ namespace core
 	namespace opengl
 	{
 		/// @brief класс шейдера
-		class Shader
+		class Shader : public DescriptorContainer
 		{
 		private:
-			unsigned int id = 0;
-
 			Shader(const TYPE_SHADER &type, const char *path);
+
+			void bind() const override {};
+			void unBind() const override {};
 
 		public:
 			~Shader();
@@ -55,12 +58,13 @@ namespace core
 			[[nodiscard]] unsigned int getId() const;
 		};
 
-		class ShaderProgram
+		class ShaderProgram : public DescriptorContainer
 		{
 		private:
-			unsigned int id = 0;
-
 			ShaderProgram(Shader **ptrShaders, uint32_t count);
+
+			void bind() const override {};
+			void unBind() const override {};
 
 		public:
 			~ShaderProgram();
