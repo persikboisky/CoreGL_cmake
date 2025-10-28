@@ -35,9 +35,6 @@ namespace core
 		private:
 			Shader(const TYPE_SHADER &type, const char *path);
 
-			void bind() const override {};
-			void unBind() const override {};
-
 		public:
 			~Shader();
 
@@ -58,13 +55,10 @@ namespace core
 			[[nodiscard]] unsigned int getId() const;
 		};
 
-		class ShaderProgram : public DescriptorContainer
+		class ShaderProgram : public FunctionUseContainer
 		{
 		private:
 			ShaderProgram(Shader **ptrShaders, uint32_t count);
-
-			void bind() const override {};
-			void unBind() const override {};
 
 		public:
 			~ShaderProgram();
@@ -82,10 +76,10 @@ namespace core
 			static ShaderProgram *ptrCreate(Shader **ptrShaders, uint32_t count);
 
 			/// @brief включает шейдерную программу
-			void use() const;
+			void use() const override;
 
 			/// @brief выключает шейдерную программу
-			void unUse() const;
+			void unUse() const override;
 
 			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна бать включена)
 			/// @param value значение

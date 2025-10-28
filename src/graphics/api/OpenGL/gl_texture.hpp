@@ -27,8 +27,6 @@ namespace core
 
 			explicit Texture(const TextureInfo& info);
 
-			void bind() const override {}
-
 		public:
 			~Texture();
 
@@ -36,7 +34,7 @@ namespace core
 			static Texture *ptrCreate(const TextureInfo& info);
 
 			void bind(unsigned int sampler);
-			void unBind() const override;
+			void unBind() const;
 
 			unsigned int getId() const;
 		};

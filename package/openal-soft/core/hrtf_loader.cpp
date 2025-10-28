@@ -2,6 +2,7 @@
 #include "config.h"
 
 #include <algorithm>
+#include <format>
 #include <iterator>
 #include <numeric>
 #include <ranges>
@@ -52,16 +53,17 @@ static_assert(GetMarker02Name().size() == HeaderMarkerSize);
 static_assert(GetMarker03Name().size() == HeaderMarkerSize);
 
 
-auto CreateHrtfStore(uint rate, uint8_t irSize, const std::span<const HrtfStore::Field> fields,
-    const std::span<const HrtfStore::Elevation> elevs, const std::span<const HrirArray> coeffs,
-    const std::span<const ubyte2> delays) -> std::unique_ptr<HrtfStore>
+auto CreateHrtfStore(u32 const rate, u8 const irSize,
+    std::span<HrtfStore::Field const> const fields,
+    std::span<HrtfStore::Elevation const> const elevs, std::span<HrirArray const> const coeffs,
+    std::span<u8x2 const> const delays) -> std::unique_ptr<HrtfStore>
 {
     static_assert(16 <= alignof(HrtfStore));
     static_assert(alignof(HrtfStore::Field) <= alignof(HrtfStore));
     static_assert(alignof(HrtfStore::Elevation) <= alignof(HrtfStore::Field));
 
     if(rate > MaxHrtfSampleRate)
-        throw std::runtime_error{fmt::format("Sample rate is too large (max: {}hz)",
+        throw std::runtime_error{std::format("Sample rate is too large (max: {}hz)",
             MaxHrtfSampleRate)};
 
     const auto irCount = size_t{elevs.back().azCount} + elevs.back().irOffset;
@@ -101,7 +103,7 @@ auto CreateHrtfStore(uint rate, uint8_t irSize, const std::span<const HrtfStore:
     auto coeffs_ = std::span{reinterpret_cast<HrirArray*>(std::to_address(storeiter)), irCount};
     std::advance(storeiter, coeffs.size_bytes());
 
-    auto delays_ = std::span{reinterpret_cast<ubyte2*>(std::to_address(storeiter)), irCount};
+    auto delays_ = std::span{reinterpret_cast<u8x2*>(std::to_address(storeiter)), irCount};
     std::advance(storeiter, delays.size_bytes());
     /* NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast) */
 
@@ -123,8 +125,8 @@ auto CreateHrtfStore(uint rate, uint8_t irSize, const std::span<const HrtfStore:
     return Hrtf;
 }
 
-void MirrorLeftHrirs(const std::span<const HrtfStore::Elevation> elevs,
-    std::span<HrirArray> coeffs, std::span<ubyte2> delays)
+void MirrorLeftHrirs(std::span<HrtfStore::Elevation const> const elevs,
+    std::span<HrirArray> coeffs, std::span<u8x2> delays)
 {
     for(const auto &elev : elevs)
     {
@@ -146,7 +148,7 @@ void MirrorLeftHrirs(const std::span<const HrtfStore::Elevation> elevs,
 template<size_t num_bits, typename T>
 constexpr auto fixsign(T value) noexcept -> T
 {
-    if constexpr(std::is_signed<T>::value && num_bits < sizeof(T)*8)
+    if constexpr(std::is_signed_v<T> && num_bits < sizeof(T)*8)
     {
         constexpr auto signbit = gsl::narrow_cast<T>(1u << (num_bits-1));
         return gsl::narrow_cast<T>((value^signbit) - signbit);
@@ -186,12 +188,12 @@ auto LoadHrtf00(std::istream &data) -> std::unique_ptr<HrtfStore>
 
     if(irSize < MinIrLength || irSize > HrirLength)
     {
-        throw std::runtime_error{fmt::format("Unsupported HRIR size, irSize={} ({} to {})", irSize,
+        throw std::runtime_error{std::format("Unsupported HRIR size, irSize={} ({} to {})", irSize,
             MinIrLength, HrirLength)};
     }
     if(evCount < MinEvCount || evCount > MaxEvCount)
     {
-        throw std::runtime_error{fmt::format("Unsupported elevation count: evCount={} ({} to {})",
+        throw std::runtime_error{std::format("Unsupported elevation count: evCount={} ({} to {})",
             evCount, MinEvCount, MaxEvCount)};
     }
 
@@ -205,36 +207,36 @@ auto LoadHrtf00(std::istream &data) -> std::unique_ptr<HrtfStore>
     {
         if(elevs[i].irOffset <= elevs[i-1].irOffset)
         {
-            throw std::runtime_error{fmt::format("Invalid evOffset: evOffset[{}]={} (last={})", i,
+            throw std::runtime_error{std::format("Invalid evOffset: evOffset[{}]={} (last={})", i,
                 elevs[i].irOffset, elevs[i-1].irOffset)};
         }
     }
     if(irCount <= elevs.back().irOffset)
     {
-        throw std::runtime_error{fmt::format("Invalid evOffset: evOffset[{}]={} (irCount={})",
+        throw std::runtime_error{std::format("Invalid evOffset: evOffset[{}]={} (irCount={})",
             elevs.size()-1, elevs.back().irOffset, irCount)};
     }
 
     for(size_t i{1};i < evCount;i++)
     {
-        elevs[i-1].azCount = gsl::narrow_cast<ushort>(elevs[i].irOffset - elevs[i-1].irOffset);
+        elevs[i-1].azCount = gsl::narrow_cast<u16>(elevs[i].irOffset - elevs[i-1].irOffset);
         if(elevs[i-1].azCount < MinAzCount || elevs[i-1].azCount > MaxAzCount)
         {
-            throw std::runtime_error{fmt::format(
+            throw std::runtime_error{std::format(
                 "Unsupported azimuth count: azCount[{}]={} ({} to {})", i-1, elevs[i-1].azCount,
                 MinAzCount, MaxAzCount)};
         }
     }
-    elevs.back().azCount = gsl::narrow_cast<ushort>(irCount - elevs.back().irOffset);
+    elevs.back().azCount = gsl::narrow_cast<u16>(irCount - elevs.back().irOffset);
     if(elevs.back().azCount < MinAzCount || elevs.back().azCount > MaxAzCount)
     {
-        throw std::runtime_error{fmt::format(
+        throw std::runtime_error{std::format(
             "Unsupported azimuth count: azCount[{}]={} ({} to {})", elevs.size()-1,
             elevs.back().azCount, MinAzCount, MaxAzCount)};
     }
 
-    auto coeffs = std::vector<HrirArray>(irCount, HrirArray{});
-    auto delays = std::vector<ubyte2>(irCount);
+    auto coeffs = std::vector(irCount, HrirArray{});
+    auto delays = std::vector(irCount, u8x2{});
     std::ranges::for_each(coeffs, [&data,irSize](HrirSpan hrir)
     {
         std::ranges::generate(hrir | std::views::take(irSize) | std::views::elements<0>,
@@ -248,10 +250,10 @@ auto LoadHrtf00(std::istream &data) -> std::unique_ptr<HrtfStore>
     {
         if(delays[i][0] > MaxHrirDelay)
         {
-            throw std::runtime_error{fmt::format("Invalid delays[{}]: {} ({})", i, delays[i][0],
+            throw std::runtime_error{std::format("Invalid delays[{}]: {} ({})", i, delays[i][0],
                 MaxHrirDelay)};
         }
-        delays[i][0] <<= HrirDelayFracBits;
+        delays[i][0] = gsl::narrow<u8>(delays[i][0] << HrirDelayFracBits);
     }
 
     /* Mirror the left ear responses to the right ear. */
@@ -271,12 +273,12 @@ auto LoadHrtf01(std::istream &data) -> std::unique_ptr<HrtfStore>
 
     if(irSize < MinIrLength || irSize > HrirLength)
     {
-        throw std::runtime_error{fmt::format("Unsupported HRIR size, irSize={} ({} to {})", irSize,
+        throw std::runtime_error{std::format("Unsupported HRIR size, irSize={} ({} to {})", irSize,
             MinIrLength, HrirLength)};
     }
     if(evCount < MinEvCount || evCount > MaxEvCount)
     {
-        throw std::runtime_error{fmt::format("Unsupported elevation count: evCount={} ({} to {})",
+        throw std::runtime_error{std::format("Unsupported elevation count: evCount={} ({} to {})",
             evCount, MinEvCount, MaxEvCount)};
     }
 
@@ -290,7 +292,7 @@ auto LoadHrtf01(std::istream &data) -> std::unique_ptr<HrtfStore>
     {
         if(elevs[i].azCount < MinAzCount || elevs[i].azCount > MaxAzCount)
         {
-            throw std::runtime_error{fmt::format(
+            throw std::runtime_error{std::format(
                 "Unsupported azimuth count: azCount[{}]={} ({} to {})", i, elevs[i].azCount,
                 MinAzCount, MaxAzCount)};
         }
@@ -298,11 +300,11 @@ auto LoadHrtf01(std::istream &data) -> std::unique_ptr<HrtfStore>
 
     elevs[0].irOffset = 0;
     for(size_t i{1};i < evCount;i++)
-        elevs[i].irOffset = gsl::narrow_cast<ushort>(elevs[i-1].irOffset + elevs[i-1].azCount);
-    const auto irCount = gsl::narrow_cast<ushort>(elevs.back().irOffset + elevs.back().azCount);
+        elevs[i].irOffset = gsl::narrow_cast<u16>(elevs[i-1].irOffset + elevs[i-1].azCount);
+    auto const irCount = gsl::narrow_cast<u16>(elevs.back().irOffset + elevs.back().azCount);
 
-    auto coeffs = std::vector<HrirArray>(irCount, HrirArray{});
-    auto delays = std::vector<ubyte2>(irCount);
+    auto coeffs = std::vector(irCount, HrirArray{});
+    auto delays = std::vector(irCount, u8x2{});
     std::ranges::for_each(coeffs, [&data,irSize](HrirSpan hrir)
     {
         std::ranges::generate(hrir | std::views::take(irSize) | std::views::elements<0>,
@@ -316,10 +318,10 @@ auto LoadHrtf01(std::istream &data) -> std::unique_ptr<HrtfStore>
     {
         if(delays[i][0] > MaxHrirDelay)
         {
-            throw std::runtime_error{fmt::format("Invalid delays[{}]: {} ({})", i, delays[i][0],
+            throw std::runtime_error{std::format("Invalid delays[{}]: {} ({})", i, delays[i][0],
                 MaxHrirDelay)};
         }
-        delays[i][0] <<= HrirDelayFracBits;
+        delays[i][0] = gsl::narrow<u8>(delays[i][0] << HrirDelayFracBits);
     }
 
     /* Mirror the left ear responses to the right ear. */
@@ -331,10 +333,10 @@ auto LoadHrtf01(std::istream &data) -> std::unique_ptr<HrtfStore>
 
 auto LoadHrtf02(std::istream &data) -> std::unique_ptr<HrtfStore>
 {
-    static constexpr auto SampleType_S16 = ubyte{0};
-    static constexpr auto SampleType_S24 = ubyte{1};
-    static constexpr auto ChanType_LeftOnly = ubyte{0};
-    static constexpr auto ChanType_LeftRight = ubyte{1};
+    static constexpr auto SampleType_S16 = 0_u8;
+    static constexpr auto SampleType_S24 = 1_u8;
+    static constexpr auto ChanType_LeftOnly = 0_u8;
+    static constexpr auto ChanType_LeftRight = 1_u8;
 
     const auto rate = readle<uint32_t>(data);
     const auto sampleType = readle<uint8_t>(data);
@@ -345,18 +347,18 @@ auto LoadHrtf02(std::istream &data) -> std::unique_ptr<HrtfStore>
         throw std::runtime_error{"Premature end of file"};
 
     if(sampleType > SampleType_S24)
-        throw std::runtime_error{fmt::format("Unsupported sample type: {}", sampleType)};
+        throw std::runtime_error{std::format("Unsupported sample type: {}", sampleType)};
     if(channelType > ChanType_LeftRight)
-        throw std::runtime_error{fmt::format("Unsupported channel type: {}", channelType)};
+        throw std::runtime_error{std::format("Unsupported channel type: {}", channelType)};
 
     if(irSize < MinIrLength || irSize > HrirLength)
     {
-        throw std::runtime_error{fmt::format("Unsupported HRIR size, irSize={} ({} to {})", irSize,
+        throw std::runtime_error{std::format("Unsupported HRIR size, irSize={} ({} to {})", irSize,
             MinIrLength, HrirLength)};
     }
     if(fdCount < 1 || fdCount > MaxFdCount)
     {
-        throw std::runtime_error{fmt::format(
+        throw std::runtime_error{std::format(
             "Unsupported number of field-depths: fdCount={} ({} to {})", fdCount, MinFdCount,
             MaxFdCount)};
     }
@@ -372,13 +374,13 @@ auto LoadHrtf02(std::istream &data) -> std::unique_ptr<HrtfStore>
 
         if(distance < MinFdDistance || distance > MaxFdDistance)
         {
-            throw std::runtime_error{fmt::format(
+            throw std::runtime_error{std::format(
                 "Unsupported field distance[{}]={} ({} to {} millimeters)", f, distance,
                 MinFdDistance, MaxFdDistance)};
         }
         if(evCount < MinEvCount || evCount > MaxEvCount)
         {
-            throw std::runtime_error{fmt::format(
+            throw std::runtime_error{std::format(
                 "Unsupported elevation count: evCount[{}]={} ({} to {})", f, evCount, MinEvCount,
                 MaxEvCount)};
         }
@@ -387,7 +389,7 @@ auto LoadHrtf02(std::istream &data) -> std::unique_ptr<HrtfStore>
         fields[f].evCount = evCount;
         if(f > 0 && !(fields[f].distance > fields[f-1].distance))
         {
-            throw std::runtime_error{fmt::format(
+            throw std::runtime_error{std::format(
                 "Field distance[{}] is not after previous ({} > {})", f, fields[f].distance,
                 fields[f-1].distance)};
         }
@@ -406,7 +408,7 @@ auto LoadHrtf02(std::istream &data) -> std::unique_ptr<HrtfStore>
         if(invazi != new_azs.end())
         {
             const auto idx = std::distance(new_azs.begin(), invazi);
-            throw std::runtime_error{fmt::format(
+            throw std::runtime_error{std::format(
                 "Unsupported azimuth count: azCount[{}][{}]={} ({} to {})", f, idx, *invazi,
                 MinAzCount, MaxAzCount)};
         }
@@ -417,12 +419,12 @@ auto LoadHrtf02(std::istream &data) -> std::unique_ptr<HrtfStore>
         [](const HrtfStore::Elevation &last, const HrtfStore::Elevation &cur)->HrtfStore::Elevation
     {
         return HrtfStore::Elevation{cur.azCount,
-            gsl::narrow_cast<ushort>(last.azCount + last.irOffset)};
+            gsl::narrow_cast<u16>(last.azCount + last.irOffset)};
     });
-    const auto irTotal = gsl::narrow_cast<ushort>(elevs.back().azCount + elevs.back().irOffset);
+    auto const irTotal = gsl::narrow_cast<u16>(elevs.back().azCount + elevs.back().irOffset);
 
-    auto coeffs = std::vector<HrirArray>(irTotal, HrirArray{});
-    auto delays = std::vector<ubyte2>(irTotal);
+    auto coeffs = std::vector(irTotal, HrirArray{});
+    auto delays = std::vector(irTotal, u8x2{});
     if(channelType == ChanType_LeftOnly)
     {
         if(sampleType == SampleType_S16)
@@ -447,17 +449,17 @@ auto LoadHrtf02(std::istream &data) -> std::unique_ptr<HrtfStore>
         if(!data || data.eof())
             throw std::runtime_error{"Premature end of file"};
 
-        auto invdelay = std::ranges::find_if(ldelays, [](const ubyte delay) noexcept
+        auto const invdelay = std::ranges::find_if(ldelays, [](u8 const delay) noexcept
         { return delay > MaxHrirDelay; });
         if(invdelay != ldelays.end())
         {
             const auto idx = std::distance(ldelays.begin(), invdelay);
-            throw std::runtime_error{fmt::format("Invalid delays[{}][0]: {} > {}", idx, *invdelay,
+            throw std::runtime_error{std::format("Invalid delays[{}][0]: {} > {}", idx, *invdelay,
                 MaxHrirDelay)};
         }
 
-        std::ranges::transform(ldelays, ldelays.begin(), [](const ubyte delay) -> ubyte
-        { return gsl::narrow_cast<ubyte>(delay << HrirDelayFracBits); });
+        std::ranges::transform(ldelays, ldelays.begin(), [](u8 const delay) -> u8
+        { return gsl::narrow_cast<u8>(delay << HrirDelayFracBits); });
 
         /* Mirror the left ear responses to the right ear. */
         MirrorLeftHrirs(elevs, coeffs, delays);
@@ -486,17 +488,17 @@ auto LoadHrtf02(std::istream &data) -> std::unique_ptr<HrtfStore>
         if(!data || data.eof())
             throw std::runtime_error{"Premature end of file"};
 
-        auto invdelay = std::ranges::find_if(joined_delays, [](const ubyte delay) noexcept
+        auto const invdelay = std::ranges::find_if(joined_delays, [](u8 const delay) noexcept
         { return delay > MaxHrirDelay; });
         if(invdelay != joined_delays.end())
         {
             const auto idx = std::distance(joined_delays.begin(), invdelay);
-            throw std::runtime_error{fmt::format("Invalid delays[{}][{}]: {} > {}", idx>>1, idx&1,
+            throw std::runtime_error{std::format("Invalid delays[{}][{}]: {} > {}", idx>>1, idx&1,
                 *invdelay, MaxHrirDelay)};
         }
 
-        std::ranges::transform(joined_delays, joined_delays.begin(), [](const ubyte delay) -> ubyte
-        { return gsl::narrow_cast<ubyte>(delay << HrirDelayFracBits); });
+        std::ranges::transform(joined_delays, joined_delays.begin(), [](u8 const delay) -> u8
+        { return gsl::narrow_cast<u8>(delay << HrirDelayFracBits); });
     }
 
     if(fdCount > 1)
@@ -504,7 +506,7 @@ auto LoadHrtf02(std::istream &data) -> std::unique_ptr<HrtfStore>
         auto fields_ = std::vector<HrtfStore::Field>(fields.size());
         auto elevs_ = std::vector<HrtfStore::Elevation>(elevs.size());
         auto coeffs_ = std::vector<HrirArray>(coeffs.size());
-        auto delays_ = std::vector<ubyte2>(delays.size());
+        auto delays_ = std::vector<u8x2>(delays.size());
 
         /* Simple reverse for the per-field elements. */
         std::ranges::reverse_copy(fields, fields_.begin());
@@ -532,7 +534,7 @@ auto LoadHrtf02(std::istream &data) -> std::unique_ptr<HrtfStore>
                 -> HrtfStore::Elevation
         {
             return HrtfStore::Elevation{cur.azCount,
-                gsl::narrow_cast<ushort>(last.azCount + last.irOffset)};
+                gsl::narrow_cast<u16>(last.azCount + last.irOffset)};
         });
 
         /* Reverse the order of each field's group of IRs. */
@@ -570,8 +572,8 @@ auto LoadHrtf02(std::istream &data) -> std::unique_ptr<HrtfStore>
 
 auto LoadHrtf03(std::istream &data) -> std::unique_ptr<HrtfStore>
 {
-    static constexpr auto ChanType_LeftOnly = ubyte{0};
-    static constexpr auto ChanType_LeftRight = ubyte{1};
+    static constexpr auto ChanType_LeftOnly = 0_u8;
+    static constexpr auto ChanType_LeftRight = 1_u8;
 
     const auto rate = readle<uint32_t>(data);
     const auto channelType = readle<uint8_t>(data);
@@ -581,16 +583,16 @@ auto LoadHrtf03(std::istream &data) -> std::unique_ptr<HrtfStore>
         throw std::runtime_error{"Premature end of file"};
 
     if(channelType > ChanType_LeftRight)
-        throw std::runtime_error{fmt::format("Unsupported channel type: {}", channelType)};
+        throw std::runtime_error{std::format("Unsupported channel type: {}", channelType)};
 
     if(irSize < MinIrLength || irSize > HrirLength)
     {
-        throw std::runtime_error{fmt::format("Unsupported HRIR size, irSize={} ({} to {})", irSize,
+        throw std::runtime_error{std::format("Unsupported HRIR size, irSize={} ({} to {})", irSize,
             MinIrLength, HrirLength)};
     }
     if(fdCount < 1 || fdCount > MaxFdCount)
     {
-        throw std::runtime_error{fmt::format(
+        throw std::runtime_error{std::format(
             "Unsupported number of field-depths: fdCount={} ({} to {})", fdCount, MinFdCount,
             MaxFdCount)};
     }
@@ -606,13 +608,13 @@ auto LoadHrtf03(std::istream &data) -> std::unique_ptr<HrtfStore>
 
         if(distance < MinFdDistance || distance > MaxFdDistance)
         {
-            throw std::runtime_error{fmt::format(
+            throw std::runtime_error{std::format(
                 "Unsupported field distance[{}]={} ({} to {} millimeters)", f, distance,
                 MinFdDistance, MaxFdDistance)};
         }
         if(evCount < MinEvCount || evCount > MaxEvCount)
         {
-            throw std::runtime_error{fmt::format(
+            throw std::runtime_error{std::format(
                 "Unsupported elevation count: evCount[{}]={} ({} to {})", f, evCount, MinEvCount,
                 MaxEvCount)};
         }
@@ -621,7 +623,7 @@ auto LoadHrtf03(std::istream &data) -> std::unique_ptr<HrtfStore>
         fields[f].evCount = evCount;
         if(f > 0 && !(fields[f].distance < fields[f-1].distance))
         {
-            throw std::runtime_error{fmt::format(
+            throw std::runtime_error{std::format(
                 "Field distance[{}] is not before previous ({} < {})", f, fields[f].distance,
                 fields[f-1].distance)};
         }
@@ -640,7 +642,7 @@ auto LoadHrtf03(std::istream &data) -> std::unique_ptr<HrtfStore>
         if(invazi != new_azs.end())
         {
             const auto idx = std::distance(new_azs.begin(), invazi);
-            throw std::runtime_error{fmt::format(
+            throw std::runtime_error{std::format(
                 "Unsupported azimuth count: azCount[{}][{}]={} ({} to {})", f, idx, *invazi,
                 MinAzCount, MaxAzCount)};
         }
@@ -651,12 +653,12 @@ auto LoadHrtf03(std::istream &data) -> std::unique_ptr<HrtfStore>
         [](const HrtfStore::Elevation &last, const HrtfStore::Elevation &cur)->HrtfStore::Elevation
     {
         return HrtfStore::Elevation{cur.azCount,
-            gsl::narrow_cast<ushort>(last.azCount + last.irOffset)};
+            gsl::narrow_cast<u16>(last.azCount + last.irOffset)};
     });
-    const auto irTotal = gsl::narrow_cast<ushort>(elevs.back().azCount + elevs.back().irOffset);
+    auto const irTotal = gsl::narrow_cast<u16>(elevs.back().azCount + elevs.back().irOffset);
 
-    auto coeffs = std::vector<HrirArray>(irTotal, HrirArray{});
-    auto delays = std::vector<ubyte2>(irTotal);
+    auto coeffs = std::vector(irTotal, HrirArray{});
+    auto delays = std::vector(irTotal, u8x2{});
     if(channelType == ChanType_LeftOnly)
     {
         std::ranges::for_each(coeffs, [&data,irSize](HrirSpan hrir)
@@ -670,12 +672,12 @@ auto LoadHrtf03(std::istream &data) -> std::unique_ptr<HrtfStore>
         if(!data || data.eof())
             throw std::runtime_error{"Premature end of file"};
 
-        auto invdelay = std::ranges::find_if(ldelays, [](const ubyte delay) noexcept
+        auto const invdelay = std::ranges::find_if(ldelays, [](u8 const delay) noexcept
         { return delay > MaxHrirDelay<<HrirDelayFracBits; });
         if(invdelay != ldelays.end())
         {
             const auto idx = std::distance(ldelays.begin(), invdelay);
-            throw std::runtime_error{fmt::format("Invalid delays[{}][0]: {:f} > {}", idx,
+            throw std::runtime_error{std::format("Invalid delays[{}][0]: {:f} > {}", idx,
                 gsl::narrow_cast<float>(*invdelay)/float{HrirDelayFracOne}, MaxHrirDelay)};
         }
 
@@ -695,12 +697,12 @@ auto LoadHrtf03(std::istream &data) -> std::unique_ptr<HrtfStore>
         if(!data || data.eof())
             throw std::runtime_error{"Premature end of file"};
 
-        auto invdelay = std::ranges::find_if(joined_delays, [](const ubyte delay) noexcept
+        auto const invdelay = std::ranges::find_if(joined_delays, [](u8 const delay) noexcept
         { return delay > MaxHrirDelay<<HrirDelayFracBits; });
         if(invdelay != joined_delays.end())
         {
             const auto idx = std::distance(joined_delays.begin(), invdelay);
-            throw std::runtime_error{fmt::format("Invalid delays[{}][{}]: {:f} ({})", idx>>1,
+            throw std::runtime_error{std::format("Invalid delays[{}][{}]: {:f} ({})", idx>>1,
                 idx&1, gsl::narrow_cast<float>(*invdelay)/float{HrirDelayFracOne}, MaxHrirDelay)};
         }
     }
@@ -716,7 +718,7 @@ auto LoadHrtf(std::istream &stream) -> std::unique_ptr<HrtfStore>
     auto magic = std::array<char,HeaderMarkerSize>{};
     stream.read(magic.data(), magic.size());
     if(stream.gcount() < std::streamsize{magic.size()})
-        throw std::runtime_error{fmt::format("Data is too short ({} bytes)", stream.gcount())};
+        throw std::runtime_error{std::format("Data is too short ({} bytes)", stream.gcount())};
     if(std::ranges::equal(GetMarker03Name(), magic))
     {
         TRACE("Detected data set format v3");

@@ -12,31 +12,35 @@ namespace core
 	namespace opengl
 	{
 		/// @brief буфер индексов
-		class ElementBuffers : public DescriptorContainer
+		class ElementBuffer : public FunctionBindContainer
 		{
 		private:
-			ElementBuffers(unsigned int *array, unsigned int sizeOfByte);
+			ElementBuffer(unsigned int *array, unsigned int sizeOfByte);
+
+			unsigned int countVertex = 0;
 
 		public:
-			~ElementBuffers();
+			~ElementBuffer();
 
 			/// @brief создаёт идексный буфер
 			/// @param array указатель на массив индексов
 			/// @param sizeOfByte размер массива в байтах
 			/// @return объект класса opengl::ElementBuffers
-			static ElementBuffers create(unsigned int *array, unsigned int sizeOfByte);
+			static ElementBuffer create(unsigned int *array, unsigned int sizeOfByte);
 
 			/// @brief создаёт идексный буфер
 			/// @param array указатель на массив индексов
 			/// @param sizeOfByte размер массива в байтах
 			/// @return указатель на объект класса opengl::ElementBuffers
-			static ElementBuffers* ptrCreate(unsigned int *array, unsigned int sizeOfByte);
+			static ElementBuffer* ptrCreate(unsigned int *array, unsigned int sizeOfByte);
 
 			/// @brief прикрепляет буфер индексов
 			void bind() const override;
 
 			/// @brief открепляет буфер индексов
 			void unBind() const override;
+
+			unsigned int getCountVertexes() const;
 		};
 	} // openGL
 } // core

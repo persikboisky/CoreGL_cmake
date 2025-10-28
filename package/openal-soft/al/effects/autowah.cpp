@@ -156,7 +156,7 @@ struct AllValidator {
 } // namespace
 
 template<> /* NOLINTNEXTLINE(clazy-copyable-polymorphic) Exceptions must be copyable. */
-struct AutowahCommitter::Exception : public EaxException {
+struct AutowahCommitter::Exception final : EaxException {
     explicit Exception(const std::string_view message) : EaxException{"EAX_AUTOWAH_EFFECT", message}
     { }
 };
@@ -164,7 +164,7 @@ struct AutowahCommitter::Exception : public EaxException {
 template<> [[noreturn]]
 void AutowahCommitter::fail(const std::string_view message) { throw Exception{message}; }
 
-bool EaxAutowahCommitter::commit(const EAXAUTOWAHPROPERTIES &props)
+auto EaxAutowahCommitter::commit(const EAXAUTOWAHPROPERTIES &props) const -> bool
 {
     if(auto *cur = std::get_if<EAXAUTOWAHPROPERTIES>(&mEaxProps); cur && *cur == props)
         return false;

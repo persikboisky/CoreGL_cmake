@@ -28,6 +28,7 @@
 #include <chrono>
 #include <cstring>
 #include <exception>
+#include <format>
 #include <memory>
 #include <mutex>
 #include <span>
@@ -44,7 +45,6 @@
 #include "core/helpers.h"
 #include "core/logging.h"
 #include "dynload.h"
-#include "fmt/core.h"
 #include "gsl/gsl"
 #include "ringbuffer.h"
 
@@ -302,7 +302,7 @@ auto probe_devices(snd_pcm_stream_t stream) -> std::vector<DevMap>
             {
                 const auto &entry = devlist.emplace_back(customdevs->substr(curpos, seppos-curpos),
                     customdevs->substr(seppos+1, nextpos-seppos-1));
-                TRACE("Got device \"{}\", \"{}\"", entry.name, entry.device_name);
+                TRACE(R"(Got device "{}", "{}")", entry.name, entry.device_name);
             }
 
             if(nextpos < customdevs->length())
@@ -319,7 +319,7 @@ auto probe_devices(snd_pcm_stream_t stream) -> std::vector<DevMap>
     for(;err >= 0 && card >= 0;err = snd_card_next(&card))
     {
         auto handle = SndCtlPtr{};
-        err = snd_ctl_open(al::out_ptr(handle), fmt::format("hw:{}", card).c_str(), 0);
+        err = snd_ctl_open(al::out_ptr(handle), std::format("hw:{}", card).c_str(), 0);
         if(err < 0)
         {
             ERR("control open (hw:{}): {}", card, snd_strerror(err));
@@ -334,7 +334,7 @@ auto probe_devices(snd_pcm_stream_t stream) -> std::vector<DevMap>
 
         const auto *cardname = snd_ctl_card_info_get_name(info.get());
         const auto *cardid = snd_ctl_card_info_get_id(info.get());
-        auto name = fmt::format("{}-{}", prefix_name(stream), cardid);
+        auto name = std::format("{}-{}", prefix_name(stream), cardid);
         const auto card_prefix = std::string{ConfigValueStr({}, "alsa"sv, name)
             .value_or(main_prefix)};
 
@@ -357,19 +357,19 @@ auto probe_devices(snd_pcm_stream_t stream) -> std::vector<DevMap>
             }
 
             /* "prefix-cardid-dev" */
-            name = fmt::format("{}-{}-{}", prefix_name(stream), cardid, dev);
+            name = std::format("{}-{}-{}", prefix_name(stream), cardid, dev);
             const auto device_prefix = std::string{ConfigValueStr({}, "alsa"sv, name)
                 .value_or(card_prefix)};
 
             /* "CardName, PcmName (CARD=cardid,DEV=dev)" */
-            name = fmt::format("{}, {} (CARD={},DEV={})", cardname,
+            name = std::format("{}, {} (CARD={},DEV={})", cardname,
                 snd_pcm_info_get_name(pcminfo.get()), cardid, dev);
 
             /* "devprefixCARD=cardid,DEV=dev" */
-            auto device = fmt::format("{}CARD={},DEV={}", device_prefix, cardid, dev);
+            auto device = std::format("{}CARD={},DEV={}", device_prefix, cardid, dev);
             
             const auto &entry = devlist.emplace_back(std::move(name), std::move(device));
-            TRACE("Got device \"{}\", \"{}\"", entry.name, entry.device_name);
+            TRACE(R"(Got device "{}", "{}")", entry.name, entry.device_name);
         }
     }
     if(err < 0)
@@ -1143,26 +1143,37 @@ auto AlsaCapture::getClockLatency() -> ClockLatency
     return ret;
 }
 
-} // namespace
+#define ALSA_LIB "libasound.so.2"
 
+#if HAVE_DYNLOAD
+OAL_ELF_NOTE_DLOPEN(
+    "backend-alsa",
+    "Support for the ALSA backend",
+    OAL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED,
+    ALSA_LIB
+);
+#endif
+
+} // namespace
 
 auto AlsaBackendFactory::init() -> bool
 {
 #if HAVE_DYNLOAD
     if(!alsa_handle)
     {
-        if(auto libresult = LoadLib("libasound.so.2"))
+        auto *const alsa_lib = gsl::czstring{ALSA_LIB};
+        if(auto const libresult = LoadLib(alsa_lib))
             alsa_handle = libresult.value();
         else
         {
-            WARN("Failed to load {}: {}", "libasound.so.2", libresult.error());
+            WARN("Failed to load {}: {}", alsa_lib, libresult.error());
             return false;
         }
 
-        static constexpr auto load_func = [](auto *&func, const char *name) -> bool
+        static constexpr auto load_func = [](auto *&func, gsl::czstring const name) -> bool
         {
             using func_t = std::remove_reference_t<decltype(func)>;
-            auto funcresult = GetSymbol(alsa_handle, name);
+            auto const funcresult = GetSymbol(alsa_handle, name);
             if(!funcresult)
             {
                 WARN("Failed to load function {}: {}", name, funcresult.error());

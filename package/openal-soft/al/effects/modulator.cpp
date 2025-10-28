@@ -1,6 +1,7 @@
 
 #include "config.h"
 
+#include <format>
 #include <optional>
 #include <stdexcept>
 
@@ -39,7 +40,7 @@ constexpr auto EnumFromWaveform(ModulatorWaveform type) -> ALenum
     case ModulatorWaveform::Sawtooth: return AL_RING_MODULATOR_SAWTOOTH;
     case ModulatorWaveform::Square: return AL_RING_MODULATOR_SQUARE;
     }
-    throw std::runtime_error{fmt::format("Invalid modulator waveform: {}",
+    throw std::runtime_error{std::format("Invalid modulator waveform: {}",
         int{al::to_underlying(type)})};
 }
 
@@ -183,7 +184,7 @@ struct AllValidator {
 } // namespace
 
 template<> /* NOLINTNEXTLINE(clazy-copyable-polymorphic) Exceptions must be copyable. */
-struct ModulatorCommitter::Exception : public EaxException {
+struct ModulatorCommitter::Exception final : EaxException {
     explicit Exception(const std::string_view message)
         : EaxException{"EAX_RING_MODULATOR_EFFECT", message}
     { }
@@ -193,7 +194,7 @@ template<> [[noreturn]]
 void ModulatorCommitter::fail(const std::string_view message)
 { throw Exception{message}; }
 
-bool EaxModulatorCommitter::commit(const EAXRINGMODULATORPROPERTIES &props)
+auto EaxModulatorCommitter::commit(const EAXRINGMODULATORPROPERTIES &props) const -> bool
 {
     if(auto *cur = std::get_if<EAXRINGMODULATORPROPERTIES>(&mEaxProps); cur && *cur == props)
         return false;

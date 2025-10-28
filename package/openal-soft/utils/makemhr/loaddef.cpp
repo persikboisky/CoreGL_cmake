@@ -21,6 +21,8 @@
  * Or visit:  http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
 
+#include "config.h"
+
 #include "loaddef.h"
 
 #include <algorithm>
@@ -48,12 +50,17 @@
 #include "filesystem.h"
 #include "fmt/base.h"
 #include "fmt/ostream.h"
-#include "gsl/gsl"
 #include "makemhr.h"
 #include "polyphase_resampler.h"
 #include "sofa-support.h"
 
 #include "mysofa.h"
+
+#if HAVE_CXXMODULES
+import gsl;
+#else
+#include "gsl/gsl"
+#endif
 
 namespace {
 
@@ -1009,7 +1016,7 @@ auto LoadWaveSource(std::istream &istream, SourceRefT *src, const uint hrirRate,
 
 
 struct SofaEasyDeleter {
-    void operator()(gsl::owner<MYSOFA_EASY*> sofa)
+    void operator()(gsl::owner<MYSOFA_EASY*> sofa) const
     {
         if(sofa->neighborhood) mysofa_neighborhood_free(sofa->neighborhood);
         if(sofa->lookup) mysofa_lookup_free(sofa->lookup);
@@ -1708,15 +1715,15 @@ auto ProcessSources(TokenReaderT *tr, HrirDataT *hData, const uint outRate) -> b
 {
     const auto channels = (hData->mChannelType == CT_STEREO) ? 2u : 1u;
     hData->mHrirsBase.resize(size_t{channels} * hData->mIrCount * hData->mIrSize);
-    const auto hrirs = std::span<double>{hData->mHrirsBase};
-    auto hrir = std::vector<double>(hData->mIrSize);
+    const auto hrirs = std::span{hData->mHrirsBase};
+    auto hrir = std::vector(hData->mIrSize, 0.0);
     uint line;
     uint col;
     uint fi;
     uint ei;
     uint ai;
 
-    auto onsetSamples = std::vector<double>(size_t{OnsetRateMultiple} * hData->mIrPoints);
+    auto onsetSamples = std::vector(size_t{OnsetRateMultiple}*hData->mIrPoints, 0.0);
     auto onsetResampler = PPhaseResampler{};
     onsetResampler.init(hData->mIrRate, OnsetRateMultiple*hData->mIrRate);
 
@@ -1782,12 +1789,12 @@ auto ProcessSources(TokenReaderT *tr, HrirDataT *hData, const uint outRate) -> b
                 src.mChannel = 0;
             }
 
-            MYSOFA_EASY *sofa{LoadSofaFile(&src, hData->mIrRate, hData->mIrPoints)};
+            auto const *const sofa = LoadSofaFile(&src, hData->mIrRate, hData->mIrPoints);
             if(!sofa) return false;
 
             const auto srcPosValues = std::span{sofa->hrtf->SourcePosition.values,
                 sofa->hrtf->M*3_uz};
-            for(uint si{0};si < sofa->hrtf->M;++si)
+            for(auto const si : std::views::iota(0u, sofa->hrtf->M))
             {
                 fmt::print("\rLoading sources... {} of {}", si+1, sofa->hrtf->M);
                 std::cout.flush();

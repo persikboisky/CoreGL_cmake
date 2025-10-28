@@ -1,8 +1,21 @@
 
 #include "config.h"
 
+#include <atomic>
+
+#if HAVE_CXXMODULES
+import alsoft.router;
+import openal.al;
+import openal.efx;
+
+#define AL_APIENTRY __cdecl
+
+#else
+
 #include "AL/al.h"
+#include "AL/efx.h"
 #include "router.h"
+#endif
 
 
 #define DECL_THUNK1(R,n,T1)                                                   \

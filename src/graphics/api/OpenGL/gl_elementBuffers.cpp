@@ -1,17 +1,16 @@
-#include "gl_elementBuffers.hpp"
 //
 // Created by kisly on 04.10.2025.
 //
 
 #include "gl_elementBuffers.hpp"
 #include "../../../util/coders.hpp"
-#include "../../../package/glew-2.1.0-master/include/GL/glew.h"
+#include "../../../package/glew-2.1.0/include/GL/glew.h"
 
 namespace core
 {
 	namespace opengl
 	{
-		ElementBuffers::ElementBuffers(unsigned int* array, unsigned int sizeOfByte)
+		ElementBuffer::ElementBuffer(unsigned int* array, unsigned int sizeOfByte) : countVertex(sizeOfByte / sizeof(unsigned int))
 		{
 			glGenBuffers(1, &this->id);
 			if (this->id <= 0)
@@ -24,22 +23,22 @@ namespace core
 			this->unBind();
 		}
 
-		ElementBuffers::~ElementBuffers()
+		ElementBuffer::~ElementBuffer()
 		{
 			glDeleteBuffers(1, &this->id);
 		}
 
-		ElementBuffers ElementBuffers::create(unsigned int* array, unsigned int sizeOfByte)
+		ElementBuffer ElementBuffer::create(unsigned int* array, unsigned int sizeOfByte)
 		{
-			return ElementBuffers(array, sizeOfByte);
+			return ElementBuffer(array, sizeOfByte);
 		}
 
-		ElementBuffers* ElementBuffers::ptrCreate(unsigned int* array, unsigned int sizeOfByte)
+		ElementBuffer* ElementBuffer::ptrCreate(unsigned int* array, unsigned int sizeOfByte)
 		{
-			return new ElementBuffers(array, sizeOfByte);
+			return new ElementBuffer(array, sizeOfByte);
 		}
 
-		void ElementBuffers::bind() const
+		void ElementBuffer::bind() const
 		{
 			try
 			{
@@ -51,9 +50,14 @@ namespace core
 			}
 		}
 
-		void ElementBuffers::unBind() const
+		void ElementBuffer::unBind() const
 		{
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		}
+
+		unsigned int ElementBuffer::getCountVertexes() const
+		{
+			return this->countVertex;
 		}
 	} // openGL
 } // core

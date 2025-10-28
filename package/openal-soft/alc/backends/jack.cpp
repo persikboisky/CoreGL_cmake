@@ -26,6 +26,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include <format>
 #include <memory.h>
 #include <memory>
 #include <mutex>
@@ -41,7 +42,6 @@
 #include "core/helpers.h"
 #include "core/logging.h"
 #include "dynload.h"
-#include "fmt/format.h"
 #include "gsl/gsl"
 #include "opthelpers.h"
 #include "ringbuffer.h"
@@ -110,23 +110,34 @@ decltype(jack_error_callback) * pjack_error_callback;
 
 jack_options_t ClientOptions = JackNullOption;
 
+#if defined(_WIN64)
+#define JACK_LIB "libjack64.dll"
+#elif defined(_WIN32)
+#define JACK_LIB "libjack.dll"
+#else
+#define JACK_LIB "libjack.so.0"
+#endif
+
+#if HAVE_DYNLOAD
+OAL_ELF_NOTE_DLOPEN(
+    "backend-jack",
+    "Support for the JACK backend",
+    OAL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED,
+    JACK_LIB
+);
+#endif
+
 auto jack_load() -> bool
 {
 #if HAVE_DYNLOAD
     if(!jack_handle)
     {
-#if defined(_WIN64)
-#define JACKLIB "libjack64.dll"
-#elif defined(_WIN32)
-#define JACKLIB "libjack.dll"
-#else
-#define JACKLIB "libjack.so.0"
-#endif
-        if(auto libresult = LoadLib(JACKLIB))
+        const char *jack_lib = JACK_LIB;
+        if(auto libresult = LoadLib(jack_lib))
             jack_handle = libresult.value();
         else
         {
-            WARN("Failed to load {}: {}", JACKLIB, libresult.error());
+            WARN("Failed to load {}: {}", jack_lib, libresult.error());
             return false;
         }
 
@@ -198,7 +209,7 @@ void EnumerateDevices(jack_client_t *client, std::vector<DeviceEntry> &list)
                 continue;
 
             const auto &entry = list.emplace_back(std::string{portdev},
-                fmt::format("{}:", portdev));
+                std::format("{}:", portdev));
             TRACE("Got device: {} = {}", entry.mName, entry.mPattern);
         }
         /* There are ports but couldn't get device names from them. Add a
@@ -263,7 +274,7 @@ void EnumerateDevices(jack_client_t *client, std::vector<DeviceEntry> &list)
                 auto name = std::string{};
                 auto count = 1_uz;
                 do {
-                    name = fmt::format("{} #{}", curitem->mName, ++count);
+                    name = std::format("{} #{}", curitem->mName, ++count);
                 } while(std::ranges::find(subrange, name, &DeviceEntry::mName) != subrange.end());
                 curitem->mName = std::move(name);
             }
@@ -498,7 +509,7 @@ bool JackPlayback::reset()
     else
     {
         const auto devname = std::string_view{mDevice->mDeviceName};
-        auto bufsize = ConfigValueUInt(devname, "jack", "buffer-size")
+        auto bufsize = ConfigValueU32(devname, "jack", "buffer-size")
             .value_or(mDevice->mUpdateSize);
         bufsize = std::max(NextPowerOf2(bufsize), mDevice->mUpdateSize);
         mDevice->mBufferSize = bufsize + mDevice->mUpdateSize;
@@ -511,14 +522,14 @@ bool JackPlayback::reset()
         const auto numchans = size_t{mDevice->channelsFromFmt()};
         std::ranges::for_each(std::views::iota(0_uz, numchans), [this](const size_t idx)
         {
-            auto name = fmt::format("channel_{}", idx);
+            auto name = std::format("channel_{}", idx);
             auto &newport = mPort.emplace_back();
             newport = jack_port_register(mClient, name.c_str(), JACK_DEFAULT_AUDIO_TYPE,
                 JackPortIsOutput | JackPortIsTerminal, 0);
             if(!newport)
             {
                 mPort.pop_back();
-                throw std::runtime_error{fmt::format(
+                throw std::runtime_error{std::format(
                     "Failed to register enough JACK ports for {} output",
                     DevFmtChannelsString(mDevice->FmtChans))};
             }
@@ -574,7 +585,7 @@ void JackPlayback::start()
                 return false;
             }
             if(jack_connect(mClient, jack_port_name(port), portname))
-                ERR("Failed to connect output port \"{}\" to \"{}\"", jack_port_name(port),
+                ERR(R"(Failed to connect output port "{}" to "{}")", jack_port_name(port),
                     portname);
             return true;
         });
@@ -593,7 +604,7 @@ void JackPlayback::start()
         mPlaying.store(true, std::memory_order_release);
     else
     {
-        auto bufsize = ConfigValueUInt(devname, "jack", "buffer-size")
+        auto bufsize = ConfigValueU32(devname, "jack", "buffer-size")
             .value_or(mDevice->mUpdateSize);
         bufsize = std::max(NextPowerOf2(bufsize), mDevice->mUpdateSize) / mDevice->mUpdateSize;
         mDevice->mBufferSize = (bufsize+1) * mDevice->mUpdateSize;

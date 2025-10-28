@@ -44,7 +44,6 @@
 #include "fmt/ostream.h"
 #include "fmt/ranges.h"
 #include "fmt/std.h"
-#include "gsl/gsl"
 #include "phase_shifter.h"
 #include "vector.h"
 
@@ -52,6 +51,11 @@
 
 #include "win_main_utf8.h"
 
+#if HAVE_CXXMODULES
+import gsl;
+#else
+#include "gsl/gsl"
+#endif
 
 namespace {
 
@@ -451,6 +455,7 @@ auto main(std::span<std::string_view> args) -> int
         outinfo.channels = gsl::narrow<int>(uhjchans);
         outinfo.format = SF_FORMAT_PCM_24 | SF_FORMAT_FLAC;
         auto outfile = SndFilePtr{sf_open(
+            /* NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast) */
             reinterpret_cast<const char*>(outname.u8string().c_str()), SFM_WRITE, &outinfo)};
         if(!outfile)
         {

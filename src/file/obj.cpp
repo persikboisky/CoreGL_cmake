@@ -14,7 +14,6 @@
 #include <map>
 #include <iostream>
 #include <functional>
-#include <windows.h>
 
 #define CALCULATE_N_POLIGONS(N_VERTEXES) N_VERTEXES / 9
 

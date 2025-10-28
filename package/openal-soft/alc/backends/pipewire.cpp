@@ -35,6 +35,7 @@
 #include <cerrno>
 #include <chrono>
 #include <ctime>
+#include <format>
 #include <functional>
 #include <iterator>
 #include <memory>
@@ -68,6 +69,7 @@
 DIAGNOSTIC_PUSH
 std_pragma("GCC diagnostic ignored \"-Wpedantic\"")
 std_pragma("GCC diagnostic ignored \"-Wconversion\"")
+std_pragma("GCC diagnostic ignored \"-Warith-conversion\"")
 std_pragma("GCC diagnostic ignored \"-Wfloat-conversion\"")
 std_pragma("GCC diagnostic ignored \"-Wmissing-field-initializers\"")
 std_pragma("GCC diagnostic ignored \"-Wunused-parameter\"")
@@ -76,6 +78,7 @@ std_pragma("GCC diagnostic ignored \"-Wsign-compare\"")
 std_pragma("GCC diagnostic ignored \"-Winline\"")
 std_pragma("GCC diagnostic ignored \"-Wpragmas\"")
 std_pragma("GCC diagnostic ignored \"-Wvla\"")
+std_pragma("GCC diagnostic ignored \"-Winvalid-constexpr\"")
 std_pragma("GCC diagnostic ignored \"-Weverything\"")
 #include "pipewire/pipewire.h"
 #include "pipewire/extensions/metadata.h"
@@ -161,7 +164,7 @@ private:
     std::vector<std::byte> mStorage;
     spa_pod_builder mPod{};
 
-    auto overflow(uint32_t size) noexcept -> int
+    auto overflow(u32 const size) noexcept -> i32
     {
         try {
             mStorage.resize(size);
@@ -176,12 +179,12 @@ private:
     }
 
 public:
-    explicit PodDynamicBuilder(uint32_t initSize=1024)
+    explicit PodDynamicBuilder(u32 const initSize=1024)
         : mStorage(initSize), mPod{make_pod_builder(mStorage.data(), initSize)}
     {
         static constexpr auto callbacks = spa_pod_builder_callbacks{
             .version = SPA_VERSION_POD_BUILDER_CALLBACKS,
-            .overflow = [](void *data, uint32_t size) noexcept
+            .overflow = [](void *data, u32 const size) noexcept
             { return static_cast<PodDynamicBuilder*>(data)->overflow(size); }
         };
 
@@ -203,7 +206,7 @@ using std::chrono::nanoseconds;
 using uint = unsigned int;
 
 
-auto check_version(const char *version) -> bool
+auto check_version(gsl::czstring const version) -> bool
 {
     /* There doesn't seem to be a function to get the version as an integer, so
      * instead we have to parse the string, which hopefully won't break in the
@@ -264,24 +267,33 @@ PWIRE_FUNCS(MAKE_FUNC)
 PWIRE_FUNCS2(MAKE_FUNC)
 #undef MAKE_FUNC
 
+#define PWIRE_LIB "libpipewire-0.3.so.0"
+
+OAL_ELF_NOTE_DLOPEN(
+    "backend-pipewire",
+    "Support for the PipeWire backend",
+    OAL_ELF_NOTE_DLOPEN_PRIORITY_RECOMMENDED,
+    PWIRE_LIB
+);
+
 auto pwire_load() -> bool
 {
     if(pwire_handle)
         return true;
 
-    auto *pwire_library = "libpipewire-0.3.so.0";
-    if(auto libresult = LoadLib(pwire_library))
+    auto *const pwire_lib = gsl::czstring{PWIRE_LIB};
+    if(auto const libresult = LoadLib(pwire_lib))
         pwire_handle = libresult.value();
     else
     {
-        WARN("Failed to load {}: {}", pwire_library, libresult.error());
+        WARN("Failed to load {}: {}", pwire_lib, libresult.error());
         return false;
     }
 
-    static constexpr auto load_func = [](auto *&func, const char *name) -> bool
+    static constexpr auto load_func = [](auto *&func, gsl::czstring const name) -> bool
     {
         using func_t = std::remove_reference_t<decltype(func)>;
-        auto funcresult = GetSymbol(pwire_handle, name);
+        auto const funcresult = GetSymbol(pwire_handle, name);
         if(!funcresult)
         {
             WARN("Failed to load function {}: {}", name, funcresult.error());
@@ -351,28 +363,28 @@ constexpr bool pwire_load() { return true; }
 #endif
 
 /* Helpers for retrieving values from params */
-template<uint32_t T> struct PodInfo { };
+template<u32 T [[maybe_unused]]> struct PodInfo { };
 
 template<>
 struct PodInfo<SPA_TYPE_Int> {
-    using Type = int32_t;
-    static auto get_value(const spa_pod *pod, int32_t *val)
+    using Type = i32;
+    static auto get_value(const spa_pod *pod, i32 *val)
     { return spa_pod_get_int(pod, val); }
 };
 template<>
 struct PodInfo<SPA_TYPE_Id> {
-    using Type = uint32_t;
-    static auto get_value(const spa_pod *pod, uint32_t *val)
+    using Type = u32;
+    static auto get_value(const spa_pod *pod, u32 *val)
     { return spa_pod_get_id(pod, val); }
 };
 
-template<uint32_t T>
-using Pod_t = typename PodInfo<T>::Type;
+template<u32 T>
+using Pod_t = PodInfo<T>::Type;
 
-template<uint32_t T>
+template<u32 T>
 auto get_array_span(const spa_pod *pod) -> std::span<const Pod_t<T>>
 {
-    auto nvals = uint32_t{};
+    auto nvals = u32{};
     if(auto *v = spa_pod_get_array(pod, &nvals))
     {
         if(get_array_value_type(pod) == T)
@@ -381,7 +393,7 @@ auto get_array_span(const spa_pod *pod) -> std::span<const Pod_t<T>>
     return {};
 }
 
-template<uint32_t T>
+template<u32 T>
 auto get_value(const spa_pod *value) -> std::optional<Pod_t<T>>
 {
     auto val = Pod_t<T>{};
@@ -406,11 +418,11 @@ auto as(From) noexcept -> To = delete;
  * - pw_node
  * - pw_metadata
  */
-template<>
+template<> [[nodiscard]]
 auto as(pw_registry *reg) noexcept -> pw_proxy* { return reinterpret_cast<pw_proxy*>(reg); }
-template<>
+template<> [[nodiscard]]
 auto as(pw_node *node) noexcept -> pw_proxy* { return reinterpret_cast<pw_proxy*>(node); }
-template<>
+template<> [[nodiscard]]
 auto as(pw_metadata *mdata) noexcept -> pw_proxy* { return reinterpret_cast<pw_proxy*>(mdata); }
 /* NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast) */
 
@@ -434,12 +446,13 @@ using PwStreamPtr = std::unique_ptr<pw_stream, decltype([](pw_stream *stream)
     { pw_stream_destroy(stream); })>;
 
 /* NOLINTBEGIN(*EnumCastOutOfRange) Enums for bitflags... again... *sigh* */
-constexpr pw_stream_flags operator|(pw_stream_flags lhs, pw_stream_flags rhs) noexcept
+[[nodiscard]] constexpr
+auto operator|(pw_stream_flags const lhs, pw_stream_flags const rhs) noexcept -> pw_stream_flags
 { return static_cast<pw_stream_flags>(lhs | al::to_underlying(rhs)); }
-/* NOLINTEND(*EnumCastOutOfRange) */
 
-constexpr pw_stream_flags& operator|=(pw_stream_flags &lhs, pw_stream_flags rhs) noexcept
+constexpr auto operator|=(pw_stream_flags &lhs, pw_stream_flags rhs) noexcept -> pw_stream_flags&
 { lhs = lhs | rhs; return lhs; }
+/* NOLINTEND(*EnumCastOutOfRange) */
 
 
 class ThreadMainloop {
@@ -707,7 +720,6 @@ struct EventManager {
 private:
     static inline auto sList = std::vector<DeviceNode>{};
 };
-using EventWatcherUniqueLock = std::unique_lock<EventManager>;
 using EventWatcherLockGuard = std::lock_guard<EventManager>;
 
 auto gEventHandler = EventManager{}; /* NOLINT(cert-err58-cpp) */
@@ -747,7 +759,7 @@ void EventManager::RemoveDevice(uint32_t id)
             return false;
         TRACE("Removing device \"{}\"", n.mDevName);
         if(gEventHandler.initIsDone(std::memory_order_relaxed))
-            n.callEvent(alc::EventType::DeviceRemoved, fmt::format("Device removed: {}", n.mName));
+            n.callEvent(alc::EventType::DeviceRemoved, std::format("Device removed: {}", n.mName));
         return true;
     });
     sList.erase(end.begin(), end.end());
@@ -840,7 +852,7 @@ void DeviceNode::parseSampleRate(const spa_pod *value, bool force_update) noexce
         auto srates = get_pod_body<int32_t>(value, nvals);
 
         /* [0] is the default, [1...size()-1] are available selections. */
-        TRACE("  sample rate: {} {}", srates[0], srates.subspan(1));
+        TRACE("{}", fmt::format("  sample rate: {} {}", srates[0], srates.subspan(1)));
         /* Pick the first rate listed that's within the allowed range (default
          * rate if possible).
          */
@@ -997,7 +1009,7 @@ void NodeProxy::infoCallback(void*, const pw_node_info *info) noexcept
         if(auto *serial_str = spa_dict_lookup(info->props, PW_KEY_OBJECT_SERIAL))
         {
             errno = 0;
-            char *serial_end{};
+            auto *serial_end = gsl::zstring{};
             serial_id = std::strtoull(serial_str, &serial_end, 0);
             if(*serial_end != '\0' || errno == ERANGE)
             {
@@ -1011,7 +1023,7 @@ void NodeProxy::infoCallback(void*, const pw_node_info *info) noexcept
         {
             if(nodeName && *nodeName)
                 return std::string{nodeName};
-            return fmt::format("PipeWire node #{}", info->id);
+            return std::format("PipeWire node #{}", info->id);
         });
 
         auto *form_factor = spa_dict_lookup(info->props, PW_KEY_DEVICE_FORM_FACTOR);
@@ -1041,7 +1053,7 @@ void NodeProxy::infoCallback(void*, const pw_node_info *info) noexcept
             {
                 if(!node.mName.empty())
                 {
-                    const auto msg = fmt::format("Device removed: {}", node.mName);
+                    const auto msg = std::format("Device removed: {}", node.mName);
                     node.callEvent(alc::EventType::DeviceRemoved, msg);
                 }
                 notifyAdd = true;
@@ -1054,7 +1066,7 @@ void NodeProxy::infoCallback(void*, const pw_node_info *info) noexcept
             || al::case_compare(form_factor, "headset"sv) == 0);
         if(notifyAdd)
         {
-            const auto msg = fmt::format("Device added: {}", node.mName);
+            const auto msg = std::format("Device added: {}", node.mName);
             node.callEvent(alc::EventType::DeviceAdded, msg);
         }
     }
@@ -1147,7 +1159,7 @@ auto MetadataProxy::propertyCallback(void*, uint32_t id, const char *key, const 
                 if(gEventHandler.mInitDone.load(std::memory_order_relaxed))
                 {
                     auto *entry = EventManager::FindDevice(*propValue);
-                    const auto message = fmt::format("Default playback device changed: {}",
+                    const auto message = std::format("Default playback device changed: {}",
                         entry ? entry->mName : std::string{});
                     alc::Event(alc::EventType::DefaultDeviceChanged, alc::DeviceType::Playback,
                         message);
@@ -1159,7 +1171,7 @@ auto MetadataProxy::propertyCallback(void*, uint32_t id, const char *key, const 
                 if(gEventHandler.mInitDone.load(std::memory_order_relaxed))
                 {
                     auto *entry = EventManager::FindDevice(*propValue);
-                    const auto message = fmt::format("Default capture device changed: {}",
+                    const auto message = std::format("Default capture device changed: {}",
                         entry ? entry->mName : std::string{});
                     alc::Event(alc::EventType::DefaultDeviceChanged, alc::DeviceType::Capture,
                         message);
@@ -1416,7 +1428,7 @@ auto make_spa_info(DeviceBase *device, bool is51rear, use_f32p_e use_f32p) -> sp
 }
 
 class PipeWirePlayback final : public BackendBase {
-    void stateChangedCallback(pw_stream_state old, pw_stream_state state, const char *error) noexcept;
+    void stateChangedCallback(pw_stream_state old, pw_stream_state state, const char *error) const noexcept;
     void ioChangedCallback(uint32_t id, void *area, uint32_t size) noexcept;
     void outputCallback() noexcept;
 
@@ -1446,7 +1458,7 @@ public:
 };
 
 
-void PipeWirePlayback::stateChangedCallback(pw_stream_state, pw_stream_state, const char*) noexcept
+void PipeWirePlayback::stateChangedCallback(pw_stream_state, pw_stream_state, const char*) const noexcept
 { mLoop.signal(false); }
 
 void PipeWirePlayback::ioChangedCallback(uint32_t id, void *area, uint32_t size) noexcept
@@ -1468,17 +1480,17 @@ void PipeWirePlayback::outputCallback() noexcept
     if(!pw_buf) [[unlikely]] return;
 
     const auto datas = std::span{pw_buf->buffer->datas,
-        std::min(mChannelPtrs.size(), size_t{pw_buf->buffer->n_datas})};
+        std::min(mChannelPtrs.size(), usize{pw_buf->buffer->n_datas})};
 #if PW_CHECK_VERSION(0,3,49)
     /* In 0.3.49, pw_buffer::requested specifies the number of samples needed
      * by the resampler/graph for this audio update.
      */
-    auto length = gsl::narrow_cast<uint>(pw_buf->requested);
+    auto length = al::saturate_cast<u32>(pw_buf->requested);
 #else
     /* In 0.3.48 and earlier, spa_io_rate_match::size apparently has the number
      * of samples per update.
      */
-    auto length = uint{mRateMatch ? mRateMatch->size : 0u};
+    auto length = mRateMatch ? u32{mRateMatch->size} : 0_u32;
 #endif
     /* If no length is specified, use the device's update size as a fallback. */
     if(!length) [[unlikely]] length = mDevice->mUpdateSize;
@@ -1491,13 +1503,13 @@ void PipeWirePlayback::outputCallback() noexcept
     auto chanptr_end = mChannelPtrs.begin();
     for(const auto &data : datas)
     {
-        length = std::min(length, data.maxsize/uint{sizeof(float)});
+        length = std::min(length, data.maxsize/u32{sizeof(float)});
         *chanptr_end = data.data;
         ++chanptr_end;
 
         data.chunk->offset = 0;
         data.chunk->stride = sizeof(float);
-        data.chunk->size   = length * sizeof(float);
+        data.chunk->size   = length * u32{sizeof(float)};
     }
 
     mDevice->renderSamples(mChannelPtrs, length);
@@ -1509,7 +1521,7 @@ void PipeWirePlayback::outputCallback() noexcept
 
 void PipeWirePlayback::open(std::string_view name)
 {
-    static auto OpenCount = std::atomic<uint>{0u};
+    static auto OpenCount = std::atomic{0u};
 
     auto targetid = uint64_t{PwIdAny};
     auto devname = std::string{};
@@ -1552,7 +1564,7 @@ void PipeWirePlayback::open(std::string_view name)
     if(!mLoop)
     {
         const auto count = OpenCount.fetch_add(1u, std::memory_order_relaxed);
-        const auto thread_name = fmt::format("ALSoftP{}", count);
+        const auto thread_name = std::format("ALSoftP{}", count);
         mLoop = ThreadMainloop::Create(thread_name.c_str());
         if(!mLoop)
             throw al::backend_exception{al::backend_error::DeviceError,
@@ -1676,9 +1688,9 @@ auto PipeWirePlayback::reset() -> bool
         mDevice->mSampleRate);
     pw_properties_setf(props, PW_KEY_NODE_RATE, "1/%u", mDevice->mSampleRate);
 #ifdef PW_KEY_TARGET_OBJECT
-    pw_properties_setf(props, PW_KEY_TARGET_OBJECT, "%" PRIu64, mTargetId);
+    pw_properties_set(props, PW_KEY_TARGET_OBJECT, std::to_string(mTargetId).c_str());
 #else
-    pw_properties_setf(props, PW_KEY_NODE_TARGET, "%" PRIu64, mTargetId);
+    pw_properties_set(props, PW_KEY_NODE_TARGET, std::to_string(mTargetId).c_str());
 #endif
 
     auto plock = MainloopUniqueLock{mLoop};
@@ -1916,8 +1928,8 @@ auto PipeWirePlayback::getClockLatency() -> ClockLatency
 
 
 class PipeWireCapture final : public BackendBase {
-    void stateChangedCallback(pw_stream_state old, pw_stream_state state, const char *error) noexcept;
-    void inputCallback() noexcept;
+    void stateChangedCallback(pw_stream_state old, pw_stream_state state, const char *error) const noexcept;
+    void inputCallback() const noexcept;
 
     void open(std::string_view name) override;
     void start() override;
@@ -1940,18 +1952,18 @@ public:
 };
 
 
-void PipeWireCapture::stateChangedCallback(pw_stream_state, pw_stream_state, const char*) noexcept
+void PipeWireCapture::stateChangedCallback(pw_stream_state, pw_stream_state, const char*) const noexcept
 { mLoop.signal(false); }
 
-void PipeWireCapture::inputCallback() noexcept
+void PipeWireCapture::inputCallback() const noexcept
 {
-    pw_buffer *pw_buf{pw_stream_dequeue_buffer(mStream.get())};
+    auto *const pw_buf = pw_stream_dequeue_buffer(mStream.get());
     if(!pw_buf) [[unlikely]] return;
 
-    spa_data *bufdata{pw_buf->buffer->datas};
-    const uint offset{bufdata->chunk->offset % bufdata->maxsize};
-    const auto input = std::span{static_cast<const std::byte*>(bufdata->data), bufdata->maxsize}
-        .subspan(offset, std::min(bufdata->chunk->size, bufdata->maxsize - offset));
+    auto const *const bufdata = pw_buf->buffer->datas;
+    auto const offset = bufdata->chunk->offset % bufdata->maxsize;
+    auto const input = std::span{static_cast<std::byte const*>(bufdata->data), bufdata->maxsize}
+        | std::views::drop(offset) | std::views::take(bufdata->chunk->size);
 
     std::ignore = mRing->write(input);
 
@@ -1961,7 +1973,7 @@ void PipeWireCapture::inputCallback() noexcept
 
 void PipeWireCapture::open(std::string_view name)
 {
-    static auto OpenCount = std::atomic<uint>{0u};
+    static auto OpenCount = std::atomic{0u};
 
     auto targetid = uint64_t{PwIdAny};
     auto devname = std::string{};
@@ -1995,8 +2007,8 @@ void PipeWireCapture::open(std::string_view name)
     {
         const auto evtlock = EventWatcherLockGuard{gEventHandler};
         auto&& devlist = EventManager::GetDeviceList();
-        const auto prefix = GetMonitorPrefix();
-        const auto suffix = GetMonitorSuffix();
+        constexpr auto prefix = GetMonitorPrefix();
+        constexpr auto suffix = GetMonitorSuffix();
 
         auto match = std::ranges::find_if(devlist, [name](const DeviceNode &n) -> bool
         { return n.mType != NodeType::Sink && n.mName == name; });
@@ -2024,7 +2036,7 @@ void PipeWireCapture::open(std::string_view name)
     if(!mLoop)
     {
         const auto count = OpenCount.fetch_add(1u, std::memory_order_relaxed);
-        const auto thread_name = fmt::format("ALSoftC{}", count);
+        const auto thread_name = std::format("ALSoftC{}", count);
         mLoop = ThreadMainloop::Create(thread_name.c_str());
         if(!mLoop)
             throw al::backend_exception{al::backend_error::DeviceError,
@@ -2100,9 +2112,9 @@ void PipeWireCapture::open(std::string_view name)
         mDevice->mSampleRate);
     pw_properties_setf(props, PW_KEY_NODE_RATE, "1/%u", mDevice->mSampleRate);
 #ifdef PW_KEY_TARGET_OBJECT
-    pw_properties_setf(props, PW_KEY_TARGET_OBJECT, "%" PRIu64, mTargetId);
+    pw_properties_set(props, PW_KEY_TARGET_OBJECT, std::to_string(mTargetId).c_str());
 #else
-    pw_properties_setf(props, PW_KEY_NODE_TARGET, "%" PRIu64, mTargetId);
+    pw_properties_set(props, PW_KEY_NODE_TARGET, std::to_string(mTargetId).c_str());
 #endif
 
     MainloopUniqueLock plock{mLoop};

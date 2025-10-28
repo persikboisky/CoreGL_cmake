@@ -1,11 +1,10 @@
-#include "gl_commands.hpp"
 //
 // Created by kisly on 19.09.2025.
 //
 
 #include "gl_commands.hpp"
 #include "../../../util/types.hpp"
-#include "../../../package/glew-2.1.0-master/include/GL/glew.h"
+#include "../../../package/glew-2.1.0/include/GL/glew.h"
 
 namespace core
 {

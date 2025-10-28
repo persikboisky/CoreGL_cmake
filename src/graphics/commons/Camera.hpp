@@ -13,8 +13,6 @@ namespace core
     enum KEY_CODE : int;
     enum CAM_MODE : int;
 
-    class Shader;
-
     struct cameraInfo
     {
         math::Vector3 up = math::Vector3(0, 1, 0);
@@ -28,11 +26,10 @@ namespace core
         cameraInfo();
     };
 
-    /// @brief êëàññ äëÿ ðàáîòû ñ êàìåðîé
+    /// @brief класс камеры
     class Camera
     {
     private:
-
         math::Vector3 startUP;
         math::Vector3 startTARGET;
 
@@ -50,111 +47,155 @@ namespace core
 
         void update();
 
-    public:
-        /// @brief êîíñòðóêòîð êàìåðû
-        /// @param posX ïîçèöèÿ êàìåðû ïî x
-        /// @param posY ïîçèöèÿ êàìåðû ïî y
-        /// @param posZ ïîçèöèÿ êàìåðû ïî z
-        /// @param fov ïîëå çðåíèÿ â ãðàäóñàõ
-        /// @param distance äàëüíîñòü çðåíèÿ
         Camera(float posX, float posY, float posZ, float fov = 70, float distance = 100);
-
-        /// @brief êîíñòðóêòîð êàìåðû
-        /// @param pos ïîçèöèÿ êàìåðû
-        /// @param fov ïîëå çðåíèÿ â ãðàäóñàõ
-        /// @param distance äàëüíîñòü çðåíèÿ
         Camera(math::Vector3 pos, float fov = 70, float distance = 100);
+        Camera(const cameraInfo &info);
 
-        //rf
-        Camera(const cameraInfo& info);
+    public:
+        /// @brief создаёт камеру
+        /// @param posX позиция камеры
+        /// @param posY позиция камеры
+        /// @param posZ позиция камеры
+        /// @param fov угол обзора(в градусах)
+        /// @param distance дистанция на которую будет видеть камера
+        /// @return объект класса Camera
+        static Camera create(float posX, float posY, float posZ, float fov = 70, float distance = 100);
 
-        /// @brief óñòàíàâëèâàåò ðåæèì êàìåðû
-        /// @param mode ðåæèì (Ïðèìåð: STATIC, DYNAMIC)
-        void setMode(const CAM_MODE& mode);
+        /// @brief создаёт камеру
+        /// @param pos позиция камеры
+        /// @param fov угол обзора(в градусах)
+        /// @param distance дистанция на которую будет видеть камера
+        /// @return объект класса Camera
+        static Camera create(math::Vector3 pos, float fov = 70, float distance = 100);
 
-        /// @brief óñòàíàâëèâàåò ïîëå çðåíèÿ
-        /// @param fov ïîëå çðåíèÿ â ãðàäóñàõ
+        /// @brief создаёт камеру
+        /// @param info объект структуры cameraInfo
+        /// @return объект класса Camera
+        static Camera create(const cameraInfo &info);
+
+        /// @brief создаёт камеру
+        /// @param posX позиция камеры
+        /// @param posY позиция камеры
+        /// @param posZ позиция камеры
+        /// @param fov угол обзора(в градусах)
+        /// @param distance дистанция на которую будет видеть камера
+        /// @return указатель на объект класса Camera
+        static Camera *ptrCreate(float posX, float posY, float posZ, float fov = 70, float distance = 100);
+
+        /// @brief создаёт камеру
+        /// @param pos позиция камеры
+        /// @param fov угол обзора(в градусах)
+        /// @param distance дистанция на которую будет видеть камера
+        /// @return указатель на объект класса Camera
+        static Camera *ptrCreate(math::Vector3 pos, float fov = 70, float distance = 100);
+
+        /// @brief создаёт камеру
+        /// @param info объект структуры cameraInfo
+        /// @return указатель на объект класса Camera
+        static Camera *ptrCreate(const cameraInfo &info);
+
+        /// @brief устанавливает режим камеры
+        /// @param mode (CAM_DYNAMIC - смотрит в одну точку, CAM_STATIC - смотрит в одном направлении)
+        void setMode(const CAM_MODE &mode);
+
+        /// @brief устанавливает угол обзора
+        /// @param fov угол обзора(в градусах)
         void setFov(float fov);
 
-        /// @brief óñòàíàâëèâàåò äàëüíîñòü çðåíèÿ
-        /// @param distance äàëüíîñòü çðåíèÿ
+        /// @brief устанавливает дальность видимости камеры
+        /// @param distance дальность видимости 
         void setDistance(float distance);
 
-        /// @brief ïîâîðà÷èâàåò êàìåðó ïî çàäàííûì îñÿì
-        /// @param x óãîë ïîâîðîòà ïî îñè x â ãðàäóñàõ
-        /// @param y óãîë ïîâîðîòà ïî îñè y â ãðàäóñàõ
-        /// @param z óãîë ïîâîðîòà ïî îñè z â ãðàäóñàõ
+        /// @brief поворачивает направление камеры(работает только при CAM_STATIC)
+        /// @param x угол поворота по оси x в градусах
+        /// @param y угол поворота по оси y в градусах
+        /// @param z угол поворота по оси z в градусах
         void rotate(float x, float y, float z);
 
-        /// @brief ïîâîðà÷èâàåò êàìåðó ïî çàäàííûì îñÿì
-        /// @param axis óãîë ïîâîðîòà ïî îñÿì â ãðàäóñàõ â âèäå âåêòîðà
-        void rotate(const math::Vector3& axis);
+        /// @brief поворачивает направление камеры(работает только при CAM_STATIC)
+        /// @param axis углы поворота в градусах, записанные в объект класса math::Vector3
+        void rotate(const math::Vector3 &axis);
 
-        /// @brief îáíóëÿåò ïîâîðîò êàìåðû(âîçâðàùàåò â èñõîäíîå ïîëîæåíèå)
+        /// @brief сбрасывает направление камеры в начальное
         void resetRotate();
 
-        /// @brief ïåðåìåùàåò êàìåðó ïî çàäàííûì îñÿì
-        /// @param x ñäâèã êàìåðû ïî x
-        /// @param y ñäâèã êàìåðû ïî y
-        /// @param z ñäâèã êàìåðû ïî z
+        /// @brief перемещает камеру на указанные значения по трём осям
+        /// @param x по x
+        /// @param y по y
+        /// @param z по z
         void move(float x, float y, float z);
 
+        /// @brief перемещает камеру на указанные значения по трём осям
+        /// @param vec3 значения, записанные в объект класса math::Vector3
         void move(const math::Vector3 vec3);
 
-        /// @brief óñòàíàâëèâàåò êàìåðó íà çàäàííûå êîîðäèíàòû
-        /// @param x êîîðäèíàòà x
-        /// @param y êîîðäèíàòà y
-        /// @param z êîîðäèíàòà z
+        /// @brief устанавливает положение камеры
+        /// @param x позиция
+        /// @param y позиция
+        /// @param z позиция
         void setPos(float x, float y, float z);
 
-        /// @brief óñòàíàâëèâàåò êàìåðó íà çàäàííûå êîîðäèíàòû
-        /// @param pos âåêòîð ñ êîîðäèíàòàìè
-        void setPos(const math::Vector3& pos);
+        /// @brief устанавливает положение камеры
+        /// @param pos объект класса math::Vector3 
+        void setPos(const math::Vector3 &pos);
 
-        /// @brief óñòàíàâëèâàåò òî÷êó â êîòîðóþ ñìîòðèò êàìåðà
-        /// @param x êîîðäèíàòà x
-        /// @param y êîîðäèíàòà y
-        /// @param z êîîðäèíàòà z
+        /// @brief устанавливает цель камеры(для CAM_STATIC - это направление, 
+        /// @brief для CAM_DYNAMIC - это точка куда смотрит камера)
+        /// @param x направление(точка) по x
+        /// @param y направление(точка) по y
+        /// @param z направление(точка) по z
         void setTarget(float x, float y, float z);
 
-        /// @brief óñòàíàâëèâàåò òî÷êó â êîòîðóþ ñìîòðèò êàìåðà
-        /// @param target âåêòîð ñ êîîðäèíàòàìè
-        void setTarget(const math::Vector3& target);
+        /// @brief устанавливает цель камеры(для CAM_STATIC - это направление, 
+        /// @brief для CAM_DYNAMIC - это точка куда смотрит камера)
+        /// @param target вектор направления(координаты точки)
+        void setTarget(const math::Vector3 &target);
 
-        /// @brief ïîëó÷àåò ïîçèöèþ êàìåðû
-        /// @param x ïåðåìåííàÿ äëÿ õðàíåíèÿ êîîðäèíàòû x
-        /// @param y ïåðåìåííàÿ äëÿ õðàíåíèÿ êîîðäèíàòû y
-        /// @param z ïåðåìåííàÿ äëÿ õðàíåíèÿ êîîðäèíàòû z
-        void getPos(float& x, float& y, float& z) const;
+        /// @brief получает позиция камеры
+        /// @param x переменная для записи координаты по x
+        /// @param y переменная для записи координаты по y
+        /// @param z переменная для записи координаты по z
+        void getPos(float &x, float &y, float &z) const;
 
-        /// @brief ïîëó÷àåò ïîçèöèþ êàìåðû
-        /// @param pos âåêòîð äëÿ õðàíåíèÿ êîîðäèíàò
-        void getPos(math::Vector3& pos) const;
+        /// @brief получает позиция камеры
+        /// @param pos ссылка на объект math::Vector3
+        void getPos(math::Vector3 &pos) const;
 
-        /// @brief ïîëó÷àåò êîîðäèíàòó êóäà ñìîòðèò êàìåðà
-        /// @param x ïåðåìåííàÿ äëÿ õðàíåíèÿ êîîðäèíàòû x
-        /// @param y ïåðåìåííàÿ äëÿ õðàíåíèÿ êîîðäèíàòû y
-        /// @param z ïåðåìåííàÿ äëÿ õðàíåíèÿ êîîðäèíàòû z
-        void getSTarget(float& x, float& y, float& z) const;
+        /// @brief возвращает начальную цель(- точка для CAM_DYNAMIC, - направление для CAM_STATIC) камеры
+        /// @param x переменная для записи координаты по x
+        /// @param y переменная для записи координаты по y
+        /// @param z переменная для записи координаты по z
+        void getSTarget(float &x, float &y, float &z) const;
 
-        /// @brief ïîëó÷àåò êîîðäèíàòó êóäà ñìîòðèò êàìåðà
-        /// @param target âåêòîð äëÿ õðàíåíèÿ êîîðäèíàò
-        void getSTarget(math::Vector3& target) const;
+        /// @brief возвращает начальную цель(- точка для CAM_DYNAMIC, - направление для CAM_STATIC) камеры
+        /// @param target ссылка на объект math::Vector3
+        void getSTarget(math::Vector3 &target) const;
 
-        void getTarget(float& x, float& y, float& z) const;
-        void getTarget(math::Vector3& target) const;
+        /// @brief возвращает текущую цель(- точка для CAM_DYNAMIC, - направление для CAM_STATIC) камеры
+        /// @param x переменная для записи координаты по x
+        /// @param y переменная для записи координаты по y
+        /// @param z переменная для записи координаты по z
+        void getTarget(float &x, float &y, float &z) const;
 
+        /// @brief  возвращает текущую цель(- точка для CAM_DYNAMIC, - направление для CAM_STATIC) камеры
+        /// @param target ссылка на объект math::Vector3
+        void getTarget(math::Vector3 &target) const;
 
-        /// @brief ñîçäà¸ò ìàòðèöó ïðîåêöèè êàìåðû
-        /// @param width øèðèíà îêíà
-        /// @param height âûñîòà îêíà
-        /// @return âîçâðàùàåò ìàòðèöó ïðîåêöèè
-        math::Matrix4 getProj(int width, int height) const;
+        /// @brief возвращает матрицу проекции
+        /// @param windowWidth ширина окна
+        /// @param windowHeight высота окна
+        /// @return матрица
+        math::Matrix4 getProj(int windowWidth, int windowHeight) const;
 
-        /// @brief ñîçäà¸ò âèäîâóþ ìàòðèöó êàìåðû
-        /// @return âîçâðàùàåò âèäîâóþ ìàòðèöó
+        /// @brief возвращает матрицу проекции
+        /// @param windowSize размер окна (объект структуры size2i)
+        /// @return матрица
+        math::Matrix4 getProj(const struct size2i &windowSize) const;
+
+        /// @brief возвращает матрицу вида
+        /// @return матрица
         math::Matrix4 getView();
     };
 }
 
-#endif //CAMERA_HPP
+#endif // CAMERA_HPP

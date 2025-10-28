@@ -11,10 +11,20 @@ namespace core::opengl
 	{
 	protected:
 		unsigned int id = 0;
+	};
 
+	class FunctionBindContainer : public DescriptorContainer
+	{
 	public:
 		virtual void bind() const = 0;
 		virtual void unBind() const = 0;
+	};
+
+	class FunctionUseContainer : public DescriptorContainer
+	{
+	public:
+		virtual void use() const = 0;
+		virtual void unUse() const = 0;
 	};
 }
 

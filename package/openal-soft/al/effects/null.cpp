@@ -72,7 +72,7 @@ using NullCommitter = EaxCommitter<EaxNullCommitter>;
 } // namespace
 
 template<> /* NOLINTNEXTLINE(clazy-copyable-polymorphic) Exceptions must be copyable. */
-struct NullCommitter::Exception : public EaxException {
+struct NullCommitter::Exception final : EaxException {
     explicit Exception(const std::string_view message) : EaxException{"EAX_NULL_EFFECT", message}
     { }
 };
@@ -81,7 +81,7 @@ template<> [[noreturn]]
 void NullCommitter::fail(const std::string_view message)
 { throw Exception{message}; }
 
-bool EaxNullCommitter::commit(const std::monostate &props)
+auto EaxNullCommitter::commit(const std::monostate &props) const -> bool
 {
     const bool ret{std::holds_alternative<std::monostate>(mEaxProps)};
     mEaxProps = props;

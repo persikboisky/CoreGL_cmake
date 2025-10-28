@@ -13,7 +13,7 @@
 #include "../util/types.hpp"
 #include "../file/image.hpp"
 #include "../graphics/api/OpenGL/gl_commands.hpp"
-#include "../../package/glew-2.1.0-master/include/GL/glew.h"
+#include "../../package/glew-2.1.0/include/GL/glew.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #if defined(CORE_INCLUDE_VULKAN)
@@ -29,8 +29,8 @@ void core::Window::createWindow(int width, int height, const char *title, bool r
 #if defined(CORE_INCLUDE_VULKAN)
     if (vkAPI)
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-#endif // defined(CORE_INCLUDE_VULKAN)
     else
+#endif // defined(CORE_INCLUDE_VULKAN)
         glfwWindowHint(GLFW_OPENGL_API, GLFW_OPENGL_CORE_PROFILE);
 
     glfwWindowHint(GLFW_RESIZABLE, resizable);
@@ -141,16 +141,16 @@ GLFWwindow *core::Window::getWindowOBJ()
 
 bool core::Window::isContext()
 {
-    if (this->VulknanAPI)
+#if defined(CORE_INCLUDE_VULKAN)
+    if (this->VulknanAPI) return false;
+#endif defined(CORE_INCLUDE_VULKAN)
+
+    if (this->window == glfwGetCurrentContext())
     {
-        if (this->window == glfwGetCurrentContext())
-        {
             return true;
-        }
-        return false;
     }
 
-    return true;
+    return false;
 }
 
 core::Window::~Window()
@@ -201,8 +201,10 @@ void core::Window::setContext()
 
 void core::Window::swapBuffers()
 {
+#if defined(CORE_INCLUDE_VULKAN)
     if (!this->VulknanAPI)
     {
+#endif // defined(CORE_INCLUDE_VULKAN)
         (this->VSfps) ? glfwSwapInterval(1) : glfwSwapInterval(0);
 
         glfwSwapBuffers(this->window);
@@ -213,7 +215,9 @@ void core::Window::swapBuffers()
 
         this->deltaTime = glfwGetTime() - this->time;
         this->time = glfwGetTime();
+#if defined(CORE_INCLUDE_VULKAN)
     }
+#endif // defined(CORE_INCLUDE_VULKAN)
 }
 
 void core::Window::setIcon(const char *pathToImg)

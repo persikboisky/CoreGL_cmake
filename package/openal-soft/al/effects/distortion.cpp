@@ -175,7 +175,7 @@ struct AllValidator {
 } // namespace
 
 template<> /* NOLINTNEXTLINE(clazy-copyable-polymorphic) Exceptions must be copyable. */
-struct DistortionCommitter::Exception : public EaxException {
+struct DistortionCommitter::Exception final : EaxException {
     explicit Exception(const std::string_view message)
         : EaxException{"EAX_DISTORTION_EFFECT", message}
     { }
@@ -185,7 +185,7 @@ template<> [[noreturn]]
 void DistortionCommitter::fail(const std::string_view message)
 { throw Exception{message}; }
 
-bool EaxDistortionCommitter::commit(const EAXDISTORTIONPROPERTIES &props)
+auto EaxDistortionCommitter::commit(const EAXDISTORTIONPROPERTIES &props) const -> bool
 {
     if(auto *cur = std::get_if<EAXDISTORTIONPROPERTIES>(&mEaxProps); cur && *cur == props)
         return false;

@@ -6,6 +6,7 @@
 #include <atomic>
 #include <bitset>
 #include <exception>
+#include <format>
 #include <mutex>
 #include <optional>
 #include <ranges>
@@ -21,14 +22,13 @@
 
 #include "alc/context.h"
 #include "alnumeric.h"
-#include "alstring.h"
 #include "core/async_event.h"
 #include "core/context.h"
 #include "core/effects/base.h"
 #include "core/except.h"
 #include "core/logging.h"
 #include "direct_defs.h"
-#include "fmt/core.h"
+#include "gsl/gsl"
 #include "intrusive_ptr.h"
 #include "opthelpers.h"
 #include "ringbuffer.h"
@@ -41,16 +41,13 @@ using namespace std::string_view_literals;
 template<typename... Ts>
 struct overloaded : Ts... { using Ts::operator()...; };
 
-template<typename... Ts>
-overloaded(Ts...) -> overloaded<Ts...>;
-
-auto EventThread(al::Context *context) -> void
+auto EventThread(gsl::not_null<al::Context*> const context) -> void
 {
-    auto *ring = context->mAsyncEvents.get();
+    auto const ring = gsl::not_null{context->mAsyncEvents.get()};
     auto quitnow = false;
     while(!quitnow)
     {
-        auto evt_span = ring->getReadVector()[0];
+        auto const evt_span = ring->getReadVector()[0];
         if(evt_span.empty())
         {
             context->mEventsPending.wait(false, std::memory_order_acquire);
@@ -67,11 +64,11 @@ auto EventThread(al::Context *context) -> void
 
             std::visit(overloaded {
                 [](AsyncKillThread&) { },
-                [](AsyncEffectReleaseEvent &evt)
+                [](AsyncEffectReleaseEvent const &evt)
                 {
-                    al::intrusive_ptr<EffectState>{evt.mEffectState};
+                    al::intrusive_ptr{evt.mEffectState};
                 },
-                [context,enabledevts](AsyncSourceStateEvent &evt)
+                [context,enabledevts](AsyncSourceStateEvent const &evt)
                 {
                     if(!context->mEventCb
                         || !enabledevts.test(al::to_underlying(AsyncEnableBits::SourceState)))
@@ -99,30 +96,31 @@ auto EventThread(al::Context *context) -> void
                         break;
                     }
 
-                    const auto msg = fmt::format("Source ID {} state has changed to {}", evt.mId,
+                    const auto msg = std::format("Source ID {} state has changed to {}", evt.mId,
                         state_sv);
                     context->mEventCb(AL_EVENT_TYPE_SOURCE_STATE_CHANGED_SOFT, evt.mId, state,
-                        al::sizei(msg), msg.c_str(), context->mEventParam);
+                        al::saturate_cast<ALsizei>(msg.size()), msg.c_str(), context->mEventParam);
                 },
-                [context,enabledevts](AsyncBufferCompleteEvent &evt)
+                [context,enabledevts](AsyncBufferCompleteEvent const &evt)
                 {
                     if(!context->mEventCb
                         || !enabledevts.test(al::to_underlying(AsyncEnableBits::BufferCompleted)))
                         return;
 
-                    const auto msg = fmt::format("{} buffer{} completed", evt.mCount,
+                    const auto msg = std::format("{} buffer{} completed", evt.mCount,
                         (evt.mCount == 1) ? "" : "s");
                     context->mEventCb(AL_EVENT_TYPE_BUFFER_COMPLETED_SOFT, evt.mId, evt.mCount,
-                        al::sizei(msg), msg.c_str(), context->mEventParam);
+                        al::saturate_cast<ALsizei>(msg.size()), msg.c_str(), context->mEventParam);
                 },
-                [context,enabledevts](AsyncDisconnectEvent &evt)
+                [context,enabledevts](AsyncDisconnectEvent const &evt)
                 {
                     if(!context->mEventCb
                         || !enabledevts.test(al::to_underlying(AsyncEnableBits::Disconnected)))
                         return;
 
-                    context->mEventCb(AL_EVENT_TYPE_DISCONNECTED_SOFT, 0, 0, al::sizei(evt.msg),
-                        evt.msg.c_str(), context->mEventParam);
+                    context->mEventCb(AL_EVENT_TYPE_DISCONNECTED_SOFT, 0, 0,
+                        al::saturate_cast<ALsizei>(evt.msg.size()), evt.msg.c_str(),
+                        context->mEventParam);
                 }
             }, event);
         }
@@ -130,7 +128,8 @@ auto EventThread(al::Context *context) -> void
     }
 }
 
-constexpr auto GetEventType(ALenum etype) noexcept -> std::optional<AsyncEnableBits>
+[[nodiscard]]
+constexpr auto GetEventType(ALenum const etype) noexcept -> std::optional<AsyncEnableBits>
 {
     switch(etype)
     {
@@ -142,8 +141,8 @@ constexpr auto GetEventType(ALenum etype) noexcept -> std::optional<AsyncEnableB
 }
 
 
-void alEventControlSOFT(gsl::not_null<al::Context*> context, ALsizei count, const ALenum *types,
-    ALboolean enable) noexcept
+void alEventControlSOFT(gsl::not_null<al::Context*> const context, ALsizei const count,
+    ALenum const *const types, ALboolean const enable) noexcept
 try {
     if(count < 0)
         context->throw_error(AL_INVALID_VALUE, "Controlling {} events", count);
@@ -153,9 +152,9 @@ try {
         context->throw_error(AL_INVALID_VALUE, "NULL pointer");
 
     auto flags = ContextBase::AsyncEventBitset{};
-    std::ranges::for_each(std::views::counted(types, count), [context,&flags](const ALenum evttype)
+    std::ranges::for_each(std::views::counted(types, count), [context,&flags](ALenum const evttype)
     {
-        const auto etype = GetEventType(evttype);
+        auto const etype = GetEventType(evttype);
         if(!etype)
             context->throw_error(AL_INVALID_ENUM, "Invalid event type {:#04x}",
                 as_unsigned(evttype));
@@ -192,10 +191,10 @@ catch(std::exception &e) {
     ERR("Caught exception: {}", e.what());
 }
 
-void alEventCallbackSOFT(gsl::not_null<al::Context*> context, ALEVENTPROCSOFT callback,
-    void *userParam) noexcept
+void alEventCallbackSOFT(gsl::not_null<al::Context*> const context, ALEVENTPROCSOFT const callback,
+    void *const userParam) noexcept
 try {
-    auto eventlock = std::lock_guard{context->mEventCbLock};
+    auto const eventlock = std::lock_guard{context->mEventCbLock};
     context->mEventCb = callback;
     context->mEventParam = userParam;
 }
@@ -226,7 +225,7 @@ void StopEventThrd(al::Context *ctx)
     if(!ctx->mEventThread.joinable())
         return;
 
-    auto *ring = ctx->mAsyncEvents.get();
+    auto const ring = gsl::not_null{ctx->mAsyncEvents.get()};
     auto evt_span = ring->getWriteVector()[0];
     if(evt_span.empty())
     {

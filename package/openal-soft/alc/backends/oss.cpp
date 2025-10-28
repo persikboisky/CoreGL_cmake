@@ -33,6 +33,7 @@
 #include <cerrno>
 #include <cstring>
 #include <exception>
+#include <format>
 #include <memory>
 #include <span>
 #include <string>
@@ -48,7 +49,6 @@
 #include "core/device.h"
 #include "core/helpers.h"
 #include "core/logging.h"
-#include "fmt/core.h"
 #include "gsl/gsl"
 #include "ringbuffer.h"
 
@@ -161,7 +161,7 @@ void ALCossListAppend(std::vector<DevMap> &list, std::string_view handle, std::s
     auto count = 1;
     auto newname = std::string{handle};
     while(std::ranges::find(list, newname, &DevMap::name) != list.end())
-        newname = fmt::format("{} #{}", handle, ++count);
+        newname = std::format("{} #{}", handle, ++count);
 
     const auto &entry = list.emplace_back(std::move(newname), path);
     TRACE("Got device \"{}\", \"{}\"", entry.name, entry.device_name);
@@ -444,7 +444,7 @@ struct OSScapture final : public BackendBase {
     explicit OSScapture(gsl::not_null<DeviceBase*> device) noexcept : BackendBase{device} { }
     ~OSScapture() override;
 
-    void recordProc();
+    void recordProc() const;
 
     void open(std::string_view name) override;
     void start() override;
@@ -468,23 +468,23 @@ OSScapture::~OSScapture()
 }
 
 
-void OSScapture::recordProc()
+void OSScapture::recordProc() const
 {
     SetRTPriority();
     althrd_setname(GetRecordThreadName());
 
-    const auto frame_size = size_t{mDevice->frameSizeFromFmt()};
+    auto const frame_size = usize{mDevice->frameSizeFromFmt()};
     while(!mKillNow.load(std::memory_order_acquire))
     {
         auto pollitem = pollfd{};
         pollitem.fd = mFd;
         pollitem.events = POLLIN;
 
-        if(const auto pret = poll(&pollitem, 1, 1000); pret < 0)
+        if(auto const pret = poll(&pollitem, 1, 1000); pret < 0)
         {
             if(errno == EINTR || errno == EAGAIN)
                 continue;
-            const auto errstr = std::generic_category().message(errno);
+            auto const errstr = std::generic_category().message(errno);
             ERR("poll failed: {}", errstr);
             mDevice->handleDisconnect("Failed to check capture samples: {}", errstr);
             break;
@@ -501,12 +501,12 @@ void OSScapture::recordProc()
             auto amt = read(mFd, vec[0].data(), vec[0].size());
             if(amt < 0)
             {
-                const auto errstr = std::generic_category().message(errno);
+                auto const errstr = std::generic_category().message(errno);
                 ERR("read failed: {}", errstr);
                 mDevice->handleDisconnect("Failed reading capture samples: {}", errstr);
                 break;
             }
-            mRing->writeAdvance(gsl::narrow_cast<size_t>(amt)/frame_size);
+            mRing->writeAdvance(gsl::narrow_cast<usize>(amt) / frame_size);
         }
     }
 }
@@ -558,7 +558,7 @@ void OSScapture::open(std::string_view name)
     auto frameSize = numChannels * mDevice->bytesFromFmt();
     auto ossSpeed = mDevice->mSampleRate;
     /* according to the OSS spec, 16 bytes are the minimum */
-    const auto periods = 4u;
+    constexpr auto periods = 4u;
     const auto log2FragmentSize = std::max(log2i(mDevice->mBufferSize * frameSize / periods), 4u);
     auto numFragmentsLogSize = (periods << 16) | log2FragmentSize;
 

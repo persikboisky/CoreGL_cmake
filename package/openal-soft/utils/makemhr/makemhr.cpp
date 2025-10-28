@@ -85,17 +85,21 @@
 #include <vector>
 
 #include "alcomplex.h"
-#include "almalloc.h"
 #include "alnumeric.h"
 #include "alstring.h"
 #include "filesystem.h"
 #include "fmt/base.h"
 #include "fmt/ostream.h"
-#include "gsl/gsl"
 #include "loaddef.h"
 #include "loadsofa.h"
 
 #include "win_main_utf8.h"
+
+#if HAVE_CXXMODULES
+import gsl;
+#else
+#include "gsl/gsl"
+#endif
 
 
 namespace {
@@ -482,8 +486,7 @@ void CalculateDfWeights(const HrirDataT *hData, const std::span<double> weights)
 void CalculateDiffuseFieldAverage(const HrirDataT *hData, const uint channels, const uint m,
     const bool weighted, const double limit, const std::span<double> dfa)
 {
-    std::vector<double> weights(hData->mFds.size() * MAX_EV_COUNT);
-    uint count;
+    auto weights = std::vector(hData->mFds.size() * MAX_EV_COUNT, double{});
 
     if(weighted)
     {
@@ -492,17 +495,15 @@ void CalculateDiffuseFieldAverage(const HrirDataT *hData, const uint channels, c
     }
     else
     {
-        double weight;
-
         // If coverage weighting is not used, the weights still need to be
         // averaged by the number of existing HRIRs.
-        count = hData->mIrCount;
+        auto count = hData->mIrCount;
         for(size_t fi{0};fi < hData->mFds.size();++fi)
         {
             for(size_t ei{0};ei < hData->mFds[fi].mEvStart;++ei)
                 count -= static_cast<uint>(hData->mFds[fi].mEvs[ei].mAzs.size());
         }
-        weight = 1.0 / count;
+        auto const weight = 1.0 / count;
 
         for(size_t fi{0};fi < hData->mFds.size();++fi)
         {

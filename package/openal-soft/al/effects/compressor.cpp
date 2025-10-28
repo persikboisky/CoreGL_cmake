@@ -91,7 +91,7 @@ struct AllValidator {
 } // namespace
 
 template<> /* NOLINTNEXTLINE(clazy-copyable-polymorphic) Exceptions must be copyable. */
-struct CompressorCommitter::Exception : public EaxException {
+struct CompressorCommitter::Exception final : EaxException {
     explicit Exception(const std::string_view message) : EaxException{"EAX_CHORUS_EFFECT", message}
     { }
 };
@@ -100,7 +100,7 @@ template<> [[noreturn]]
 void CompressorCommitter::fail(const std::string_view message)
 { throw Exception{message}; }
 
-bool EaxCompressorCommitter::commit(const EAXAGCCOMPRESSORPROPERTIES &props)
+auto EaxCompressorCommitter::commit(const EAXAGCCOMPRESSORPROPERTIES &props) const -> bool
 {
     if(auto *cur = std::get_if<EAXAGCCOMPRESSORPROPERTIES>(&mEaxProps); cur && *cur == props)
         return false;

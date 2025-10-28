@@ -4,6 +4,8 @@
 
 #include "vk_image.hpp"
 
+#if defined(CORE_INCLUDE_VULKAN)
+
 namespace core
 {
 	namespace vulkan
@@ -28,3 +30,5 @@ namespace core
 		}
 	} // vulkan
 } // core
+
+#endif // defined(CORE_INCLUDE_VULKAN)

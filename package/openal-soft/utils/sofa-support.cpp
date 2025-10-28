@@ -22,8 +22,9 @@
  * Or visit:  http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
 
-#include "sofa-support.h"
+#include "config.h"
 
+#include "sofa-support.h"
 
 #include <algorithm>
 #include <array>
@@ -33,10 +34,10 @@
 #include <utility>
 #include <vector>
 
-#include "fmt/core.h"
+#include "fmt/base.h"
 #include "fmt/ranges.h"
-#include "mysofa.h"
 
+#include "mysofa.h"
 
 namespace {
 
@@ -183,7 +184,7 @@ const char *SofaErrorStr(int err)
 
 auto GetCompatibleLayout(const std::span<const float> xyzs) -> std::vector<SofaField>
 {
-    auto aers = std::vector<double3>(xyzs.size()/3, double3{});
+    auto aers = std::vector(xyzs.size()/3, double3{});
     for(size_t i{0u};i < aers.size();++i)
     {
         std::array vals{xyzs[i*3], xyzs[i*3 + 1], xyzs[i*3 + 2]};

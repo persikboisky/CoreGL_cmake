@@ -33,6 +33,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <iterator>
+#include <format>
 #include <functional>
 #include <limits>
 #include <memory>
@@ -910,7 +911,7 @@ auto EnumFromStereoMode(SourceStereo mode) -> ALenum
     case SourceStereo::Normal: return AL_NORMAL_SOFT;
     case SourceStereo::Enhanced: return AL_SUPER_STEREO_SOFT;
     }
-    throw std::runtime_error{fmt::format("Invalid SourceStereo: {:#x}", al::to_underlying(mode))};
+    throw std::runtime_error{std::format("Invalid SourceStereo: {:#x}", al::to_underlying(mode))};
 }
 
 inline auto SpatializeModeFromEnum(std::signed_integral auto mode) noexcept
@@ -932,7 +933,7 @@ auto EnumFromSpatializeMode(SpatializeMode mode) -> ALenum
     case SpatializeMode::On: return AL_TRUE;
     case SpatializeMode::Auto: return AL_AUTO_SOFT;
     }
-    throw std::runtime_error{fmt::format("Invalid SpatializeMode: {}",
+    throw std::runtime_error{std::format("Invalid SpatializeMode: {}",
         int{al::to_underlying(mode)})};
 }
 
@@ -955,7 +956,7 @@ auto EnumFromDirectMode(DirectMode mode) -> ALenum
     case DirectMode::DropMismatch: return AL_DROP_UNMATCHED_SOFT;
     case DirectMode::RemixMismatch: return AL_REMIX_UNMATCHED_SOFT;
     }
-    throw std::runtime_error{fmt::format("Invalid DirectMode: {}", int{al::to_underlying(mode)})};
+    throw std::runtime_error{std::format("Invalid DirectMode: {}", int{al::to_underlying(mode)})};
 }
 
 inline auto DistanceModelFromALenum(std::signed_integral auto model) noexcept
@@ -985,7 +986,7 @@ auto ALenumFromDistanceModel(DistanceModel model) -> ALenum
     case DistanceModel::Exponent: return AL_EXPONENT_DISTANCE;
     case DistanceModel::ExponentClamped: return AL_EXPONENT_DISTANCE_CLAMPED;
     }
-    throw std::runtime_error{fmt::format("Unexpected distance model: {}",
+    throw std::runtime_error{std::format("Unexpected distance model: {}",
         int{al::to_underlying(model)})};
 }
 
@@ -1444,8 +1445,6 @@ auto PropTypeName<ALdouble>() -> std::string_view { return "double"sv; }
  */
 template<typename T, typename U>
 struct PairStruct { T First; U Second; };
-template<typename T, typename U>
-PairStruct(T,U) -> PairStruct<T,U>;
 
 template<typename T, size_t N>
 auto GetCheckers(gsl::not_null<al::Context*> context, const SourceProp prop,
@@ -1472,8 +1471,8 @@ NOINLINE void SetProperty(const gsl::not_null<ALsource*> Source,
     const gsl::not_null<al::Context*> Context, const SourceProp prop,
     const std::span<const T> values)
 {
-    static constexpr auto is_finite = [](auto&& v) -> bool
-    { return std::isfinite(gsl::narrow_cast<float>(std::forward<decltype(v)>(v))); };
+    static constexpr auto is_finite = []<typename U>(U&& v) -> bool
+    { return std::isfinite(gsl::narrow_cast<float>(std::forward<U>(v))); };
     auto [CheckSize, CheckValue] = GetCheckers(Context, prop, values);
     auto const device = al::get_not_null(Context->mALDevice);
 
@@ -2010,10 +2009,10 @@ NOINLINE void SetProperty(const gsl::not_null<ALsource*> Source,
             if(send.mSlot && slot != send.mSlot && IsPlayingOrPaused(Source))
             {
                 send.mSlot = std::move(slot);
-
-                Voice *voice{GetSourceVoice(Source, Context)};
-                if(voice) UpdateSourceProps(Source, voice, Context);
-                else Source->mPropsDirty = true;
+                if(auto *const voice = GetSourceVoice(Source, Context))
+                    UpdateSourceProps(Source, voice, Context);
+                else
+                    Source->mPropsDirty = true;
             }
             else
             {
@@ -2531,7 +2530,7 @@ void StartSources(const gsl::not_null<al::Context*> context,
     {
         if(context->mStopVoicesOnDisconnect.load(std::memory_order_acquire))
         {
-            for(const gsl::not_null<ALsource*> source : srchandles)
+            for(const gsl::not_null source : srchandles)
             {
                 /* TODO: Send state change event? */
                 source->Offset = 0.0;
@@ -3827,7 +3826,7 @@ void ALsource::eax4_set_defaults() noexcept
 
 void ALsource::eax5_set_source_defaults(EAX50SOURCEPROPERTIES& props) noexcept
 {
-    eax3_set_defaults(static_cast<EAX30SOURCEPROPERTIES&>(props));
+    eax3_set_defaults(props);
     props.flMacroFXFactor = EAXSOURCE_DEFAULTMACROFXFACTOR;
 }
 

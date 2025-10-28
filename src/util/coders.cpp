@@ -11,7 +11,7 @@
 #endif //defined(CORE_INCLUDE_VULKAN)
 
 const std::string INFO_CODERS[] = {             
-    //          информация                          // код
+    //          информация                      // код
         "FAILED_INIT_GLFW",                     // 0
         "FAILED_INIT_WINDOW",                   // 1
         "FAILED_INIT_GLEW",                     // 2
@@ -60,7 +60,8 @@ const std::string INFO_CODERS[] = {
         "VK_FAILED_YOUR_GPU_DON'T_HOLDING_VULKAN_API",	//45
 		"VK_FAILED_SEARCH_DEVICE_TYPE_MEMORY",  // 46
 		"VK_FAILED_INIT_GLSLang",				 // 47
-		""
+		"ASSIMP_FAILED_LOAD_OBJ_MODEL(s)",          // 48
+        ""
 };
 
 core::coders::coders(int codeError, std::string addInfo)

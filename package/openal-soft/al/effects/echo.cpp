@@ -175,7 +175,7 @@ struct AllValidator {
 } // namespace
 
 template<> /* NOLINTNEXTLINE(clazy-copyable-polymorphic) Exceptions must be copyable. */
-struct EchoCommitter::Exception : public EaxException {
+struct EchoCommitter::Exception final : EaxException {
     explicit Exception(const std::string_view message) : EaxException{"EAX_ECHO_EFFECT", message}
     { }
 };
@@ -184,7 +184,7 @@ template<> [[noreturn]]
 void EchoCommitter::fail(const std::string_view message)
 { throw Exception{message}; }
 
-bool EaxEchoCommitter::commit(const EAXECHOPROPERTIES &props)
+auto EaxEchoCommitter::commit(const EAXECHOPROPERTIES &props) const -> bool
 {
     if(auto *cur = std::get_if<EAXECHOPROPERTIES>(&mEaxProps); cur && *cur == props)
         return false;

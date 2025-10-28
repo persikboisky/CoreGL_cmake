@@ -1,6 +1,7 @@
 
 cmake_minimum_required(VERSION 3.5)
 project(CoreGL)
+set(CMAKE_CXX_STANDARD 20)
 
 set(CoreGL_source
         src/core.cpp
@@ -45,6 +46,8 @@ set(CoreGL_source
         src/file/image.cpp
         src/file/wav.cpp
         src/file/ttf.cpp
+        src/file/models/m_OBJ.cpp
+        src/file/animation/a_FBX.cpp
         src/math/math.cpp
         src/math/Vector2.cpp
         src/math/Vector3.cpp
@@ -74,9 +77,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE package/glfw/include)
 # link glew
 set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build shared libraries")
 set(BUILD_UTILS OFF CACHE INTERNAL "Build utilities")
-add_subdirectory(package/glew-2.1.0-master/build/cmake)
+add_subdirectory(package/glew-2.1.0/build/cmake)
 target_link_libraries(${PROJECT_NAME} glew_s)
-target_link_directories(${PROJECT_NAME} PRIVATE package/glew-2.1.0-master/include)
+target_link_directories(${PROJECT_NAME} PRIVATE "package/glew-2.1.0/include")
 
 # link stb_image
 target_include_directories(${PROJECT_NAME} PRIVATE package/stb)
@@ -88,12 +91,26 @@ target_link_libraries(${PROJECT_NAME} OpenAL)
 target_include_directories(${PROJECT_NAME} PRIVATE package/openal-soft/include)
 
 # link vulkan
-find_package(Vulkan REQUIRED)
-target_link_libraries(${PROJECT_NAME} ${Vulkan_LIBRARIES})
-target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
+#find_package(Vulkan REQUIRED)
+#target_link_libraries(${PROJECT_NAME} ${Vulkan_LIBRARIES})
+#target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
 
 ## link gslang
 #find_package(Shaderc REQUIRED)
 #target_link_libraries(${PROJECT_NAME} shaderc)
+
+#link assimp
+set(BUILD_SHARED_LIBS OFF)
+set(ASSIMP_BUILD_ZLIB ON)
+set(DASSIMP_BUILD_ZLIB ON)
+add_subdirectory(package/assimp)
+target_link_libraries(${PROJECT_NAME} assimp)
+target_include_directories(${PROJECT_NAME} PRIVATE package/assimp/include)
+
+# link zlib
+#add_subdirectory(package/zlib)
+#target_link_libraries(${PROJECT_NAME} ZLIB::ZLIBSTATIC)
+#target_include_directories(${PROJECT_NAME} PRIVATE package/zlib)
+
 
 

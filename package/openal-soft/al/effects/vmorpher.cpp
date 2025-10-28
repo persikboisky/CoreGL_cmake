@@ -1,6 +1,7 @@
 
 #include "config.h"
 
+#include <format>
 #include <optional>
 #include <stdexcept>
 
@@ -97,7 +98,7 @@ constexpr ALenum EnumFromPhenome(VMorpherPhenome phenome)
     HANDLE_PHENOME(V);
     HANDLE_PHENOME(Z);
     }
-    throw std::runtime_error{fmt::format("Invalid phenome: {}", int{al::to_underlying(phenome)})};
+    throw std::runtime_error{std::format("Invalid phenome: {}", int{al::to_underlying(phenome)})};
 #undef HANDLE_PHENOME
 }
 
@@ -119,7 +120,7 @@ constexpr ALenum EnumFromWaveform(VMorpherWaveform type)
     case VMorpherWaveform::Triangle: return AL_VOCAL_MORPHER_WAVEFORM_TRIANGLE;
     case VMorpherWaveform::Sawtooth: return AL_VOCAL_MORPHER_WAVEFORM_SAWTOOTH;
     }
-    throw std::runtime_error{fmt::format("Invalid vocal morpher waveform: {}",
+    throw std::runtime_error{std::format("Invalid vocal morpher waveform: {}",
         int{al::to_underlying(type)})};
 }
 
@@ -321,7 +322,7 @@ struct AllValidator {
 } // namespace
 
 template<> /* NOLINTNEXTLINE(clazy-copyable-polymorphic) Exceptions must be copyable. */
-struct VocalMorpherCommitter::Exception : public EaxException {
+struct VocalMorpherCommitter::Exception final : EaxException {
     explicit Exception(const std::string_view message)
         : EaxException{"EAX_VOCAL_MORPHER_EFFECT", message}
     { }
@@ -331,7 +332,7 @@ template<> [[noreturn]]
 void VocalMorpherCommitter::fail(const std::string_view message)
 { throw Exception{message}; }
 
-bool EaxVocalMorpherCommitter::commit(const EAXVOCALMORPHERPROPERTIES &props)
+auto EaxVocalMorpherCommitter::commit(const EAXVOCALMORPHERPROPERTIES &props) const -> bool
 {
     if(auto *cur = std::get_if<EAXVOCALMORPHERPROPERTIES>(&mEaxProps); cur && *cur == props)
         return false;

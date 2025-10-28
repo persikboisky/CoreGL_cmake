@@ -11,7 +11,7 @@
 #include "../../../math/Matrix4.hpp"
 #include "../../../math/Vectors.hpp"
 #include "gl_texture.hpp"
-#include "../../../package/glew-2.1.0-master/include/GL/glew.h"
+#include "../../../package/glew-2.1.0/include/GL/glew.h"
 #include <string>
 #include <iostream>
 

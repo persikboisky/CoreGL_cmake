@@ -1,7 +1,7 @@
 #ifndef ALHELPERS_HPP
 #define ALHELPERS_HPP
 
-#include "AL/alc.h"
+#include "config.h"
 
 #include <iostream>
 #include <span>
@@ -12,49 +12,59 @@
 
 #include "fmt/base.h"
 #include "fmt/ostream.h"
+
+#if HAVE_CXXMODULES
+import gsl;
+import openal.alc;
+
+#else
+
+#include "AL/alc.h"
+
 #include "gsl/gsl"
+#endif
 
 
 [[nodiscard]]
 inline auto InitAL(std::span<std::string_view> &args, const ALCint *attribs=nullptr)
 {
     struct Handle {
-        ALCdevice *device{};
-        ALCcontext *context{};
+        ALCdevice *mDevice{};
+        ALCcontext *mContext{};
 
         Handle() = default;
         Handle(const Handle&) = delete;
         Handle(Handle&& rhs) noexcept
-            : device{std::exchange(rhs.device, nullptr)}
-            , context{std::exchange(rhs.context, nullptr)}
+            : mDevice{std::exchange(rhs.mDevice, nullptr)}
+            , mContext{std::exchange(rhs.mContext, nullptr)}
         { }
         ~Handle()
         {
-            if(context)
-                alcDestroyContext(context);
-            if(device)
-                alcCloseDevice(device);
+            if(mContext)
+                alcDestroyContext(mContext);
+            if(mDevice)
+                alcCloseDevice(mDevice);
         }
         auto operator=(const Handle&) -> Handle& = delete;
         auto operator=(Handle&&) -> Handle& = delete;
 
         auto close() -> void
         {
-            if(context)
-                alcDestroyContext(context);
-            context = nullptr;
-            if(device)
-                alcCloseDevice(device);
-            device = nullptr;
+            if(mContext)
+                alcDestroyContext(mContext);
+            mContext = nullptr;
+            if(mDevice)
+                alcCloseDevice(mDevice);
+            mDevice = nullptr;
         }
 
         auto printName() const -> void
         {
             auto *name = gsl::czstring{};
-            if(alcIsExtensionPresent(device, "ALC_ENUMERATE_ALL_EXT"))
-                name = alcGetString(device, ALC_ALL_DEVICES_SPECIFIER);
-            if(!name || alcGetError(device) != ALC_NO_ERROR)
-                name = alcGetString(device, ALC_DEVICE_SPECIFIER);
+            if(alcIsExtensionPresent(mDevice, "ALC_ENUMERATE_ALL_EXT"))
+                name = alcGetString(mDevice, ALC_ALL_DEVICES_SPECIFIER);
+            if(!name || alcGetError(mDevice) != ALC_NO_ERROR)
+                name = alcGetString(mDevice, ALC_DEVICE_SPECIFIER);
             fmt::println("Opened \"{}\"", name);
         }
     };
@@ -63,21 +73,21 @@ inline auto InitAL(std::span<std::string_view> &args, const ALCint *attribs=null
     /* Open and initialize a device */
     if(args.size() > 1 && args[0] == "-device")
     {
-        hdl.device = alcOpenDevice(std::string{args[1]}.c_str());
-        if(!hdl.device)
+        hdl.mDevice = alcOpenDevice(std::string{args[1]}.c_str());
+        if(!hdl.mDevice)
             fmt::println(std::cerr, "Failed to open \"{}\", trying default", args[1]);
         args = args.subspan(2);
     }
-    if(!hdl.device)
-        hdl.device = alcOpenDevice(nullptr);
-    if(!hdl.device)
+    if(!hdl.mDevice)
+        hdl.mDevice = alcOpenDevice(nullptr);
+    if(!hdl.mDevice)
     {
         fmt::println(std::cerr, "Could not open a device");
         throw std::runtime_error{"Failed to open a device"};
     }
 
-    hdl.context = alcCreateContext(hdl.device, attribs);
-    if(!hdl.context || alcMakeContextCurrent(hdl.context) == ALC_FALSE)
+    hdl.mContext = alcCreateContext(hdl.mDevice, attribs);
+    if(!hdl.mContext || alcMakeContextCurrent(hdl.mContext) == ALC_FALSE)
     {
         fmt::println(std::cerr, "Could not set a context");
         throw std::runtime_error{"Failed to initialize an OpenAL context"};

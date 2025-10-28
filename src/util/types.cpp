@@ -8,6 +8,7 @@
 
 using namespace core;
 
+#if defined(CORE_INCLUDE_VULKAN)
 VkFormat vulkan::convertFormat(const FORMAT_VARIABLE& format)
 {
 	switch (format)
@@ -28,6 +29,7 @@ VkFormat vulkan::convertFormat(const FORMAT_VARIABLE& format)
 		return VK_FORMAT_R32_SFLOAT;
 	}
 }
+#endif //defined(CORE_INCLUDE_VULKAN)
 
 int core::convertKeyCode(const KEY_CODE& keyCode)
 {

@@ -24,6 +24,8 @@
 
 /* This file contains an example for using the debug extension. */
 
+#include "config.h"
+
 #include <algorithm>
 #include <array>
 #include <cstdio>
@@ -35,30 +37,35 @@
 #include <string_view>
 #include <vector>
 
-#include "AL/al.h"
-#include "AL/alc.h"
-#include "AL/alext.h"
-
 #include "alnumeric.h"
 #include "fmt/base.h"
 #include "fmt/ostream.h"
-#include "gsl/gsl"
+#include "fmt/std.h"
 
 #include "win_main_utf8.h"
+
+#if HAVE_CXXMODULES
+import gsl;
+import openal;
+
+#else
+
+#include "AL/alc.h"
+#include "AL/al.h"
+#include "AL/alext.h"
+
+#include "gsl/gsl"
+#endif
 
 namespace {
 
 using namespace std::string_view_literals;
 
-struct DeviceCloser {
-    void operator()(ALCdevice *device) const noexcept { alcCloseDevice(device); }
-};
-using DevicePtr = std::unique_ptr<ALCdevice,DeviceCloser>;
+using DevicePtr = std::unique_ptr<ALCdevice, decltype([](ALCdevice *device)
+    { alcCloseDevice(device); })>;
 
-struct ContextDestroyer {
-    void operator()(ALCcontext *context) const noexcept { alcDestroyContext(context); }
-};
-using ContextPtr = std::unique_ptr<ALCcontext,ContextDestroyer>;
+using ContextPtr = std::unique_ptr<ALCcontext, decltype([](ALCcontext *context)
+    { alcDestroyContext(context); })>;
 
 
 constexpr auto GetDebugSourceName(ALenum source) noexcept -> std::string_view
@@ -172,10 +179,10 @@ auto main(std::span<std::string_view> args) -> int
     if(!args.empty() && args[0] == "-nodebug")
         flags &= ~ALC_CONTEXT_DEBUG_BIT_EXT;
 
-    const auto attribs = std::array<ALCint,3>{{
+    const auto attribs = std::to_array<ALCint>({
         ALC_CONTEXT_FLAGS_EXT, flags,
         0 /* end-of-list */
-    }};
+    });
     auto context = ContextPtr{alcCreateContext(device.get(), attribs.data())};
     if(!context || alcMakeContextCurrent(context.get()) == ALC_FALSE)
     {
@@ -215,7 +222,7 @@ auto main(std::span<std::string_view> args) -> int
 
     for(auto numlogs = alGetInteger(AL_DEBUG_LOGGED_MESSAGES_EXT);numlogs > 0;--numlogs)
     {
-        auto message = std::vector<char>(static_cast<ALuint>(maxloglength), '\0');
+        auto message = std::vector(gsl::narrow<ALuint>(maxloglength), '\0');
         auto source = ALenum{};
         auto type = ALenum{};
         auto id = ALuint{};
@@ -237,7 +244,7 @@ auto main(std::span<std::string_view> args) -> int
          * the offset to the next message.
          */
         const auto msgstr = std::string_view{message.data(),
-            static_cast<ALuint>(msglength ? msglength-1 : 0)};
+            gsl::narrow<ALuint>(msglength ? msglength-1 : 0)};
         fmt::println("Got message from log:\n"
             "  Source: {}\n"
             "  Type: {}\n"
@@ -258,7 +265,7 @@ auto main(std::span<std::string_view> args) -> int
         /* The message length provided to the callback does not include the
          * null terminator.
          */
-        const auto msgstr = std::string_view{message, static_cast<ALuint>(length)};
+        const auto msgstr = std::string_view{message, gsl::narrow<ALuint>(length)};
         fmt::println("Got message from callback:\n"
             "  Source: {}\n"
             "  Type: {}\n"

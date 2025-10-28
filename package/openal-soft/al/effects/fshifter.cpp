@@ -1,6 +1,7 @@
 
 #include "config.h"
 
+#include <format>
 #include <optional>
 #include <stdexcept>
 
@@ -38,7 +39,7 @@ constexpr ALenum EnumFromDirection(FShifterDirection dir)
     case FShifterDirection::Up: return AL_FREQUENCY_SHIFTER_DIRECTION_UP;
     case FShifterDirection::Off: return AL_FREQUENCY_SHIFTER_DIRECTION_OFF;
     }
-    throw std::runtime_error{fmt::format("Invalid direction: {}", int{al::to_underlying(dir)})};
+    throw std::runtime_error{std::format("Invalid direction: {}", int{al::to_underlying(dir)})};
 }
 
 consteval EffectProps genDefaultProps() noexcept
@@ -182,7 +183,7 @@ struct AllValidator {
 } // namespace
 
 template<> /* NOLINTNEXTLINE(clazy-copyable-polymorphic) Exceptions must be copyable. */
-struct FrequencyShifterCommitter::Exception : public EaxException {
+struct FrequencyShifterCommitter::Exception final : EaxException {
     explicit Exception(const std::string_view message)
         : EaxException{"EAX_FREQUENCY_SHIFTER_EFFECT", message}
     { }
@@ -192,7 +193,7 @@ template<> [[noreturn]]
 void FrequencyShifterCommitter::fail(const std::string_view message)
 { throw Exception{message}; }
 
-bool EaxFrequencyShifterCommitter::commit(const EAXFREQUENCYSHIFTERPROPERTIES &props)
+auto EaxFrequencyShifterCommitter::commit(const EAXFREQUENCYSHIFTERPROPERTIES &props) const -> bool
 {
     if(auto *cur = std::get_if<EAXFREQUENCYSHIFTERPROPERTIES>(&mEaxProps); cur && *cur == props)
         return false;

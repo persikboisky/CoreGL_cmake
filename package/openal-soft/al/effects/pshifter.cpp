@@ -115,7 +115,7 @@ struct AllValidator {
 } // namespace
 
 template<> /* NOLINTNEXTLINE(clazy-copyable-polymorphic) Exceptions must be copyable. */
-struct PitchShifterCommitter::Exception : public EaxException {
+struct PitchShifterCommitter::Exception final : EaxException {
     explicit Exception(const std::string_view message)
         : EaxException{"EAX_PITCH_SHIFTER_EFFECT", message}
     { }
@@ -125,7 +125,7 @@ template<> [[noreturn]]
 void PitchShifterCommitter::fail(const std::string_view message)
 { throw Exception{message}; }
 
-bool EaxPitchShifterCommitter::commit(const EAXPITCHSHIFTERPROPERTIES &props)
+auto EaxPitchShifterCommitter::commit(const EAXPITCHSHIFTERPROPERTIES &props) const -> bool
 {
     if(auto *cur = std::get_if<EAXPITCHSHIFTERPROPERTIES>(&mEaxProps); cur && *cur == props)
         return false;

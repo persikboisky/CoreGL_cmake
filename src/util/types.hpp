@@ -6,6 +6,7 @@
 #define TYPES_HPP
 
 #include <string>
+#include <vector>
 #include "../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
 #include <vulkan/vulkan.h>
@@ -487,6 +488,32 @@ namespace core
 		DepthSize(float depth = 1.0, float stencil = 0.0);
 		void operator = (const DepthSize& ds);
 	};
+
+    namespace model
+    {
+        struct Vertex
+        {
+            float x = 0;
+            float y = 0;
+            float z = 0;
+            float nX = 0;
+            float nY = 0;
+            float nZ = 0;
+            float u = 0;
+            float v = 0;
+        };
+
+        struct Texture {
+            std::string type = "";
+            std::string path = "";
+        };
+
+        struct Mesh {
+            std::vector<Vertex> vertices = {};
+            std::vector<Texture> textures = {};
+            std::vector<unsigned int> indices = {};
+        };
+    }
 }
 
 #endif //TYPES_HPP

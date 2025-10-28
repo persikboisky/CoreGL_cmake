@@ -2,6 +2,8 @@
  * An example showing how to play a stream sync'd to video, using ffmpeg.
  */
 
+#include "config.h"
+
 #include <algorithm>
 #include <array>
 #include <atomic>
@@ -28,17 +30,12 @@
 #include <utility>
 #include <vector>
 
-#include "AL/alc.h"
-#include "AL/al.h"
-#include "AL/alext.h"
-
 #include "almalloc.h"
 #include "alnumeric.h"
 #include "alstring.h"
 #include "common/alhelpers.hpp"
-#include "fmt/format.h"
+#include "fmt/base.h"
 #include "fmt/ostream.h"
-#include "gsl/gsl"
 #include "opthelpers.h"
 #include "pragmadefs.h"
 
@@ -69,6 +66,27 @@ struct SwsContext;
 #include "SDL3/SDL_main.h"
 #include "SDL3/SDL_render.h"
 #include "SDL3/SDL_video.h"
+
+#if HAVE_CXXMODULES
+import gsl;
+import openal;
+
+/* AL_APIENTRY is needed, but not exported from the module. */
+#ifdef _WIN32
+ #define AL_APIENTRY __cdecl
+#else
+ #define AL_APIENTRY
+#endif
+
+#else
+
+#include "AL/al.h"
+#include "AL/alc.h"
+#include "AL/alext.h"
+
+#include "gsl/gsl"
+#endif
+
 
 namespace {
 
@@ -425,7 +443,7 @@ struct AudioState {
 
     auto bufferCallback(const std::span<ALubyte> data) noexcept -> ALsizei;
 
-    [[nodiscard]] auto getClockNoLock() -> nanoseconds;
+    [[nodiscard]] auto getClockNoLock() const -> nanoseconds;
     [[nodiscard]] auto getClock() -> nanoseconds
     {
         const auto lock = std::lock_guard{mSrcMutex};
@@ -537,7 +555,7 @@ struct MovieState {
 };
 
 
-auto AudioState::getClockNoLock() -> nanoseconds
+auto AudioState::getClockNoLock() const -> nanoseconds
 {
     /* The audio clock is the timestamp of the sample currently being heard. */
     if(mStartPts == nanoseconds::min())
@@ -1226,7 +1244,7 @@ void AudioState::handler()
              * ordering and normalization, so a custom matrix is needed to
              * scale and reorder the source from AmbiX.
              */
-            auto mtx = std::vector<double>(64_uz*64_uz, 0.0);
+            auto mtx = std::vector(64_uz*64_uz, 0.0);
             mtx[0 + 0*64] = std::sqrt(0.5);
             mtx[3 + 1*64] = 1.0;
             mtx[1 + 2*64] = 1.0;

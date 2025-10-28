@@ -23,7 +23,7 @@ unsigned char *core::Image::load(
 {
     stbi_set_flip_vertically_on_load(rotateImg);
     stbi_uc *image = stbi_load(path, &width, &height, &channels, STBI_default);
-    if (image == 0 || image == nullptr)
+    if (image == nullptr)
     {
         throw core::coders(3, "Path: " + std::string(path));
     }
@@ -31,7 +31,13 @@ unsigned char *core::Image::load(
     if (CORE_INFO && info)
     {
         core::console::printTime();
-        std::cout << "Ok: load png to path: " << path << std::endl;
+        std::cout << "Ok: load Image to path: " << path << std::endl;
+        core::console::printTime();
+        std::cout << "Width: " << width << std::endl;
+        core::console::printTime();
+        std::cout << "Height: " << height << std::endl;
+        core::console::printTime();
+        std::cout << "Channels: " << height << std::endl;
     }
 
     return image;

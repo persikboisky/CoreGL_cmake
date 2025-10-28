@@ -21,7 +21,7 @@ namespace core
 			VALUE_TYPE valueType;
 		};
 
-		class VertexBuffer : public DescriptorContainer
+		class VertexBuffer : public FunctionBindContainer
 		{
 		private:
 			unsigned int VBO;
@@ -35,15 +35,34 @@ namespace core
 		public:
 			~VertexBuffer();
 
+			/// @brief создаёт вершинный буфер
+			/// @param info объект структуры opengl::VertexBufferInfo
+			/// @return объект класса opengl::VertexBuffer
 			static VertexBuffer create(const VertexBufferInfo& info);
+
+			/// @brief создаёт вершинный буфер
+			/// @param info объект структуры opengl::VertexBufferInfo
+			/// @return указатель на объект класса opengl::VertexBuffer
 			static VertexBuffer *ptrCreate(const VertexBufferInfo& info);
 
+			/// @brief прикпрепляет буфер
 			void bind() const override;
+
+			/// @brief открепляет буфер
 			void unBind() const override;
 
+			/// @brief добавляет или перезаписывает вершинный атрибут
+			/// @param location номер атрибута (его идентификатор в location шейдера)
+			/// @param nElement кол-во элементов для данного атрибута
+			/// @param offset отступ(в кол-вах элементов) от начала вершины
 			void addAttribute(unsigned int location, int nElement, int offset) const;
 
+			/// @brief получает размер массива в байтах
+			/// @return байты
 			unsigned int getSizeOfByte() const;
+
+			/// @brief получает кол-во вершин
+			/// @return кол-во вершин
 			unsigned int getCountVertex() const;
 		};
 	} // opengl

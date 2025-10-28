@@ -33,7 +33,7 @@
 #include "core/voice_change.h"
 #include "device.h"
 #include "flexarray.h"
-#include "fmt/core.h"
+#include "fmt/format.h"
 #include "fmt/ranges.h"
 #include "gsl/gsl"
 #include "ringbuffer.h"
@@ -52,7 +52,7 @@ using voidp = void*;
 /* Default context extensions */
 auto getContextExtensions() noexcept -> std::vector<std::string_view>
 {
-    return std::vector<std::string_view>{
+    return std::vector({
         "AL_EXT_ALAW"sv,
         "AL_EXT_BFORMAT"sv,
         "AL_EXT_debug"sv,
@@ -96,7 +96,7 @@ auto getContextExtensions() noexcept -> std::vector<std::string_view>
         "AL_SOFT_source_start_delay"sv,
         "AL_SOFT_UHJ"sv,
         "AL_SOFT_UHJ_ex"sv,
-    };
+    });
 }
 
 } // namespace
@@ -121,7 +121,7 @@ thread_local Context::ThreadCtx Context::sThreadContext;
 ALeffect Context::sDefaultEffect;
 
 
-void ContextDeleter::operator()(gsl::owner<Context*> context) noexcept
+void ContextDeleter::operator()(gsl::owner<Context*> context) const noexcept
 { delete context; }
 
 auto Context::Create(const gsl::not_null<intrusive_ptr<Device>> &device, ContextFlagBitset flags)
@@ -478,7 +478,7 @@ void Context::eax_ensure_enough_aux_sends() const
         eax_fail("Not enough aux sends.");
 }
 
-void Context::eax_ensure_compatibility()
+void Context::eax_ensure_compatibility() const
 {
     eax_ensure_enough_aux_sends();
 }
