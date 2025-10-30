@@ -60,7 +60,7 @@ void core::Window::Init()
     this->cursor = new Cursor(*this->window);
 }
 
-core::Window::Window(const core::windowInfo &winInfo) : window(nullptr),
+core::Window::Window(const core::WindowInfo &winInfo) : window(nullptr),
                                                         event(nullptr), width(winInfo.width), height(winInfo.height), posX(winInfo.posX), posY(winInfo.posY),
                                                         saveWidth(winInfo.width), saveHeight(winInfo.height), cursor(nullptr), monitor(new Monitor()),
                                                         VSfps(winInfo.VerticalSynchronization), flagFullScreen(winInfo.fullScreen), time(glfwGetTime()),
@@ -124,7 +124,7 @@ void core::Window::resetMonitor()
         GLFW_DONT_CARE);
 }
 
-core::Window core::Window::create(const core::windowInfo &winInfo)
+core::Window core::Window::create(const core::WindowInfo &winInfo)
 {
     return Window(winInfo);
 }
@@ -143,7 +143,7 @@ bool core::Window::isContext()
 {
 #if defined(CORE_INCLUDE_VULKAN)
     if (this->VulknanAPI) return false;
-#endif defined(CORE_INCLUDE_VULKAN)
+#endif //defined(CORE_INCLUDE_VULKAN)
 
     if (this->window == glfwGetCurrentContext())
     {

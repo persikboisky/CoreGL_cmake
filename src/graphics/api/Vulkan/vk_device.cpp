@@ -156,34 +156,14 @@ namespace core
 			vkDestroyDevice(this->device, nullptr);
 		}
 
-		uint32_t Device::getGraphicsQueueFamilyIndex()
+		uint32_t Device::getGraphicsQueueFamilyIndex() const
 		{
 			return this->graphicsQueueFamilyIndex;
 		}
 
-		uint32_t Device::getPresentQueueFamilyIndex()
+		uint32_t Device::getPresentQueueFamilyIndex() const
 		{
 			return this->presentQueueFamilyIndex;
-		}
-
-		VkSurfaceFormatKHR Device::getVkSurfaceFormat()
-		{
-			return this->surfaceFormat;
-		}
-
-		VkSurfaceCapabilitiesKHR Device::getVkSurfaceCapabilities()
-		{
-			return this->surfaceCapabilitiesFormat;
-		}
-
-		VkDevice Device::getDevice()
-		{
-			return this->device;
-		}
-
-		VkDevice* Device::getPtrDevice()
-		{
-			return &this->device;
 		}
 
 		uint32_t Device::getCountGraphicsQueue() const

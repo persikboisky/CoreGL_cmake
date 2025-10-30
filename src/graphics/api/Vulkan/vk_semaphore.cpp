@@ -11,7 +11,7 @@ namespace core
 {
 	namespace vulkan
 	{
-		Semaphore::Semaphore(Device& device) : ptrDevice(device.getPtrDevice())
+		Semaphore::Semaphore(Device& device) : ptrDevice(&device.device)
 		{
 			VkSemaphoreCreateInfo semaphoreCreateInfo = {};
 			semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -19,7 +19,7 @@ namespace core
 			semaphoreCreateInfo.flags = 0;
 
 			VkResult result = vkCreateSemaphore(
-				device.getDevice(),
+				device.device,
 				&semaphoreCreateInfo,
 				nullptr,
 				&this->semaphore);

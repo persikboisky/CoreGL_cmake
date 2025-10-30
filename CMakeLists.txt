@@ -24,7 +24,7 @@ set(CoreGL_source
         src/graphics/api/Vulkan/vk_shaderModule.cpp
         src/graphics/api/Vulkan/vk_pipeline.cpp
         src/graphics/api/Vulkan/vk_renderPass.cpp
-        src/graphics/api/Vulkan/vk_imageView.cpp
+        src/graphics/api/Vulkan/vk_SwapChainImageView.cpp
         src/graphics/api/Vulkan/vk_frameBuffer.cpp
         src/graphics/api/Vulkan/vk_commandBuffer.cpp
         src/graphics/api/Vulkan/vk_image.cpp
@@ -91,9 +91,9 @@ target_link_libraries(${PROJECT_NAME} OpenAL)
 target_include_directories(${PROJECT_NAME} PRIVATE package/openal-soft/include)
 
 # link vulkan
-#find_package(Vulkan REQUIRED)
-#target_link_libraries(${PROJECT_NAME} ${Vulkan_LIBRARIES})
-#target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
+find_package(Vulkan REQUIRED)
+target_link_libraries(${PROJECT_NAME} ${Vulkan_LIBRARIES})
+target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
 
 ## link gslang
 #find_package(Shaderc REQUIRED)
@@ -111,6 +111,4 @@ target_include_directories(${PROJECT_NAME} PRIVATE package/assimp/include)
 #add_subdirectory(package/zlib)
 #target_link_libraries(${PROJECT_NAME} ZLIB::ZLIBSTATIC)
 #target_include_directories(${PROJECT_NAME} PRIVATE package/zlib)
-
-
 

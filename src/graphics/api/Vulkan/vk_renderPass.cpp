@@ -15,12 +15,12 @@ namespace core
 	namespace vulkan
 	{
 		RenderPass::RenderPass(const RenderPassInfo& info) :
-				device(info.ptrDevice->getPtrDevice()), depthAttachment(info.depthTest),
+				device(&info.ptrDevice->device), depthAttachment(info.depthTest),
 				clearBuffers(info.clearBuffers)
 		{
 			// Цветовой attachment
 			VkAttachmentDescription colorAttachment = {};
-			colorAttachment.format = info.ptrDevice->getVkSurfaceFormat().format;
+			colorAttachment.format = info.ptrDevice->surfaceFormat.format;
 			colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
 			colorAttachment.loadOp = {
 					(info.clearBuffers) ?
@@ -97,7 +97,7 @@ namespace core
 			// RenderPassInfo.dependencyCount = 2;
 
 			VkResult result = vkCreateRenderPass(
-					info.ptrDevice->getDevice(),
+					info.ptrDevice->device,
 					&renderPassInfo,
 					nullptr,
 					&renderPass);

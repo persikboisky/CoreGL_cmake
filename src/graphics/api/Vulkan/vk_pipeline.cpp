@@ -17,7 +17,7 @@ namespace core
 {
 	namespace vulkan
 	{
-		Pipeline::Pipeline(const PipelineInfo &info) : ptrDevice(info.ptrDevice->getPtrDevice())
+		Pipeline::Pipeline(const PipelineInfo &info) : ptrDevice(&info.ptrDevice->device)
 		{
 			VkPipelineLayoutCreateInfo layoutInfoCreateInfo = {};
 			layoutInfoCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -73,7 +73,7 @@ namespace core
 			}
 
 			VkResult result = vkCreatePipelineLayout(
-				info.ptrDevice->getDevice(),
+				info.ptrDevice->device,
 				&layoutInfoCreateInfo,
 				nullptr,
 				&this->pipelineLayout);
@@ -314,7 +314,7 @@ namespace core
 			pipelineCreateInfo.subpass = 0;
 
 			result = vkCreateGraphicsPipelines(
-				info.ptrDevice->getDevice(),
+				info.ptrDevice->device,
 				VK_NULL_HANDLE,
 				1,
 				&pipelineCreateInfo,
@@ -346,7 +346,7 @@ namespace core
 				nullptr);
 		}
 
-		VkPipeline Pipeline::getVkPipeline()
+		VkPipeline Pipeline::getVkPipeline() const
 		{
 			return this->pipeline;
 		}

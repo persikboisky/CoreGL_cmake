@@ -6,7 +6,7 @@
 #if defined(CORE_INCLUDE_VULKAN)
 #include "vk_surface.hpp"
 #include "vk_device.hpp"
-#include "vk_imageView.hpp"
+#include "vk_SwapChainImageView.hpp"
 #include "vk_image.hpp"
 #include "vk_semaphore.hpp"
 #include "vk_fence.hpp"
@@ -16,7 +16,7 @@ namespace core
 {
 	namespace vulkan
 	{
-		SwapChain::SwapChain(const SwapChainInfo& info) : ptrDevice(info.ptrDevice->getPtrDevice())
+		SwapChain::SwapChain(const SwapChainInfo& info) : ptrDevice(&info.ptrDevice->device)
 		{
 			uint32_t FamilyIndices = info.ptrDevice->getPresentQueueFamilyIndex();
 
@@ -27,16 +27,16 @@ namespace core
 			swapchainCreateInfo.flags = 0;
 			swapchainCreateInfo.pNext = nullptr;
 			swapchainCreateInfo.presentMode = (info.V_sync) ? VK_PRESENT_MODE_FIFO_KHR : VK_PRESENT_MODE_IMMEDIATE_KHR;
-			swapchainCreateInfo.preTransform = info.ptrDevice->getVkSurfaceCapabilities().currentTransform;
+			swapchainCreateInfo.preTransform = info.ptrDevice->surfaceCapabilitiesFormat.currentTransform;
 			swapchainCreateInfo.minImageCount = info.countFrameBuffers;
-			swapchainCreateInfo.imageUsage = info.ptrDevice->getVkSurfaceCapabilities().supportedUsageFlags;
-			swapchainCreateInfo.imageFormat = info.ptrDevice->getVkSurfaceFormat().format;
-			swapchainCreateInfo.imageExtent = info.ptrDevice->getVkSurfaceCapabilities().currentExtent;
+			swapchainCreateInfo.imageUsage = info.ptrDevice->surfaceCapabilitiesFormat.supportedUsageFlags;
+			swapchainCreateInfo.imageFormat = info.ptrDevice->surfaceFormat.format;
+			swapchainCreateInfo.imageExtent = info.ptrDevice->surfaceCapabilitiesFormat.currentExtent;
 			swapchainCreateInfo.clipped = (info.clipped) ? VK_TRUE : VK_FALSE;
 			swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 			swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 			swapchainCreateInfo.imageArrayLayers = 1;
-			swapchainCreateInfo.imageColorSpace = info.ptrDevice->getVkSurfaceFormat().colorSpace;
+			swapchainCreateInfo.imageColorSpace = info.ptrDevice->surfaceFormat.colorSpace;
 			swapchainCreateInfo.pQueueFamilyIndices = &FamilyIndices;
 			swapchainCreateInfo.queueFamilyIndexCount = 1;
 
@@ -47,7 +47,7 @@ namespace core
 				swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
 
 			VkResult result = vkCreateSwapchainKHR(
-				info.ptrDevice->getDevice(),
+				info.ptrDevice->device,
 				&swapchainCreateInfo,
 				nullptr,
 				&this->swapChain);
@@ -127,7 +127,7 @@ namespace core
 					this->swapChain,
 					UINT64_MAX,
 					VK_NULL_HANDLE,
-					fence.getVkFence(),
+					fence.fence,
 					&index);
 			coders::vulkanProcessingError(result);
 			return index;
@@ -141,7 +141,7 @@ namespace core
 				this->swapChain,
 				UINT64_MAX,
 				semaphore.getVkSemaphore(),
-					fence.getVkFence(),
+					fence.fence,
 				&index);
 			coders::vulkanProcessingError(result);
 			return index;

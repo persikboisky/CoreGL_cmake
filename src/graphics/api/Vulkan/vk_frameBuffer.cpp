@@ -5,7 +5,7 @@
 #include "vk_frameBuffer.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
 #include "vk_renderPass.hpp"
-#include "vk_imageView.hpp"
+#include "vk_SwapChainImageView.hpp"
 #include "vk_device.hpp"
 #include "vk_image.hpp"
 #include "vk_depthImageView.hpp"
@@ -14,7 +14,7 @@
 
 namespace core::vulkan
 {
-	FrameBuffer::FrameBuffer(Device &device, RenderPass &renderPass, ImageView &img, DepthImageView *ptrDIW) : ptrDevice(device.getPtrDevice())
+	FrameBuffer::FrameBuffer(Device &device, RenderPass &renderPass, ImageView &img, DepthImageView *ptrDIW) : ptrDevice(&device.device)
 	{
 		std::vector<VkImageView> Attachments = {};
 		if (renderPass.getStateDepth() && ptrDIW != nullptr)
@@ -31,14 +31,14 @@ namespace core::vulkan
 		framebufferInfo.renderPass = renderPass.getVkRenderPass();
 		framebufferInfo.attachmentCount = static_cast<uint32_t>(Attachments.size());
 		framebufferInfo.pAttachments = Attachments.data();
-		framebufferInfo.width = device.getVkSurfaceCapabilities().currentExtent.width;
-		framebufferInfo.height = device.getVkSurfaceCapabilities().currentExtent.height;
+		framebufferInfo.width = device.surfaceCapabilitiesFormat.currentExtent.width;
+		framebufferInfo.height = device.surfaceCapabilitiesFormat.currentExtent.height;
 		framebufferInfo.layers = 1;
 		framebufferInfo.pNext = nullptr;
 		framebufferInfo.flags = 0;
 
 		VkResult result = vkCreateFramebuffer(
-			device.getDevice(),
+			device.device,
 			&framebufferInfo,
 			nullptr,
 			&this->fbo);
@@ -73,7 +73,7 @@ namespace core::vulkan
 		return &this->fbo;
 	}
 
-	FrameBuffers::FrameBuffers(FrameBuffersInfo &info) : device(info.ptrDevice->getPtrDevice())
+	FrameBuffers::FrameBuffers(FrameBuffersInfo &info) : device(&info.ptrDevice->device)
 	{
 		uint32_t i = 0;
 		for (ImageView *image : info.ptrSwapchainImageViews->getPtrImagesView())

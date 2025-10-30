@@ -14,8 +14,6 @@ namespace core
 {
 	namespace vulkan
 	{
-		class PhysicalDevices;
-
 		/// @brief структура с информацией для создания экземпляра Vulkan
 		struct InstanceInfo
 		{
@@ -35,12 +33,15 @@ namespace core
 		/// @brief класс экземпляр Vulkan
 		class Instance
 		{
-		 private:
-			VkInstance  instance{};
+		private:
+			friend class PhysicalDevices;
+			friend class Surface;
+
+			VkInstance instance{};
 
 			explicit Instance(const InstanceInfo& info);
 
-		 public:
+		public:
 			/// @brief создаёт экземпляр Vulkan
 			/// @param info объект структуры vulkan::InstanceInfo
 			/// @return объект класса vulkan::Instance
@@ -49,12 +50,9 @@ namespace core
 			/// @brief создаёт экземпляр Vulkan
 			/// @param info объект структуры vulkan::InstanceInfo
 			/// @return указатель на объект класса vulkan::Instance
-			static Instance *PtrCreate(const InstanceInfo& info = {});
+			static Instance* PtrCreate(const InstanceInfo& info = {});
 
 			~Instance();
-
-			VkInstance getVkInstance();
-			VkInstance *getVkPtrInstance();
 		};
 	} // vulkan
 } // core

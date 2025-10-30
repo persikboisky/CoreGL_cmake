@@ -61,7 +61,7 @@ namespace core
 
 			~Pipeline();
 
-			VkPipeline getVkPipeline();
+			VkPipeline getVkPipeline() const;
 			VkPipeline *getVkPtrPipeline();
 
 			VkPipelineLayout getVkPipelineLayout();

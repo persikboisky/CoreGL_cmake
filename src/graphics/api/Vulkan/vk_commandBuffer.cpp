@@ -18,8 +18,8 @@ namespace core
 {
 	namespace vulkan
 	{
-		CommandBuffer::CommandBuffer(struct Device& device, class CommandPool &commandPool) :
-			ptrDevice(device.getPtrDevice()), ptrCommandPool(commandPool.getVkPtrCommandPool())
+		CommandBuffer::CommandBuffer(Device& device, CommandPool &commandPool) :
+			ptrDevice(&device.device), ptrCommandPool(commandPool.getVkPtrCommandPool())
 		{
 			VkCommandBufferAllocateInfo allocInfo = {};
 			allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -28,7 +28,7 @@ namespace core
 			allocInfo.commandBufferCount = 1;
 
 			VkResult result = vkAllocateCommandBuffers(
-				device.getDevice(),
+				device.device,
 				&allocInfo,
 				&this->commandBuffer);
 			coders::vulkanProcessingError(result);

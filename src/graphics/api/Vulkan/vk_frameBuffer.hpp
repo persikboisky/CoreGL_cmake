@@ -16,7 +16,7 @@ namespace core::vulkan
 	{
 		class Device *ptrDevice = nullptr;
 		class RenderPass *ptrRenderPass = nullptr;
-		class ImageViews *ptrSwapchainImageViews = nullptr;
+		class SwapchainImagesView *ptrSwapchainImageViews = nullptr;
 		class DepthImageViews *ptrDepthImageViews = nullptr;
 	};
 

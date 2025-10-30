@@ -13,7 +13,7 @@ namespace core
 {
 	namespace vulkan
 	{
-		VertexBuffer::VertexBuffer(VertexBufferInfo& info) : ptrDevice(info.ptrDevice->getPtrDevice()), binding(info.binding)
+		VertexBuffer::VertexBuffer(VertexBufferInfo& info) : ptrDevice(&info.ptrDevice->device), binding(info.binding)
 		{
 			VkBufferCreateInfo bufferInfo = {};
 			bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -26,14 +26,14 @@ namespace core
 			this->nByteToOneElement = sizeof(info.arrayVertices[0]);
 
 			VkResult result = vkCreateBuffer(
-					info.ptrDevice->getDevice(),
+					info.ptrDevice->device,
 					&bufferInfo,
 					nullptr,
 					&this->buffer);
 			coders::vulkanProcessingError(result);
 
 			VkMemoryRequirements memRequirements;
-			vkGetBufferMemoryRequirements(info.ptrDevice->getDevice(), buffer, &memRequirements);
+			vkGetBufferMemoryRequirements(info.ptrDevice->device, buffer, &memRequirements);
 
 			VkMemoryAllocateInfo allocInfo = {};
 			allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
@@ -43,14 +43,14 @@ namespace core
 					VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 			result = vkAllocateMemory(
-					info.ptrDevice->getDevice(),
+					info.ptrDevice->device,
 					&allocInfo,
 					nullptr,
 					&this->bufferMemory);
 			coders::vulkanProcessingError(result);
 
 			result = vkBindBufferMemory(
-					info.ptrDevice->getDevice(),
+					info.ptrDevice->device,
 					buffer,
 					this->bufferMemory,
 					0);
@@ -58,7 +58,7 @@ namespace core
 
 			void* pData;
 			vkMapMemory(
-					info.ptrDevice->getDevice(),
+					info.ptrDevice->device,
 					this->bufferMemory,
 					0,
 					memRequirements.size,
@@ -69,7 +69,7 @@ namespace core
 					info.arrayVertices,
 					static_cast<size_t>(memRequirements.size));
 			vkUnmapMemory(
-					info.ptrDevice->getDevice(),
+					info.ptrDevice->device,
 					this->bufferMemory);
 
 			this->bindingDescription.binding = info.binding;

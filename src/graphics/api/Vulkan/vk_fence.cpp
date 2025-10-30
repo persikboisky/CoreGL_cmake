@@ -11,7 +11,7 @@ namespace core
 {
 	namespace vulkan
 	{
-		Fence::Fence(Device& device) : ptrDevice(device.getPtrDevice())
+		Fence::Fence(Device& device) : ptrDevice(&device.device)
 		{
 			VkFenceCreateInfo fenceCreateInfo = {};
 			fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
@@ -19,7 +19,7 @@ namespace core
 			fenceCreateInfo.pNext = nullptr;
 
 			VkResult result = vkCreateFence(
-					device.getDevice(),
+					device.device,
 					&fenceCreateInfo,
 					nullptr,
 					&this->fence);
@@ -41,26 +41,16 @@ namespace core
 			vkDestroyFence(*this->ptrDevice, this->fence, nullptr);
 		}
 
-		VkFence Fence::getVkFence()
-		{
-			return this->fence;
-		}
-
-		VkFence* Fence::getVkPtrFence()
-		{
-			return &this->fence;
-		}
-
 		void Fence::wait(WaitForFencesInfo& info)
 		{
 			auto ptrFences = new VkFence[info.countFences];
 			for (uint32_t i = 0; i < info.countFences; i++)
 			{
-				ptrFences[i] = info.ptrFences[i]->getVkFence();
+				ptrFences[i] = info.ptrFences[i]->fence;
 			}
 
 			VkResult result = vkWaitForFences(
-					info.ptrDevice->getDevice(),
+					info.ptrDevice->device,
 					info.countFences,
 					ptrFences,
 					(info.waitAllFences) ? VK_TRUE : VK_FALSE,

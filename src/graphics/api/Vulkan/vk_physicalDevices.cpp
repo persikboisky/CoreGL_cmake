@@ -18,7 +18,7 @@ namespace core
 		{
 			uint32_t count = 0;
 			VkResult result = vkEnumeratePhysicalDevices(
-				instance.getVkInstance(),
+				instance.instance,
 				&count,
 				nullptr);
 			coders::vulkanProcessingError(result);
@@ -26,7 +26,7 @@ namespace core
 			this->devices.resize(count);
 
 			result = vkEnumeratePhysicalDevices(
-				instance.getVkInstance(),
+				instance.instance,
 				&count,
 				this->devices.data());
 			coders::vulkanProcessingError(result);

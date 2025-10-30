@@ -56,7 +56,7 @@ namespace core
 			static Queue ptrGet(class Device& device, uint32_t queueIndex);
 
 			void submit(const QueueSubmitInfo& qs) const;
-			void submits(const QueueSubmitsInfo& qs);
+			void submits(const QueueSubmitsInfo& qs) const;
 			void present(const QueuePresentInfo& qp) const;
 
 			void wait() const;

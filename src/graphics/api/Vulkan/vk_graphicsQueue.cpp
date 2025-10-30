@@ -19,7 +19,7 @@ namespace core
 		Queue::Queue(Device& device, uint32_t queueIndex)
 		{
 			vkGetDeviceQueue(
-				device.getDevice(),
+				device.device,
 				device.getGraphicsQueueFamilyIndex(),
 				queueIndex,
 				&this->queue);
@@ -58,11 +58,11 @@ namespace core
 					this->queue,
 					1,
 					&submitInfo,
-					(qs.ptrFence == nullptr) ? VK_NULL_HANDLE : qs.ptrFence->getVkFence());
+					(qs.ptrFence == nullptr) ? VK_NULL_HANDLE : qs.ptrFence->fence);
 			coders::vulkanProcessingError(result);
 		}
 
-		void Queue::submits(const QueueSubmitsInfo& qs)
+		void Queue::submits(const QueueSubmitsInfo& qs) const
 		{
 			VkSubmitInfo submitInfo = {};
 			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -106,7 +106,7 @@ namespace core
 					this->queue,
 					1,
 					&submitInfo,
-					(qs.ptrFence == nullptr) ? VK_NULL_HANDLE : qs.ptrFence->getVkFence());
+					(qs.ptrFence == nullptr) ? VK_NULL_HANDLE : qs.ptrFence->fence);
 			coders::vulkanProcessingError(result);
 		}
 

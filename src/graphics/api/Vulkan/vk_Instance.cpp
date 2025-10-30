@@ -73,16 +73,6 @@ namespace core
 		{
 			vkDestroyInstance(this->instance, nullptr);
 		}
-
-		[[maybe_unused]] VkInstance Instance::getVkInstance()
-		{
-			return this->instance;
-		}
-
-		[[maybe_unused]] VkInstance* Instance::getVkPtrInstance()
-		{
-			return &this->instance;
-		}
 	} // culkan
 } // core
 

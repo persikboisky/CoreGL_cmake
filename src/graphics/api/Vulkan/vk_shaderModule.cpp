@@ -16,7 +16,7 @@
 namespace core::vulkan
 {
 	ShaderModule::ShaderModule(ShaderModuleInfo& info) :
-		typeShader(info.typeShader), ptrDevice(info.ptrDevice->getPtrDevice()),
+		typeShader(info.typeShader), ptrDevice(&info.ptrDevice->device),
 		mainFuncName(info.mainFuncName)
 	{
 		VkShaderModuleCreateInfo createInfo = {};
@@ -61,7 +61,7 @@ namespace core::vulkan
 		createInfo.pNext = nullptr;
 
 		VkResult result = vkCreateShaderModule(
-				info.ptrDevice->getDevice(),
+				info.ptrDevice->device,
 				&createInfo,
 				nullptr,
 				&this->shader);

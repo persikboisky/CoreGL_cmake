@@ -10,15 +10,15 @@
 
 namespace core::vulkan
 {
-	DepthImageView::DepthImageView(Device& device) : ptrDevice(device.getPtrDevice())
+	DepthImageView::DepthImageView(Device& device) : ptrDevice(&device.device)
 	{
 		VkImageCreateInfo imageInfo{};
 		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 		imageInfo.imageType = VK_IMAGE_TYPE_2D;
 		imageInfo.format = VK_FORMAT_D32_SFLOAT;
 		imageInfo.extent.depth = 1.0;
-		imageInfo.extent.width = device.getVkSurfaceCapabilities().currentExtent.width;
-		imageInfo.extent.height = device.getVkSurfaceCapabilities().currentExtent.height;
+		imageInfo.extent.width = device.surfaceCapabilitiesFormat.currentExtent.width;
+		imageInfo.extent.height = device.surfaceCapabilitiesFormat.currentExtent.height;
 		imageInfo.mipLevels = 1;
 		imageInfo.arrayLayers = 1;
 		imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -27,14 +27,14 @@ namespace core::vulkan
 		imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
 		VkResult result = vkCreateImage(
-				device.getDevice(),
+				device.device,
 				&imageInfo,
 				nullptr,
 				&this->depthImage);
 		coders::vulkanProcessingError(result);
 
 		VkMemoryRequirements memRequirements;
-		vkGetImageMemoryRequirements(device.getDevice(), depthImage, &memRequirements);
+		vkGetImageMemoryRequirements(device.device, depthImage, &memRequirements);
 
 		VkMemoryAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
@@ -44,13 +44,13 @@ namespace core::vulkan
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
 		result = vkAllocateMemory(
-				device.getDevice(),
+				device.device,
 				&allocInfo,
 				nullptr,
 				&this->depthImageMemory);
 		coders::vulkanProcessingError(result);
 		result = vkBindImageMemory(
-				device.getDevice(),
+				device.device,
 				depthImage,
 				this->depthImageMemory,
 				0);
@@ -68,7 +68,7 @@ namespace core::vulkan
 		viewInfo.subresourceRange.layerCount = 1;
 
 		result = vkCreateImageView(
-				device.getDevice(),
+				device.device,
 				&viewInfo,
 				nullptr,
 				&this->depthImageView);

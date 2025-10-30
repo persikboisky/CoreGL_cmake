@@ -13,7 +13,7 @@ struct GLFWmonitor;
 
 namespace core
 {
-    struct windowInfo
+    struct WindowInfo
     {
         const char *title = "CoreGL";
         const char *pathToIcon = nullptr;
@@ -61,7 +61,7 @@ namespace core
         void getSizeWindow();
         void Init();
 
-        explicit Window(const windowInfo &winInfo = {});
+        explicit Window(const WindowInfo &winInfo = {});
         Window(int width, int height, const char *title, bool resizable, bool vkAPI);
 
         void setMonitor(Monitor& monitor);
@@ -72,7 +72,7 @@ namespace core
         Cursor *cursor;
         Monitor *monitor;
 
-        [[nodiscard]] static Window create(const windowInfo &winInfo = {});
+        [[nodiscard]] static Window create(const WindowInfo &winInfo = {});
         [[nodiscard]] static Window create(int width, int height, const char *title = "", bool resizable = false, bool vkAPI = false);
 
         [[nodiscard]] GLFWwindow *getWindowOBJ();

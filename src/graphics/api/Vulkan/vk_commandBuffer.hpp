@@ -23,7 +23,7 @@ namespace core
 			size2i extent = {0, 0};
 
 			float depth = 1.0f;
-			uint32_t stencil = 0.0f;
+			uint32_t stencil = 0;
 
 			color::RGBA clearColor = color::BLACK;
 		};

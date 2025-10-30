@@ -17,10 +17,10 @@ namespace core
 {
 	namespace vulkan
 	{
-		Surface::Surface(Instance& instance, Window& window) : ptrInstance(instance.getVkPtrInstance())
+		Surface::Surface(Instance& instance, Window& window) : ptrInstance(&instance.instance)
 		{
 			VkResult result = glfwCreateWindowSurface(
-				instance.getVkInstance(),
+				instance.instance,
 				window.getWindowOBJ(),
 				nullptr,
 				&this->surface);

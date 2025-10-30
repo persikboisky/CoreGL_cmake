@@ -31,7 +31,24 @@ namespace core
 
 		class Device
 		{
-		 private:
+		protected:
+			friend class SwapChain;
+			friend class ShaderModule;
+			friend class Semaphore;
+			friend class ImageView;
+			friend class SwapchainImagesView;
+			friend class RenderPass;
+			friend class FrameBuffer;
+			friend class FrameBuffers;
+			friend class DepthImageView;
+			friend class Pipeline;
+			friend class Queue;
+			friend class VertexBuffer;
+			friend class CommandPool;
+			friend class Fence;
+			friend class CommandBuffer;
+
+		private:
 			VkPhysicalDevice physicalDevice = {};
 			VkDevice device = {};
 
@@ -51,20 +68,14 @@ namespace core
 
 			explicit Device(const DeviceInfo& info);
 
-		 public:
+		public:
 			static Device create(const DeviceInfo& info);
 			static Device* ptrCreate(const DeviceInfo& info);
 
 			~Device();
 
-			uint32_t getGraphicsQueueFamilyIndex();
-			uint32_t getPresentQueueFamilyIndex();
-
-			VkSurfaceFormatKHR getVkSurfaceFormat();
-			VkSurfaceCapabilitiesKHR getVkSurfaceCapabilities();
-
-			VkDevice getDevice();
-			VkDevice *getPtrDevice();
+			uint32_t getGraphicsQueueFamilyIndex() const;
+			uint32_t getPresentQueueFamilyIndex() const;
 
 			[[nodiscard]] uint32_t getCountGraphicsQueue() const;
 			[[nodiscard]] uint32_t getCountPresentQueue() const;

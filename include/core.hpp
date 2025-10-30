@@ -24,7 +24,7 @@
 #include "../src/graphics/api/Vulkan/vk_shaderModule.hpp"
 #include "../src/graphics/api/Vulkan/vk_pipeline.hpp"
 #include "../src/graphics/api/Vulkan/vk_renderPass.hpp"
-#include "../src/graphics/api/Vulkan/vk_imageView.hpp"
+#include "../src/graphics/api/Vulkan/vk_SwapChainImageView.hpp"
 #include "../src/graphics/api/Vulkan/vk_frameBuffer.hpp"
 #include "../src/graphics/api/Vulkan/vk_commandBuffer.hpp"
 #include "../src/graphics/api/Vulkan/vk_image.hpp"

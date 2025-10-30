@@ -11,7 +11,7 @@ namespace core
 {
 	namespace vulkan
 	{
-		CommandPool::CommandPool(struct Device& device, bool flagMayReset) : ptrDevice(device.getPtrDevice())
+		CommandPool::CommandPool(struct Device& device, bool flagMayReset) : ptrDevice(&device.device)
 		{
 			VkCommandPoolCreateInfo poolInfo = {};
 			poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -20,7 +20,7 @@ namespace core
 			poolInfo.flags = (flagMayReset) ? VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT : 0;
 
 			VkResult result = vkCreateCommandPool(
-				device.getDevice(),
+				device.device,
 				&poolInfo,
 				nullptr,
 				&this->commandPool);

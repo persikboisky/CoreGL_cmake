@@ -23,6 +23,10 @@ namespace core
 
 		class Fence
 		{
+		protected:
+			friend class SwapChain;
+			friend class Queue;
+
 		private:
 			VkFence fence = {};
 			VkDevice* ptrDevice = nullptr;
@@ -34,9 +38,6 @@ namespace core
 			static Fence* ptrCreate(class Device& device);
 
 			~Fence();
-
-			VkFence getVkFence();
-			VkFence *getVkPtrFence();
 
 			static void wait(WaitForFencesInfo& info);
 			void wait();
