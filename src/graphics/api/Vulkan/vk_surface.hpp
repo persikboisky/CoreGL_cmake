@@ -17,13 +17,17 @@ namespace core
 		/// @brief класс поверхности окна(холст)
 		class Surface
 		{
-		 private:
+		protected:
+			friend class Device;
+			friend class SwapChain;
+
+		private:
 			VkSurfaceKHR surface;
 			VkInstance* ptrInstance = nullptr;
 
 			Surface(class Instance& instance, Window& window);
 
-		 public:
+		public:
 			/// @brief создаёт поверхность окна
 			/// @param instance объект класса vulkan::Instance
 			/// @param window объект класса Window
@@ -34,12 +38,9 @@ namespace core
 			/// @param instance объект класса vulkan::Instance
 			/// @param window объект класса Window
 			/// @return указатель на объект класса vulkan::Surface
-			static Surface *ptrCreate(class Instance& instance, Window& window);
+			static Surface* ptrCreate(class Instance& instance, Window& window);
 
 			~Surface();
-
-			VkSurfaceKHR getVkSurfaceKHR();
-			VkSurfaceKHR *getVkPtrSurfaceKHR();
 		};
 	} // vulkan
 } // core

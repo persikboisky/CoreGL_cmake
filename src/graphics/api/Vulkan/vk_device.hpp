@@ -2,8 +2,8 @@
 // Created by kisly on 04.09.2025.
 //
 
-#ifndef VK_DEVICE_HPP_
-#define VK_DEVICE_HPP_
+#ifndef VK_DEVICE_HPP
+#define VK_DEVICE_HPP
 
 #include "../../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
@@ -33,20 +33,7 @@ namespace core
 		{
 		protected:
 			friend class SwapChain;
-			friend class ShaderModule;
-			friend class Semaphore;
-			friend class ImageView;
-			friend class SwapchainImagesView;
 			friend class RenderPass;
-			friend class FrameBuffer;
-			friend class FrameBuffers;
-			friend class DepthImageView;
-			friend class Pipeline;
-			friend class Queue;
-			friend class VertexBuffer;
-			friend class CommandPool;
-			friend class Fence;
-			friend class CommandBuffer;
 
 		private:
 			VkPhysicalDevice physicalDevice = {};
@@ -54,13 +41,11 @@ namespace core
 
 			VkPhysicalDeviceProperties deviceProperties = {};
 			VkPhysicalDeviceFeatures deviceFeatures = {};
-
 			VkSurfaceFormatKHR surfaceFormat = {};
 			VkSurfaceCapabilitiesKHR surfaceCapabilitiesFormat = {};
 
 			uint32_t graphicsQueueFamilyIndex = 0;
 			uint32_t presentQueueFamilyIndex = 0;
-
 			uint32_t countGraphicsQueue = 0;
 			uint32_t countPresentQueue = 0;
 
@@ -86,4 +71,4 @@ namespace core
 } // core
 
 #endif //defined(CORE_INCLUDE_VULKAN)
-#endif //VK_DEVICE_HPP_
+#endif //VK_DEVICE_HPP

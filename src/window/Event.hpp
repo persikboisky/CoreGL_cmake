@@ -6,22 +6,24 @@
 #define EVENT_HPP
 
 #define MAX_KEY_CODE 360
+#define MAX_MOUSE_KEY_CODE 12
 
 struct GLFWwindow;
-typedef void (*GLFWkeyfun)(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 namespace core
 {
     enum KEY_CODE : int;
+    enum class MOUSE_KEY_CODE : int;
     class Window;
     class Event
     {
     private:
-        GLFWwindow* window;
+        GLFWwindow* window = nullptr;
 
-        void setCallbackKey(GLFWkeyfun callback);
-        bool* key = new bool[MAX_KEY_CODE];
-        char* saveKey = new char[MAX_KEY_CODE];
+        bool* key = nullptr;
+        bool* saveKey = nullptr;
+        bool* mouseKey = nullptr;
+        bool* mouseSaveKey = nullptr;
 
     public:
         explicit Event(GLFWwindow& addrWindow);
@@ -44,6 +46,15 @@ namespace core
 
         [[nodiscard]] bool upKey(int key);
         [[nodiscard]] bool upKey(const core::KEY_CODE& key);
+
+        [[nodiscard]] bool stateMouseKey(int key);
+        [[nodiscard]] bool stateMouseKey(const core::MOUSE_KEY_CODE& key);
+
+        [[nodiscard]] bool downMouseKey(int key);
+        [[nodiscard]] bool downMouseKey(const core::MOUSE_KEY_CODE& key);
+
+        [[nodiscard]] bool upMouseKey(int key);
+        [[nodiscard]] bool upMouseKey(const core::MOUSE_KEY_CODE& key);
     };
 }
 

@@ -5,14 +5,14 @@
 #include "Event.hpp"
 #include "Window.hpp"
 #include "../util/coders.hpp"
-#include "../util/types.hpp"
 #include <GLFW/glfw3.h>
 #include <cstring>
-#include <iostream>
+
 
 bool Key[MAX_KEY_CODE];
+bool MouseKey[MAX_MOUSE_KEY_CODE];
 
-static void key_callbac(GLFWwindow* window, int key, int scancode, int action, int mods)
+static inline void setCallbackKey(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (action == GLFW_PRESS)
     {
@@ -24,42 +24,49 @@ static void key_callbac(GLFWwindow* window, int key, int scancode, int action, i
     }
 }
 
-void core::Event::setCallbackKey(GLFWkeyfun callback)
+static inline void setCallbackMouseKey(GLFWwindow* window, int key, int action, int mods)
 {
-    glfwSetKeyCallback(this->window, callback);
-
-    for (unsigned int index = 0; index < MAX_KEY_CODE; index++)
+    if (action == GLFW_PRESS)
     {
-        this->key[index] = Key[index];
+        MouseKey[key] = true;
+    }
+    else if (action == GLFW_RELEASE)
+    {
+        MouseKey[key] = false;
     }
 }
 
-core::Event::Event(core::Window &window) : window(window.getWindowOBJ())
+core::Event::Event(core::Window &window) : window(window.getWindowOBJ()), key(new bool[MAX_KEY_CODE]),
+    saveKey(new bool[MAX_KEY_CODE]), mouseKey(new bool[MAX_MOUSE_KEY_CODE]), mouseSaveKey(new bool[MAX_MOUSE_KEY_CODE])
 {
-    this->setCallbackKey(key_callbac);
     memset(this->saveKey, false, MAX_KEY_CODE);
+    glfwSetKeyCallback(window.getWindowOBJ(), setCallbackKey);
+    glfwSetMouseButtonCallback(window.getWindowOBJ(), setCallbackMouseKey);
 }
 
-core::Event::Event(GLFWwindow &addrWindow) : window(&addrWindow)
+core::Event::Event(GLFWwindow &addrWindow) : window(&addrWindow), key(new bool[MAX_KEY_CODE]),
+    saveKey(new bool[MAX_KEY_CODE]), mouseKey(new bool[MAX_MOUSE_KEY_CODE]), mouseSaveKey(new bool[MAX_MOUSE_KEY_CODE])
 {
-    this->setCallbackKey(key_callbac);
     memset(this->saveKey, false, MAX_KEY_CODE);
+    glfwSetKeyCallback(window, setCallbackKey);
+    glfwSetMouseButtonCallback(window, setCallbackMouseKey);
 }
 
 core::Event::~Event()
 {
     delete[] this->key;
     delete[] this->saveKey;
+    delete[] this->mouseKey;
+    delete[] this->mouseSaveKey;
 }
 
 void core::Event::update()
 {
-    for (unsigned int index = 0; index < MAX_KEY_CODE; index++)
-    {
-        this->saveKey[index] = this->key[index];
-    }
-    this->setCallbackKey(key_callbac);
+    memcpy(this->saveKey, this->key, MAX_KEY_CODE);
+    memcpy(this->mouseSaveKey, this->mouseKey, MAX_MOUSE_KEY_CODE);
     glfwPollEvents();
+    memcpy(this->key, Key, MAX_KEY_CODE);
+    memcpy(this->mouseKey, MouseKey, MAX_MOUSE_KEY_CODE);
 }
 
 bool core::Event::close()
@@ -119,3 +126,47 @@ bool core::Event::upKey(const core::KEY_CODE& key)
 {
     return this->upKey(convertKeyCode(key));
 }
+
+bool core::Event::stateMouseKey(int key)
+{
+    if (key >= MAX_MOUSE_KEY_CODE || key < 0)
+    {
+        throw core::coders(4, "Function: core::Event::stateMouseKey(int key)");
+    }
+
+    else return this->mouseKey[key];
+}
+
+bool core::Event::stateMouseKey(const core::MOUSE_KEY_CODE& key)
+{
+    return stateMouseKey(convertMouseKeyCode(key));
+}
+
+bool core::Event::downMouseKey(int key)
+{
+    if (this->mouseKey[key] && this->mouseSaveKey[key] == false)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool core::Event::downMouseKey(const core::MOUSE_KEY_CODE& key)
+{
+    return downMouseKey(convertMouseKeyCode(key));
+}
+
+bool core::Event::upMouseKey(int key)
+{
+    if (this->mouseKey[key] && this->mouseSaveKey[key] == false)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool core::Event::upMouseKey(const core::MOUSE_KEY_CODE& key)
+{
+    return upMouseKey(convertMouseKeyCode(key));
+}
+

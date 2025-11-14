@@ -75,7 +75,6 @@ namespace core
         [[nodiscard]] static Window create(const WindowInfo &winInfo = {});
         [[nodiscard]] static Window create(int width, int height, const char *title = "", bool resizable = false, bool vkAPI = false);
 
-        [[nodiscard]] GLFWwindow *getWindowOBJ();
         [[nodiscard]] bool isContext();
 
         ~Window();

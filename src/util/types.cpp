@@ -150,6 +150,37 @@ int core::convertKeyCode(const KEY_CODE& keyCode)
     }
 }
 
+int core::convertMouseKeyCode(const MOUSE_KEY_CODE& keyCode)
+{
+    switch (keyCode)
+    {
+    case MOUSE_KEY_CODE::MOUSE_BUTTON_1:
+        return GLFW_MOUSE_BUTTON_1;
+    case MOUSE_KEY_CODE::MOUSE_BUTTON_2:
+        return GLFW_MOUSE_BUTTON_2;
+    case MOUSE_KEY_CODE::MOUSE_BUTTON_3:
+        return GLFW_MOUSE_BUTTON_3;
+    case MOUSE_KEY_CODE::MOUSE_BUTTON_4:
+        return GLFW_MOUSE_BUTTON_4;
+    case MOUSE_KEY_CODE::MOUSE_BUTTON_5:
+        return GLFW_MOUSE_BUTTON_5;
+    case MOUSE_KEY_CODE::MOUSE_BUTTON_6:
+        return GLFW_MOUSE_BUTTON_6;
+    case MOUSE_KEY_CODE::MOUSE_BUTTON_7:
+        return GLFW_MOUSE_BUTTON_7;
+    case MOUSE_KEY_CODE::MOUSE_BUTTON_8:
+        return GLFW_MOUSE_BUTTON_8;
+    case MOUSE_KEY_CODE::MOUSE_BUTTON_LAST:
+        return GLFW_MOUSE_BUTTON_LAST;
+    case MOUSE_KEY_CODE::MOUSE_BUTTON_LEFT:
+        return GLFW_MOUSE_BUTTON_LEFT;
+    case MOUSE_KEY_CODE::MOUSE_BUTTON_RIGHT:
+        return GLFW_MOUSE_BUTTON_RIGHT;
+    case MOUSE_KEY_CODE::MOUSE_BUTTON_MIDDLE:
+        return GLFW_MOUSE_BUTTON_MIDDLE;
+    }
+}
+
 int core::convertPrimitive(const PRIMITIVE& primitive)
 {
     switch (primitive)

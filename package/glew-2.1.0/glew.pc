@@ -1,6 +1,6 @@
-prefix=C:/Program Files (x86)/render
+prefix=C:/Program Files (x86)/CoreGL
 exec_prefix=${prefix}
-libdir=C:/Program Files (x86)/render/lib
+libdir=C:/Program Files (x86)/CoreGL/lib
 includedir=${prefix}/include
 
 Name: glew

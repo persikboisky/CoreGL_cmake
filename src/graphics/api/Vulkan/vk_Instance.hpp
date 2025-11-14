@@ -10,55 +10,33 @@
 #include "../../../util/types.hpp"
 #include <vulkan/vulkan.h>
 
-namespace core
+namespace core::vulkan
 {
-	namespace vulkan
+	struct InstanceInfo
 	{
-		/// @brief структура с информацией для создания экземпляра Vulkan
-		struct InstanceInfo
-		{
-			/// @brief объект структуры version3 (версия Vulkan)
-			version3 VULKAN_API_VERSION = {1, 2, 0};
+		version3 vulkanVersion = { 1, 0, 0 };
+		version3 appVersion = { 1, 0, 0 };
+		const char* appName = "CoreGL";
+	};
 
-			/// @brief объект структуры version3 (версия приложения, необязательный пармаетр)
-			version3 APP_VERSION = {1, 0, 0};
+	class Instance
+	{
+	protected:
+		friend class Surface;
+		friend class PhysicalDevices;
 
-			/// @brief название приложения (необязатяльный параметр)
-			const char* APP_NAME = "CoreGL";
+	private:
+		VkInstance instance = {};
 
-			/// @brief разрешить выводить дерево ресурсов vulkan при вызове функций
-			bool debugApiDump = false;
-		};
+		explicit Instance(const InstanceInfo& info);
 
-		/// @brief класс экземпляр Vulkan
-		class Instance
-		{
-		private:
-			friend class PhysicalDevices;
-			friend class Surface;
+	public:
+		static Instance create(const InstanceInfo& info);
+		static Instance *ptrCreate(const InstanceInfo& info);
 
-			VkInstance instance{};
+		~Instance();
+	};
+}
 
-			explicit Instance(const InstanceInfo& info);
-
-		public:
-			/// @brief создаёт экземпляр Vulkan
-			/// @param info объект структуры vulkan::InstanceInfo
-			/// @return объект класса vulkan::Instance
-			static Instance create(const InstanceInfo& info = {});
-
-			/// @brief создаёт экземпляр Vulkan
-			/// @param info объект структуры vulkan::InstanceInfo
-			/// @return указатель на объект класса vulkan::Instance
-			static Instance* PtrCreate(const InstanceInfo& info = {});
-
-			~Instance();
-		};
-	} // vulkan
-} // core
-
-#endif //defined(CORE_INCLUDE_VULKAN)
-#endif //VK_INSTANCE_HPP_
-
-
-
+#endif // defined(CORE_INCLUDE_VULKAN)
+#endif // VK_INSTANCE_HPP_

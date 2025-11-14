@@ -12,32 +12,33 @@
 
 namespace core
 {
-	namespace vulkan
-	{
-		/// @brief класс список графических видиокарт на вашем ПК
-		class PhysicalDevices
-		{
-		 private:
-			std::vector<VkPhysicalDevice> devices = {};
+    namespace vulkan
+    {
+        /// @brief класс список графических видиокарт на вашем ПК
+        class PhysicalDevices
+        {
+        protected:
+            friend class Device;
 
-			explicit PhysicalDevices(class Instance& instance);
+        private:
+            std::vector<VkPhysicalDevice> devices = {};
 
-		 public:
-			/// @brief получает список видиокарт
-			/// @param instance объект класса vulkan::Instance
-			/// @return объект класса vulkan::PhysicalDevices
-			static PhysicalDevices get(class Instance& instance);
+            explicit PhysicalDevices(class Instance& instance);
 
-			/// @brief получает список видиокарт
-			/// @param instance объект класса vulkan::Instance
-			/// @return указатель нв объект класса vulkan::PhysicalDevices
-			static PhysicalDevices* ptrGet(class Instance& instance);
+        public:
+            /// @brief получает список видиокарт
+            /// @param instance объект класса vulkan::Instance
+            /// @return объект класса vulkan::PhysicalDevices
+            static PhysicalDevices get(class Instance& instance);
 
-			[[maybe_unused]] VkPhysicalDevice getVkPhysicalDevice(uint32_t id = 0);
+            /// @brief получает список видиокарт
+            /// @param instance объект класса vulkan::Instance
+            /// @return указатель нв объект класса vulkan::PhysicalDevices
+            static PhysicalDevices* ptrGet(class Instance& instance);
 
-			~PhysicalDevices() = default;
-		};
-	} // vulkan
+            ~PhysicalDevices() = default;
+        };
+    } // vulkan
 } // core
 
 #endif //defined(CORE_INCLUDE_VULKAN)

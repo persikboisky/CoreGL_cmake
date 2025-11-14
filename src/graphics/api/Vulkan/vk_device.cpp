@@ -2,15 +2,15 @@
 // Created by kisly on 04.09.2025.
 //
 
-#include "vk_device.hpp"
+#include "../../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
-#include "vk_Instance.hpp"
-#include "vk_physicalDevices.hpp"
-#include "vk_surface.hpp"
+#include "vk_Device.hpp"
+#include "vk_PhysicalDevices.hpp"
+#include "vk_Surface.hpp"
 #include "../../../util/coders.hpp"
-#include "../../../util/console.hpp"
 #include "../../../config.hpp"
-#include <vector>
+#include "../../../util/console.hpp"
+#include <vulkan/vulkan.h>
 #include <array>
 #include <iostream>
 
@@ -18,7 +18,8 @@ namespace core
 {
 	namespace vulkan
 	{
-		Device::Device(const DeviceInfo& info) : physicalDevice(info.ptrPhDevices->getVkPhysicalDevice(info.idDevice))
+		Device::Device(const DeviceInfo& info) :
+			physicalDevice(info.ptrPhDevices->devices[info.idDevice])
 		{
 			vkGetPhysicalDeviceProperties(this->physicalDevice, &this->deviceProperties);
 			vkGetPhysicalDeviceFeatures(this->physicalDevice, &this->deviceFeatures);
@@ -27,16 +28,16 @@ namespace core
 			uint32_t count = 0;
 			vkGetPhysicalDeviceQueueFamilyProperties(
 					this->physicalDevice,
-				&count,
-				nullptr);
+					&count,
+					nullptr);
 			queueFamilyProperties.resize(count);
 			vkGetPhysicalDeviceQueueFamilyProperties(
 					this->physicalDevice,
-				&count,
-				queueFamilyProperties.data());
+					&count,
+					queueFamilyProperties.data());
 
 			count = 0;
-			for (const VkQueueFamilyProperties &prop : queueFamilyProperties)
+			for (const VkQueueFamilyProperties& prop: queueFamilyProperties)
 			{
 				if (prop.queueFlags & VK_QUEUE_GRAPHICS_BIT)
 				{
@@ -48,16 +49,16 @@ namespace core
 			}
 
 			count = 0;
-			for (const VkQueueFamilyProperties &prop : queueFamilyProperties)
+			for (const VkQueueFamilyProperties& prop: queueFamilyProperties)
 			{
 				if (prop.queueFlags & VK_QUEUE_GRAPHICS_BIT)
 				{
 					VkBool32 flag = VK_FALSE;
 					VkResult result = vkGetPhysicalDeviceSurfaceSupportKHR(
 							this->physicalDevice,
-						count,
-						info.ptrSurface->getVkSurfaceKHR(),
-						&flag);
+							count,
+							info.ptrSurface->surface,
+							&flag);
 
 					coders::vulkanProcessingError(result);
 					if (flag == VK_TRUE)
@@ -71,7 +72,7 @@ namespace core
 			}
 
 			std::array<const char*, 1> enabledExtensionNames = {
-				VK_KHR_SWAPCHAIN_EXTENSION_NAME
+					VK_KHR_SWAPCHAIN_EXTENSION_NAME
 			};
 
 			VkDeviceQueueCreateInfo deviceQueueCreateInfo = {};
@@ -96,9 +97,9 @@ namespace core
 
 			VkResult result = vkCreateDevice(
 					this->physicalDevice,
-				&deviceCreateInfo,
-				nullptr,
-				&this->device);
+					&deviceCreateInfo,
+					nullptr,
+					&this->device);
 			coders::vulkanProcessingError(result);
 
 			if (CORE_INFO)
@@ -111,20 +112,20 @@ namespace core
 			std::vector<VkSurfaceFormatKHR> surfaceFormats = {};
 			result = vkGetPhysicalDeviceSurfaceFormatsKHR(
 					this->physicalDevice,
-				info.ptrSurface->getVkSurfaceKHR(),
-				&count,
-				nullptr);
+					info.ptrSurface->surface,
+					&count,
+					nullptr);
 			coders::vulkanProcessingError(result);
 
 			surfaceFormats.resize(count);
 			result = vkGetPhysicalDeviceSurfaceFormatsKHR(
 					this->physicalDevice,
-				info.ptrSurface->getVkSurfaceKHR(),
-				&count,
-				surfaceFormats.data());
+					info.ptrSurface->surface,
+					&count,
+					surfaceFormats.data());
 			coders::vulkanProcessingError(result);
 
-			for (const VkSurfaceFormatKHR& format : surfaceFormats)
+			for (const VkSurfaceFormatKHR& format: surfaceFormats)
 			{
 				if (format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR &&
 					format.format == VK_FORMAT_B8G8R8A8_UNORM)
@@ -136,8 +137,8 @@ namespace core
 
 			result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
 					this->physicalDevice,
-				info.ptrSurface->getVkSurfaceKHR(),
-				&this->surfaceCapabilitiesFormat);
+					info.ptrSurface->surface,
+					&this->surfaceCapabilitiesFormat);
 			coders::vulkanProcessingError(result);
 		}
 

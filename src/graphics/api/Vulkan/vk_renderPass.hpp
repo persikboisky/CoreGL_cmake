@@ -8,6 +8,7 @@
 #include "../../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
 #include <vulkan/vulkan.h>
+#include <vector>
 
 namespace core
 {
@@ -16,31 +17,16 @@ namespace core
 		struct RenderPassInfo
 		{
 			class Device* ptrDevice = nullptr;
-			bool depthTest = false;
-			bool clearBuffers = true;
+			std::vector<struct AttachmentsInfo*> ptrArrayAttachmentsInfo = {};
 		};
 
 		class RenderPass
 		{
-		 private:
-			VkRenderPass renderPass;
-			VkDevice* device = nullptr;
-			bool depthAttachment = false;
-			bool clearBuffers = true;
+		private:
+			VkRenderPass renderPass = nullptr;
+			VkDevice* ptrDevice = nullptr;
 
 			RenderPass(const RenderPassInfo& info);
-
-		 public:
-			~RenderPass();
-
-			static RenderPass create(const RenderPassInfo& info);
-			static RenderPass *ptrCreate(const RenderPassInfo& info);
-
-			VkRenderPass getVkRenderPass();
-			VkRenderPass *getVkPtrRenderPass();
-
-			bool getStateDepth() const;
-			bool getStateClear() const;
 		};
 	} // vulkan
 } // core

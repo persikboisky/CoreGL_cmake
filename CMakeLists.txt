@@ -17,23 +17,11 @@ set(CoreGL_source
         src/graphics/commons/fbo.cpp
         src/graphics/commons/Camera.cpp
         src/graphics/api/Vulkan/vk_Instance.cpp
-        src/graphics/api/Vulkan/vk_physicalDevices.cpp
-        src/graphics/api/Vulkan/vk_surface.cpp
-        src/graphics/api/Vulkan/vk_device.cpp
-        src/graphics/api/Vulkan/vk_swapChain.cpp
-        src/graphics/api/Vulkan/vk_shaderModule.cpp
-        src/graphics/api/Vulkan/vk_pipeline.cpp
-        src/graphics/api/Vulkan/vk_renderPass.cpp
-        src/graphics/api/Vulkan/vk_SwapChainImageView.cpp
-        src/graphics/api/Vulkan/vk_frameBuffer.cpp
-        src/graphics/api/Vulkan/vk_commandBuffer.cpp
-        src/graphics/api/Vulkan/vk_image.cpp
-        src/graphics/api/Vulkan/vk_semaphore.cpp
-        src/graphics/api/Vulkan/vk_graphicsQueue.cpp
-        src/graphics/api/Vulkan/vk_commandPool.cpp
-        src/graphics/api/Vulkan/vk_vertexBuffer.cpp
-        src/graphics/api/Vulkan/vk_depthImageView.cpp
-        src/graphics/api/Vulkan/vk_fence.cpp
+        src/graphics/api/Vulkan/vk_Surface.cpp
+        src/graphics/api/Vulkan/vk_PhysicalDevices.cpp
+        src/graphics/api/Vulkan/vk_Device.cpp
+        src/graphics/api/Vulkan/vk_SwapChain.cpp
+        src/graphics/api/Vulkan/vk_RenderPass.cpp
         src/graphics/api/OpenGL/gl_vertexBuffer.cpp
         src/graphics/api/OpenGL/gl_shaderProgram.cpp
         src/graphics/api/OpenGL/gl_commands.cpp

@@ -47,16 +47,6 @@ namespace core
 		{
 			vkDestroySurfaceKHR(*this->ptrInstance, this->surface, nullptr);
 		}
-
-		VkSurfaceKHR Surface::getVkSurfaceKHR()
-		{
-			return this->surface;
-		}
-
-		VkSurfaceKHR* Surface::getVkPtrSurfaceKHR()
-		{
-			return &this->surface;
-		}
 	} // vulkan
 } // core
 
