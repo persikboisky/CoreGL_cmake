@@ -5,19 +5,18 @@
 #ifndef GL_ELEMENTBUFFERS_HPP
 #define GL_ELEMENTBUFFERS_HPP
 
-#include "gl_descriptorContainer.hpp"
-
 namespace core
 {
 	namespace opengl
 	{
 		/// @brief буфер индексов
-		class ElementBuffer : public FunctionBindContainer
+		class ElementBuffer
 		{
 		private:
-			ElementBuffer(unsigned int *array, unsigned int sizeOfByte);
-
+			unsigned int id;
 			unsigned int countVertex = 0;
+
+			ElementBuffer(unsigned int *array, unsigned int sizeOfByte);
 
 		public:
 			~ElementBuffer();
@@ -35,10 +34,10 @@ namespace core
 			static ElementBuffer* ptrCreate(unsigned int *array, unsigned int sizeOfByte);
 
 			/// @brief прикрепляет буфер индексов
-			void bind() const override;
+			void bind() const;
 
 			/// @brief открепляет буфер индексов
-			void unBind() const override;
+			void unBind() const;
 
 			unsigned int getCountVertexes() const;
 		};

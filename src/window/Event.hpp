@@ -31,8 +31,11 @@ namespace core
 
         ~Event();
 
+        /// @brief обновляет список событий
         void update();
 
+        /// @brief событие закрытия окна
+        /// @return 
         [[nodiscard]] bool close();
 
         [[nodiscard]] bool GetMouseLeftButton();

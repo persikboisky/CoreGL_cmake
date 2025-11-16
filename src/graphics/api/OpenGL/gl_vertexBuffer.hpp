@@ -5,8 +5,6 @@
 #ifndef GL_VERTEXBUFFER_HPP
 #define GL_VERTEXBUFFER_HPP
 
-#include "gl_descriptorContainer.hpp"
-
 namespace core
 {
 	enum VALUE_TYPE : int;
@@ -21,9 +19,10 @@ namespace core
 			VALUE_TYPE valueType;
 		};
 
-		class VertexBuffer : public FunctionBindContainer
+		class VertexBuffer
 		{
 		private:
+			unsigned int VAO;
 			unsigned int VBO;
 			unsigned int countElementToVertex;
 			unsigned int byteToElement;
@@ -46,10 +45,10 @@ namespace core
 			static VertexBuffer *ptrCreate(const VertexBufferInfo& info);
 
 			/// @brief прикпрепляет буфер
-			void bind() const override;
+			void bind() const;
 
 			/// @brief открепляет буфер
-			void unBind() const override;
+			void unBind() const;
 
 			/// @brief добавляет или перезаписывает вершинный атрибут
 			/// @param location номер атрибута (его идентификатор в location шейдера)

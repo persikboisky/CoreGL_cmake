@@ -26,9 +26,6 @@ void core::Core::Init()
         std::cout << "Ok: init GLFW v";
         std::cout << major << "." << minor << "." << rev << std::endl;
     }
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, OPENGL_VERSION_MAJOR);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, OPENGL_VERSION_MINOR);
 }
 
 void core::Core::Terminate()

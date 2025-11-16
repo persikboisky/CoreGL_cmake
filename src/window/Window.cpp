@@ -60,11 +60,11 @@ void core::Window::Init()
     this->cursor = new Cursor(*this->window);
 }
 
-core::Window::Window(const core::WindowInfo &winInfo) : window(nullptr),
-                                                        event(nullptr), width(winInfo.width), height(winInfo.height), posX(winInfo.posX), posY(winInfo.posY),
-                                                        saveWidth(winInfo.width), saveHeight(winInfo.height), cursor(nullptr), monitor(new Monitor()),
-                                                        VSfps(winInfo.VerticalSynchronization), flagFullScreen(winInfo.fullScreen), time(glfwGetTime()),
-                                                        deltaTime(glfwGetTime())
+core::Window::Window(const core::WindowInfo &winInfo) :
+    window(nullptr), event(nullptr), width(winInfo.width), height(winInfo.height),
+    posX(winInfo.posX), posY(winInfo.posY), saveWidth(winInfo.width), saveHeight(winInfo.height),
+    cursor(nullptr), monitor(new Monitor()), flagFullScreen(winInfo.fullScreen),
+    time(glfwGetTime()), deltaTime(glfwGetTime())
 {
 #if defined(CORE_INCLUDE_VULKAN)
     this->VulknanAPI = winInfo.VulkanAPI;
@@ -73,6 +73,22 @@ core::Window::Window(const core::WindowInfo &winInfo) : window(nullptr),
     GLFWmonitor *ptrMon = nullptr;
     if (winInfo.fullScreen)
         ptrMon = this->monitor->getGLFWObj();
+
+    if (!this->VulknanAPI)
+    {
+        if (winInfo.ptrApiGlInfo != nullptr)
+        {
+            this->VSfps = winInfo.ptrApiGlInfo->VerticalSynchronization;
+            glfwWindowHint(GLFW_VERSION_MAJOR, winInfo.ptrApiGlInfo->OpenGlVersion.MAJOR);
+            glfwWindowHint(GLFW_VERSION_MINOR, winInfo.ptrApiGlInfo->OpenGlVersion.MINOR);
+        }
+        else
+        {
+            this->VSfps = true;
+            glfwWindowHint(GLFW_VERSION_MAJOR, 3);
+            glfwWindowHint(GLFW_VERSION_MINOR, 3);
+        }
+    }
 
     this->createWindow(winInfo.width, winInfo.height, winInfo.title, winInfo.resizable,
 #if defined(CORE_INCLUDE_VULKAN)
@@ -89,11 +105,17 @@ core::Window::Window(const core::WindowInfo &winInfo) : window(nullptr),
     }
 }
 
-core::Window::Window(int width, int height, const char *title, bool resizable, bool vkAPI) : window(nullptr), cursor(nullptr), VSfps(true), monitor(nullptr),
-                                                                                             event(nullptr), width(width), height(height), posX(0), posY(0), saveWidth(width), saveHeight(height),
-                                                                                             time(glfwGetTime()), deltaTime(glfwGetTime())
+core::Window::Window(int width, int height, const char *title, bool resizable, bool vkAPI) :
+    window(nullptr), cursor(nullptr), VSfps(true), monitor(nullptr),
+    event(nullptr), width(width), height(height), posX(0), posY(0), saveWidth(width), saveHeight(height),
+    time(glfwGetTime()), deltaTime(glfwGetTime())
 {
     GLFWmonitor *ptrMon = nullptr;
+    if (!this->VulknanAPI)
+    {
+        glfwWindowHint(GLFW_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_VERSION_MINOR, 3);
+    }
     this->createWindow(width, height, title, resizable, vkAPI, ptrMon);
 
 #if defined(CORE_INCLUDE_VULKAN)
@@ -160,9 +182,8 @@ core::Window::~Window()
     glfwDestroyWindow(this->window);
 }
 
-static void glInit()
+static inline void glInit()
 {
-
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
     if (err != GLEW_OK)
@@ -173,11 +194,34 @@ static void glInit()
     if (CORE_INFO)
     {
         core::console::printTime();
-        std::cout << "Ok: init glew" << std::endl;
+        std::cout << "=== OpenGL System Information ===" << std::endl;
         core::console::printTime();
-        std::cout << "GPU: " << glGetString(GL_RENDERER) << std::endl;
+        std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
         core::console::printTime();
-        std::cout << "Opengl & Driver : v" << glGetString(GL_VERSION) << std::endl;
+        std::cout << "Vendor: " << glGetString(GL_VENDOR) << std::endl;
+        core::console::printTime();
+        std::cout << "Version: " << glGetString(GL_VERSION) << std::endl;
+        core::console::printTime();
+        std::cout << "GLSL Version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+        core::console::printTime();
+        int major, minor;
+        glGetIntegerv(GL_MAJOR_VERSION, &major);
+        glGetIntegerv(GL_MINOR_VERSION, &minor);
+        std::cout << "Core Version: " << major << "." << minor << std::endl;
+        core::console::printTime();
+        if (glewIsSupported("GL_VERSION_4_5")) {
+            std::cout << "OpenGL 4.5 is supported!" << std::endl;
+        }
+        core::console::printTime();
+        int maxTextureSize;
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+        std::cout << "Max Texture Size: " << maxTextureSize << "x" << maxTextureSize << std::endl;
+        core::console::printTime();
+        int maxVertexAttribs;
+        glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttribs);
+        std::cout << "Max Vertex Attributes: " << maxVertexAttribs << std::endl;
+        core::console::printTime();
+        std::cout << "=================================" << std::endl;
     }
 }
 
@@ -368,4 +412,9 @@ void core::Window::fullScreen(bool flag)
 double core::Window::getDeltaTime() const
 {
     return this->deltaTime;
+}
+
+void core::Window::close()
+{
+    glfwSetWindowShouldClose(this->window, true);
 }

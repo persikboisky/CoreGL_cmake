@@ -13,17 +13,23 @@ struct GLFWmonitor;
 
 namespace core
 {
+    struct WindowApiGlInfo
+    {
+        bool VerticalSynchronization = true;
+        version2 OpenGlVersion = {3, 3};
+    };
+
     struct WindowInfo
     {
         const char *title = "CoreGL";
         const char *pathToIcon = nullptr;
         int width = 800;
         int height = 800;
-        bool VerticalSynchronization = true;
         bool resizable = false;
         int posX = 100;
         int posY = 100;
         bool fullScreen = false;
+        WindowApiGlInfo* ptrApiGlInfo = nullptr;
 #if defined(CORE_INCLUDE_VULKAN)
         bool VulkanAPI = false;
 #endif // defined(CORE_INCLUDE_VULKAN)
@@ -72,6 +78,8 @@ namespace core
         Cursor *cursor;
         Monitor *monitor;
 
+        GLFWwindow* getWindowOBJ();
+
         [[nodiscard]] static Window create(const WindowInfo &winInfo = {});
         [[nodiscard]] static Window create(int width, int height, const char *title = "", bool resizable = false, bool vkAPI = false);
 
@@ -102,6 +110,8 @@ namespace core
         void fullScreen(bool flag = true);
 
         [[nodiscard]] double getDeltaTime() const;
+
+        void close();
     };
 }
 

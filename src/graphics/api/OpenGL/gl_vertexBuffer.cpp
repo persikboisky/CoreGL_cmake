@@ -16,10 +16,10 @@ namespace core
 		{
 			this->sizeOfByte = info.sizeOfByte;
 
-			glGenVertexArrays(1, &this->id);
+			glGenVertexArrays(1, &this->VAO);
 			glGenBuffers(1, &this->VBO);
 
-			if (this->id == -1)
+			if (this->VAO == -1)
 			{
 				throw coders(13);
 			}
@@ -57,7 +57,7 @@ namespace core
 
 		VertexBuffer::~VertexBuffer()
 		{
-			glDeleteVertexArrays(1, &this->id);
+			glDeleteVertexArrays(1, &this->VAO);
 			glDeleteBuffers(1, &this->VBO);
 		}
 
@@ -75,11 +75,11 @@ namespace core
 		{
 			try
 			{
-				glBindVertexArray(this->id);
+				glBindVertexArray(this->VAO);
 			}
 			catch (...)
 			{
-				throw coders(12, "id = " + std::to_string(this->id));
+				throw coders(12, "id = " + std::to_string(this->VAO));
 			}
 		}
 
