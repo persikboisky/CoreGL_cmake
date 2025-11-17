@@ -14,7 +14,6 @@
 #include "../src/window/Event.hpp"
 #include "../src/window/Cursor.hpp"
 #include "../src/window/Monitor.hpp"
-#include "../src/graphics/commons/fbo.hpp"
 #include "../src/graphics/commons/Camera.hpp"
 #include "../src/graphics/api/Vulkan/vk_Instance.hpp"
 #include "../src/graphics/api/Vulkan/vk_Surface.hpp"

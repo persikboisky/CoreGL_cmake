@@ -77,6 +77,8 @@ namespace core
 		/// @param normalize надо ли его нормализировать(то есть преобразовать в формат[0-1], 
 		/// т.к. openGL использует диапозон[0-1])
 		void setClearColor(const color::RGBA& color, bool normalize = false);
+
+		void setStateBlend(bool flag);
 	} // opengl
 } // core
 

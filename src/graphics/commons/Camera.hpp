@@ -13,7 +13,7 @@ namespace core
     enum KEY_CODE : int;
     enum CAM_MODE : int;
 
-    struct cameraInfo
+    struct CameraInfo
     {
         math::Vector3 up = math::Vector3(0, 1, 0);
         math::Vector3 position = math::Vector3(0, 0, 4);
@@ -23,7 +23,7 @@ namespace core
         float near = 0.1f;
         CAM_MODE mode;
 
-        cameraInfo();
+        CameraInfo();
     };
 
     /// @brief класс камеры
@@ -49,7 +49,7 @@ namespace core
 
         Camera(float posX, float posY, float posZ, float fov = 70, float distance = 100);
         Camera(math::Vector3 pos, float fov = 70, float distance = 100);
-        Camera(const cameraInfo &info);
+        Camera(const CameraInfo &info);
 
     public:
         /// @brief создаёт камеру
@@ -69,9 +69,9 @@ namespace core
         static Camera create(math::Vector3 pos, float fov = 70, float distance = 100);
 
         /// @brief создаёт камеру
-        /// @param info объект структуры cameraInfo
+        /// @param info объект структуры CameraInfo
         /// @return объект класса Camera
-        static Camera create(const cameraInfo &info);
+        static Camera create(const CameraInfo &info);
 
         /// @brief создаёт камеру
         /// @param posX позиция камеры
@@ -90,9 +90,9 @@ namespace core
         static Camera *ptrCreate(math::Vector3 pos, float fov = 70, float distance = 100);
 
         /// @brief создаёт камеру
-        /// @param info объект структуры cameraInfo
+        /// @param info объект структуры CameraInfo
         /// @return указатель на объект класса Camera
-        static Camera *ptrCreate(const cameraInfo &info);
+        static Camera *ptrCreate(const CameraInfo &info);
 
         /// @brief устанавливает режим камеры
         /// @param mode (CAM_DYNAMIC - смотрит в одну точку, CAM_STATIC - смотрит в одном направлении)

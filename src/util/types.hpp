@@ -374,27 +374,25 @@ namespace core
 
             void normalize();
         };
+		struct RGBA
+		{
+			float red;
+			float green;
+			float blue;
+			float alpha;
+
+			RGBA(const COLOR& color);
+			RGBA(const RGB& color);
+			RGBA(float red = 0, float green = 0, float blue = 0, float alpha = 255);
+
+			void operator=(const RGB& color);
+			void operator=(const RGBA &color);
+			void operator=(const COLOR &color);
+
+			void normalize();
+		};
 
         RGB stringToRGB(std::string str);
-
-        struct RGBA
-        {
-            float red;
-            float green;
-            float blue;
-            float alpha;
-
-            RGBA(const COLOR& color);
-            RGBA(const RGB& color);
-            RGBA(float red = 0, float green = 0, float blue = 0, float alpha = 255);
-
-            void operator=(const RGB& color);
-            void operator=(const RGBA &color);
-            void operator=(const COLOR &color);
-
-            void normalize();
-        };
-
         RGB convertColor(const COLOR& color);
 
 		RGBA normalize(const RGBA& color);
@@ -412,7 +410,6 @@ namespace core
 
         void operator = (const pos2f& pos);
     };
-
     struct pos2i final
     {
         int x = 0;
@@ -423,7 +420,6 @@ namespace core
 
         void operator = (const pos2i& pos);
     };
-
     struct pos3f final
     {
         float x = 0;
@@ -435,7 +431,6 @@ namespace core
 
         void operator = (const pos3f& pos);
     };
-
     struct size2f final
     {
         float width = 0;
@@ -448,7 +443,6 @@ namespace core
 
         void operator = (const size2f& size);
     };
-
     struct size2i final
     {
         int width = 0;
@@ -461,7 +455,6 @@ namespace core
 
         void operator = (const size2i& size);
     };
-
     struct size3f final
     {
         float width = 0;
@@ -476,7 +469,6 @@ namespace core
 
         void operator = (const size3f& size);
     };
-
     struct version2
     {
         int MAJOR;
@@ -485,7 +477,6 @@ namespace core
         version2(int MAJOR, int MINOR) : MINOR(MINOR), MAJOR(MAJOR) {}
         void operator = (const version2& v2);
     };
-
     struct version3
     {
         int MAJOR;
@@ -495,7 +486,6 @@ namespace core
         version3(int MAJOR, int MINOR, int PATCH) : MINOR(MINOR), MAJOR(MAJOR), PATCH(PATCH) {}
         void operator = (const version3& v3);
     };
-
 	struct DepthSize
 	{
 		float depth;

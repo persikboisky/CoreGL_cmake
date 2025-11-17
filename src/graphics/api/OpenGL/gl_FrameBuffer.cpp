@@ -61,17 +61,33 @@ namespace core
 
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->texture, 0);
 
-			glGenRenderbuffers(1, &rbo);
-			glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, info.width, info.height);
-			glBindRenderbuffer(GL_RENDERBUFFER, 0);
+			if (info.flagCreateStencilBuffer || info.flagCreateDepthBuffer)
+			{
+				glGenRenderbuffers(1, &fbo);
+				glBindRenderbuffer(GL_RENDERBUFFER, fbo);
 
-			// 5. Прикрепляем RBO к FBO в качестве прикрепления глубины и трафарета
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+				if (info.flagCreateDepthBuffer && info.flagCreateStencilBuffer)
+				{
+					glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, info.width, info.height);
+					glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fbo);
+				}
+				else if (info.flagCreateDepthBuffer)
+				{
+					glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, info.width, info.height);
+					glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbo);
+				}
+				else
+				{
+					glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_COMPONENTS, info.width, info.height);
+					glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fbo);
+				}
 
-			// 6. Проверяем, готов ли FBO к использованию
-			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-				throw coders(21, "ID = " + std::to_string(this->fbo));
+				glBindRenderbuffer(GL_RENDERBUFFER, 0);
+			}
+
+			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			{
+				throw coders(35, "Frame buffer don't ready");
 			}
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);

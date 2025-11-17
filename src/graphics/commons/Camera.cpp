@@ -11,7 +11,7 @@ using namespace core::math;
 namespace core
 {
 
-    cameraInfo::cameraInfo() : mode(CAM_DYNAMIC) {}
+    CameraInfo::CameraInfo() : mode(CAM_DYNAMIC) {}
 
     static inline float convertNumberToUnit(float number)
     {
@@ -52,7 +52,7 @@ namespace core
         this->update();
     }
 
-    Camera::Camera(const cameraInfo& info) :
+    Camera::Camera(const CameraInfo& info) :
         far(info.far), mode(info.mode), near(info.near), pos(info.position),
         startUP(info.up), startTARGET(info.target), fov(radians(info.fov))
     {
@@ -69,7 +69,7 @@ namespace core
         return Camera(pos, fov, distance);
     }
 
-    Camera Camera::create(const cameraInfo& info)
+    Camera Camera::create(const CameraInfo& info)
     {
         return Camera(info);
     }
@@ -84,7 +84,7 @@ namespace core
         return new Camera(pos, fov, distance);
     }
 
-    Camera* Camera::ptrCreate(const cameraInfo& info)
+    Camera* Camera::ptrCreate(const CameraInfo& info)
     {
         return new Camera(info);
     }

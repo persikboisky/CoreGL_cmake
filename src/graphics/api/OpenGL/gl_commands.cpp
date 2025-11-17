@@ -143,5 +143,13 @@ namespace core
 				normalColor.alpha
 			);
 		}
+
+		void setStateBlend(bool flag)
+		{
+			if (flag)
+				glEnable(GL_BLEND);
+			else
+				glDisable(GL_BLEND);
+		}
 	} // opengl
 } // core

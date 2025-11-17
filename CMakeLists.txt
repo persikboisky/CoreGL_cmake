@@ -14,7 +14,6 @@ set(CoreGL_source
         src/window/Event.cpp
         src/window/Cursor.cpp
         src/window/Monitor.cpp
-        src/graphics/commons/fbo.cpp
         src/graphics/commons/Camera.cpp
         src/graphics/api/Vulkan/vk_Instance.cpp
         src/graphics/api/Vulkan/vk_Surface.cpp
