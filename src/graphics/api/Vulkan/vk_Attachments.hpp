@@ -5,15 +5,11 @@
 #ifndef VK_ATTACHMENTS_HPP
 #define VK_ATTACHMENTS_HPP
 
+#include "../../../modules.hpp"
+#if defined(CORE_INCLUDE_VULKAN)
+
 namespace core::vulkan
 {
-	enum class FormatAttachment : int
-	{
-		COLOR,
-		DEPTH,
-		STENCIL
-	};
-
 	enum class LoadOp : int
 	{
 		LOAD_OP_CLEAR,
@@ -38,11 +34,11 @@ namespace core::vulkan
 
 	struct AttachmentsInfo
 	{
-		FormatAttachment format = FormatAttachment::COLOR;
 		LoadOp loadOp = LoadOp::LOAD_OP_CLEAR;
 		InitialLayout initLayout = InitialLayout::LAYOUT_UNDEFINED;
 		FinalLayout finalLayout = FinalLayout::LAYOUT_PRESENT_SRC_KHR;
 	};
 }
 
+#endif //defined(CORE_INCLUDE_VULKAN)
 #endif //VK_ATTACHMENTS_HPP

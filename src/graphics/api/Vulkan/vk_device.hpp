@@ -26,7 +26,7 @@ namespace core
 			class Surface* ptrSurface = nullptr;
 
 			/// @brief индекс выбранной видиокарты согласно списку vulkan::PhysicalDevices
-			unsigned int idDevice = 0;
+			unsigned int idPhDevice = 0;
 		};
 
 		class Device
@@ -34,6 +34,7 @@ namespace core
 		protected:
 			friend class SwapChain;
 			friend class RenderPass;
+			friend class FrameBuffer;
 
 		private:
 			VkPhysicalDevice physicalDevice = {};
@@ -44,6 +45,8 @@ namespace core
 			VkSurfaceFormatKHR surfaceFormat = {};
 			VkSurfaceCapabilitiesKHR surfaceCapabilitiesFormat = {};
 
+			VkFormat depthFormat = {};
+
 			uint32_t graphicsQueueFamilyIndex = 0;
 			uint32_t presentQueueFamilyIndex = 0;
 			uint32_t countGraphicsQueue = 0;
@@ -52,6 +55,20 @@ namespace core
 			const float queuePriorities = 1.0f;
 
 			explicit Device(const DeviceInfo& info);
+
+			uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+			void createImage(
+					uint32_t width,
+					uint32_t height,
+					VkFormat format,
+					VkImageUsageFlags usage,
+					VkImage& image,
+					VkDeviceMemory& imageMemory);
+
+			VkImageView createImageView(
+					VkImage image,
+					VkFormat format,
+					VkImageAspectFlags aspectFlags);
 
 		public:
 			static Device create(const DeviceInfo& info);
@@ -64,8 +81,6 @@ namespace core
 
 			[[nodiscard]] uint32_t getCountGraphicsQueue() const;
 			[[nodiscard]] uint32_t getCountPresentQueue() const;
-
-			uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 		};
 	} // vulkan
 } // core

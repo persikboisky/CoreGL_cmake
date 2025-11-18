@@ -14,9 +14,9 @@ namespace core::vulkan
 {
 	struct InstanceInfo
 	{
-		version3 vulkanVersion = { 1, 0, 0 };
-		version3 appVersion = { 1, 0, 0 };
 		const char* appName = "CoreGL";
+		version3 appVersion = { 1, 0, 0 };
+		version3 vulkanVersion = { 1, 0, 0 };
 	};
 
 	class Instance

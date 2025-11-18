@@ -61,6 +61,9 @@ const std::string INFO_CODERS[] = {
 		"VK_FAILED_SEARCH_DEVICE_TYPE_MEMORY",  // 46
 		"VK_FAILED_INIT_GLSLang",				 // 47
 		"ASSIMP_FAILED_LOAD_OBJ_MODEL(s)",          // 48
+        "VK_FAILED_FIND_DEPTH_FORMAT",              // 49
+        "VK_FAILED_TO_CREATE_DEPTH_IMAGE",             // 50
+        "VK_FAILED_TO_ALLOCATE_DEPTH_IMAGE_MEMORY",    // 51
         ""
 };
 

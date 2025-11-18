@@ -31,7 +31,15 @@ void core::Window::createWindow(int width, int height, const char *title, bool r
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     else
 #endif // defined(CORE_INCLUDE_VULKAN)
+    {
         glfwWindowHint(GLFW_OPENGL_API, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_RED_BITS, 8);      // Биты на красный канал
+        glfwWindowHint(GLFW_GREEN_BITS, 8);    // Биты на зеленый канал
+        glfwWindowHint(GLFW_BLUE_BITS, 8);     // Биты на синий канал
+        glfwWindowHint(GLFW_ALPHA_BITS, 8);    // Биты на альфа-канал
+        glfwWindowHint(GLFW_DEPTH_BITS, 24);   // Биты буфера глубины
+        glfwWindowHint(GLFW_STENCIL_BITS, 8);  // Биты буфера трафарета
+    }
 
     glfwWindowHint(GLFW_RESIZABLE, resizable);
 
@@ -89,6 +97,9 @@ core::Window::Window(const core::WindowInfo &winInfo) :
             glfwWindowHint(GLFW_VERSION_MINOR, 3);
         }
     }
+
+    glfwWindowHint(GLFW_DECORATED, winInfo.windowDecorate);
+    glfwWindowHint(GLFW_FOCUSED, winInfo.windowFocus);
 
     this->createWindow(winInfo.width, winInfo.height, winInfo.title, winInfo.resizable,
 #if defined(CORE_INCLUDE_VULKAN)
@@ -225,7 +236,7 @@ static inline void glInit()
     }
 }
 
-void core::Window::setContext()
+void core::Window::setGlContext()
 {
 #if defined(CORE_INCLUDE_VULKAN)
     if (!this->VulknanAPI)

@@ -25,10 +25,12 @@ namespace core
         const char *pathToIcon = nullptr;
         int width = 800;
         int height = 800;
-        bool resizable = false;
         int posX = 100;
         int posY = 100;
+        bool resizable = false;
         bool fullScreen = false;
+        bool windowFocus = true;
+        bool windowDecorate = true;
         WindowApiGlInfo* ptrApiGlInfo = nullptr;
 #if defined(CORE_INCLUDE_VULKAN)
         bool VulkanAPI = false;
@@ -87,7 +89,7 @@ namespace core
 
         ~Window();
 
-        void setContext();
+        void setGlContext();
         void swapBuffers();
 
         void setIcon(const char *pathToImg);

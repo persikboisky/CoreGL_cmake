@@ -27,6 +27,9 @@ namespace core
 
 		class SwapChain
 		{
+		protected:
+			friend class FrameBuffer;
+
 		private:
 			VkSwapchainKHR swapChain = {};
 			VkDevice *ptrDevice = nullptr;

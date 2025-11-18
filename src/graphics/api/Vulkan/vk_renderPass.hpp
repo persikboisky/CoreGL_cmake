@@ -17,16 +17,26 @@ namespace core
 		struct RenderPassInfo
 		{
 			class Device* ptrDevice = nullptr;
-			std::vector<struct AttachmentsInfo*> ptrArrayAttachmentsInfo = {};
+			struct AttachmentsInfo* ptrColorAttachment = nullptr;
+			struct AttachmentsInfo* ptrDepthStencilAttachment = nullptr;
 		};
 
 		class RenderPass
 		{
+		protected:
+			friend class FrameBuffer;
+
 		private:
 			VkRenderPass renderPass = nullptr;
 			VkDevice* ptrDevice = nullptr;
 
-			RenderPass(const RenderPassInfo& info);
+			explicit RenderPass(const RenderPassInfo& info);
+
+		public:
+			static RenderPass create(const RenderPassInfo& info);
+			static RenderPass *ptrCreate(const RenderPassInfo& info);
+
+			~RenderPass();
 		};
 	} // vulkan
 } // core

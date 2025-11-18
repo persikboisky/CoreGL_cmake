@@ -21,6 +21,7 @@ set(CoreGL_source
         src/graphics/api/Vulkan/vk_Device.cpp
         src/graphics/api/Vulkan/vk_SwapChain.cpp
         src/graphics/api/Vulkan/vk_RenderPass.cpp
+        src/graphics/api/Vulkan/vk_FrameBuffer.cpp
         src/graphics/api/OpenGL/gl_vertexBuffer.cpp
         src/graphics/api/OpenGL/gl_shaderProgram.cpp
         src/graphics/api/OpenGL/gl_commands.cpp
