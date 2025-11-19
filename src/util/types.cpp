@@ -661,6 +661,12 @@ void core::pos2i::operator=(const pos2i& pos)
     this->y = pos.y;
 }
 
+void core::pos2ui::operator=(const pos2ui& pos)
+{
+    this->x = pos.x;
+    this->y = pos.y;
+}
+
 void core::pos3f::operator=(const pos3f& pos)
 {
     this->x = pos.x;
@@ -675,6 +681,12 @@ void core::size2f::operator=(const size2f& size)
 }
 
 void core::size2i::operator=(const size2i& size)
+{
+    this->width = size.width;
+    this->height = size.height;
+}
+
+void size2ui::operator=(const size2ui& size)
 {
     this->width = size.width;
     this->height = size.height;
@@ -709,3 +721,4 @@ void DepthSize::operator=(const DepthSize& ds)
 	this->depth = ds.depth;
 	this->stencil = ds.stencil;
 }
+

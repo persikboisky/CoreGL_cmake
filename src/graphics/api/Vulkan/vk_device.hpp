@@ -13,6 +13,14 @@ namespace core
 {
 	namespace vulkan
 	{
+		enum class TypeFamilyQueue : int
+		{
+			GRAPHICS,
+			PRESENT,
+			COMPUTER,
+			TRANSFER
+		};
+
 		/// @brief информация для создания vulkan::Device
 		struct DeviceInfo
 		{
@@ -32,9 +40,13 @@ namespace core
 		class Device
 		{
 		protected:
+			friend class Queue;
 			friend class SwapChain;
+			friend class Semaphore;
 			friend class RenderPass;
 			friend class FrameBuffer;
+			friend class CommandPool;
+			friend class CommandBuffer;
 
 		private:
 			VkPhysicalDevice physicalDevice = {};
@@ -49,8 +61,13 @@ namespace core
 
 			uint32_t graphicsQueueFamilyIndex = 0;
 			uint32_t presentQueueFamilyIndex = 0;
+			uint32_t computeFamilyIndex = 0;
+			uint32_t transferFamilyIndex = 0;
+
 			uint32_t countGraphicsQueue = 0;
 			uint32_t countPresentQueue = 0;
+			uint32_t countComputeQueue = 0;
+			uint32_t countTransferQueue = 0;
 
 			const float queuePriorities = 1.0f;
 
@@ -81,6 +98,9 @@ namespace core
 
 			[[nodiscard]] uint32_t getCountGraphicsQueue() const;
 			[[nodiscard]] uint32_t getCountPresentQueue() const;
+
+			uint32_t getQueueFamilyIndex(const TypeFamilyQueue& type) const;
+			uint32_t getCountQueue(const TypeFamilyQueue& type) const;
 		};
 	} // vulkan
 } // core

@@ -420,6 +420,16 @@ namespace core
 
         void operator = (const pos2i& pos);
     };
+	struct pos2ui final
+	{
+		unsigned int x = 0;
+		unsigned int y = 0;
+
+		pos2ui() {}
+		pos2ui(unsigned int x, unsigned int y) : x(x), y(y) {}
+
+		void operator = (const pos2ui& pos);
+	};
     struct pos3f final
     {
         float x = 0;
@@ -455,6 +465,16 @@ namespace core
 
         void operator = (const size2i& size);
     };
+	struct size2ui final
+	{
+		unsigned int width = 0;
+		unsigned int height = 0;
+
+		size2ui() {}
+		size2ui(unsigned int width, unsigned int height) : width(width), height(height){}
+
+		void operator = (const size2ui& size);
+	};
     struct size3f final
     {
         float width = 0;

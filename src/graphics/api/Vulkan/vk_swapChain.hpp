@@ -29,6 +29,7 @@ namespace core
 		{
 		protected:
 			friend class FrameBuffer;
+			friend class Queue;
 
 		private:
 			VkSwapchainKHR swapChain = {};
@@ -43,6 +44,8 @@ namespace core
 			static SwapChain *ptrCreate(const SwapChainInfo &info);
 
 			~SwapChain();
+
+			uint32_t getIndexNextImage(class Semaphore& semaphore);
 		};
 	} // vulkan
 } // core

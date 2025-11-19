@@ -15,6 +15,12 @@ set(CoreGL_source
         src/window/Cursor.cpp
         src/window/Monitor.cpp
         src/graphics/commons/Camera.cpp
+        src/graphics/api/OpenGL/gl_vertexBuffer.cpp
+        src/graphics/api/OpenGL/gl_shaderProgram.cpp
+        src/graphics/api/OpenGL/gl_commands.cpp
+        src/graphics/api/OpenGL/gl_texture.cpp
+        src/graphics/api/OpenGL/gl_elementBuffers.cpp
+        src/graphics/api/OpenGL/gl_FrameBuffer.cpp
         src/graphics/api/Vulkan/vk_Instance.cpp
         src/graphics/api/Vulkan/vk_Surface.cpp
         src/graphics/api/Vulkan/vk_PhysicalDevices.cpp
@@ -22,12 +28,10 @@ set(CoreGL_source
         src/graphics/api/Vulkan/vk_SwapChain.cpp
         src/graphics/api/Vulkan/vk_RenderPass.cpp
         src/graphics/api/Vulkan/vk_FrameBuffer.cpp
-        src/graphics/api/OpenGL/gl_vertexBuffer.cpp
-        src/graphics/api/OpenGL/gl_shaderProgram.cpp
-        src/graphics/api/OpenGL/gl_commands.cpp
-        src/graphics/api/OpenGL/gl_texture.cpp
-        src/graphics/api/OpenGL/gl_elementBuffers.cpp
-        src/graphics/api/OpenGL/gl_FrameBuffer.cpp
+        src/graphics/api/Vulkan/vk_CommandPool.cpp
+        src/graphics/api/Vulkan/vk_CommandBuffer.cpp
+        src/graphics/api/Vulkan/vk_Semaphore.cpp
+        src/graphics/api/Vulkan/vk_Queue.cpp
         src/file/code.cpp
         src/file/mtl.cpp
         src/file/obj.cpp

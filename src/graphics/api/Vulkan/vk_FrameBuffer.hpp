@@ -25,6 +25,9 @@ namespace core
 
 		class FrameBuffer
 		{
+		protected:
+			friend class CommandBuffer;
+
 		private:
 			VkFramebuffer* frameBuffers = nullptr;
 //			VkImageView* colorImagesView = nullptr;

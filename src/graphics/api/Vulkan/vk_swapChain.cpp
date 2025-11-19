@@ -6,6 +6,7 @@
 #if defined(CORE_INCLUDE_VULKAN)
 #include "vk_Device.hpp"
 #include "vk_Surface.hpp"
+#include "vk_Semaphore.hpp"
 #include "../../../util/coders.hpp"
 #include <vector>
 
@@ -112,6 +113,20 @@ namespace core
 				vkDestroyImageView(*this->ptrDevice, img, nullptr);
 			}
 			vkDestroySwapchainKHR(*this->ptrDevice, this->swapChain, nullptr);
+		}
+
+		uint32_t SwapChain::getIndexNextImage(Semaphore& semaphore)
+		{
+			uint32_t index;
+			VkResult result = vkAcquireNextImageKHR(
+					*this->ptrDevice,
+					this->swapChain,
+					UINT64_MAX,
+					semaphore.semaphore,
+					VK_NULL_HANDLE,
+					&index);
+			coders::vulkanProcessingError(result);
+			return index;
 		}
 	} // vulkan
 } // core

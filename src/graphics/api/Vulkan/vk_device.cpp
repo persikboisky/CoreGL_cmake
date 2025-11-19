@@ -169,6 +169,30 @@ namespace core
 				count++;
 			}
 
+			count = 0;
+			for (const VkQueueFamilyProperties& prop: queueFamilyProperties)
+			{
+				if (prop.queueFlags & VK_QUEUE_COMPUTE_BIT)
+				{
+					this->computeFamilyIndex = count;
+					this->countComputeQueue = prop.queueCount;
+					break;
+				}
+				count++;
+			}
+
+			count = 0;
+			for (const VkQueueFamilyProperties& prop: queueFamilyProperties)
+			{
+				if (prop.queueFlags & VK_QUEUE_TRANSFER_BIT)
+				{
+					this->transferFamilyIndex = count;
+					this->countTransferQueue = prop.queueCount;
+					break;
+				}
+				count++;
+			}
+
 			std::array<const char*, 1> enabledExtensionNames = {
 					VK_KHR_SWAPCHAIN_EXTENSION_NAME
 			};
@@ -288,6 +312,36 @@ namespace core
 			}
 
 			throw coders(46);
+		}
+
+		uint32_t Device::getQueueFamilyIndex(const TypeFamilyQueue& type) const
+		{
+			switch (type)
+			{
+			case TypeFamilyQueue::GRAPHICS:
+				return this->graphicsQueueFamilyIndex;
+			case TypeFamilyQueue::PRESENT:
+				return this->presentQueueFamilyIndex;
+			case TypeFamilyQueue::COMPUTER:
+				return this->computeFamilyIndex;
+			default:
+				return this->transferFamilyIndex;
+			}
+		}
+
+		uint32_t Device::getCountQueue(const TypeFamilyQueue& type) const
+		{
+			switch (type)
+			{
+			case TypeFamilyQueue::GRAPHICS:
+				return this->countGraphicsQueue;
+			case TypeFamilyQueue::PRESENT:
+				return this->countPresentQueue;
+			case TypeFamilyQueue::COMPUTER:
+				return this->countComputeQueue;
+			default:
+				return this->countTransferQueue;
+			}
 		}
 	} // vulkan
 } // core

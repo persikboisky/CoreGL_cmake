@@ -25,6 +25,7 @@ namespace core
 		{
 		protected:
 			friend class FrameBuffer;
+			friend class CommandBuffer;
 
 		private:
 			VkRenderPass renderPass = nullptr;
