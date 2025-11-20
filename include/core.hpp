@@ -33,6 +33,8 @@
 #include "../src/graphics/api/Vulkan/vk_CommandBuffer.hpp"
 #include "../src/graphics/api/Vulkan/vk_Semaphore.hpp"
 #include "../src/graphics/api/Vulkan/vk_Queue.hpp"
+#include "../src/graphics/api/Vulkan/vk_Pipeline.hpp"
+#include "../src/graphics/api/Vulkan/vk_ShaderStage.hpp"
 #include "../src/file/image.hpp"
 #include "../src/file/code.hpp"
 #include "../src/file/mtl.hpp"

@@ -8,6 +8,7 @@
 #include "vk_CommandPool.hpp"
 #include "vk_RenderPass.hpp"
 #include "vk_FrameBuffer.hpp"
+#include "vk_Pipeline.hpp"
 #include "../../../util/coders.hpp"
 
 namespace core
@@ -108,6 +109,25 @@ namespace core
 		void CommandBuffer::endRenderPass()
 		{
 			vkCmdEndRenderPass(this->commandBuffer);
+		}
+
+		void CommandBuffer::bindGraphicsPipeline(const GraphicsPipeline& pipeline)
+		{
+			vkCmdBindPipeline(this->commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
+		}
+
+		void CommandBuffer::draw(
+				uint32_t firstVertex,
+				uint32_t vertexCount,
+				uint32_t firstInstance,
+				uint32_t instanceCount)
+		{
+			vkCmdDraw(
+					this->commandBuffer,
+					vertexCount,
+					instanceCount,
+					firstVertex,
+					firstInstance);
 		}
 	} // vulkan
 } // core

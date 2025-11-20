@@ -506,13 +506,21 @@ namespace core
         version3(int MAJOR, int MINOR, int PATCH) : MINOR(MINOR), MAJOR(MAJOR), PATCH(PATCH) {}
         void operator = (const version3& v3);
     };
-	struct DepthSize
+	struct Rect2D
 	{
-		float depth;
-		float stencil;
-
-		DepthSize(float depth = 1.0, float stencil = 0.0);
-		void operator = (const DepthSize& ds);
+		int32_t x = 0;
+		int32_t y = 0;
+		int32_t width = 0;
+		int32_t height = 0;
+	};
+	struct Viewport
+	{
+		float x = 0;
+		float y = 0;
+		float width = 0;
+		float height = 0;
+		float minDepth = 0;
+		float maxDepth = 1;
 	};
 
     namespace model

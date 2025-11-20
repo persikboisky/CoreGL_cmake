@@ -712,13 +712,3 @@ void version3::operator=(const version3 &v3)
     this->PATCH = v3.PATCH;
 }
 
-DepthSize::DepthSize(float depth, float stencil) : depth(depth), stencil(stencil)
-{
-}
-
-void DepthSize::operator=(const DepthSize& ds)
-{
-	this->depth = ds.depth;
-	this->stencil = ds.stencil;
-}
-

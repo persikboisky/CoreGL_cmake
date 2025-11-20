@@ -50,6 +50,14 @@ namespace core
 
 			void beginRenderPass(const BeginRenderPassInfo& info);
 			void endRenderPass();
+
+			void bindGraphicsPipeline(const class GraphicsPipeline& pipeline);
+
+			void draw(
+					uint32_t firstVertex,
+					uint32_t vertexCount,
+					uint32_t firstInstance = 0,
+					uint32_t instanceCount = 1);
 		};
 	} // vulkan
 }// core

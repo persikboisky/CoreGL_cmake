@@ -27,6 +27,7 @@ namespace core
 			swapchainCreateInfo.preTransform = info.ptrDevice->surfaceCapabilitiesFormat.currentTransform;
 			swapchainCreateInfo.minImageCount = info.countImage;
 			swapchainCreateInfo.imageUsage = info.ptrDevice->surfaceCapabilitiesFormat.supportedUsageFlags;
+			// swapchainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 			swapchainCreateInfo.imageFormat = info.ptrDevice->surfaceFormat.format;
 			swapchainCreateInfo.imageExtent = info.ptrDevice->surfaceCapabilitiesFormat.currentExtent;
 			swapchainCreateInfo.clipped = (info.clipped) ? VK_TRUE : VK_FALSE;

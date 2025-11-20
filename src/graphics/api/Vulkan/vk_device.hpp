@@ -46,7 +46,9 @@ namespace core
 			friend class RenderPass;
 			friend class FrameBuffer;
 			friend class CommandPool;
+			friend class ShaderModule;
 			friend class CommandBuffer;
+			friend class GraphicsPipeline;
 
 		private:
 			VkPhysicalDevice physicalDevice = {};
