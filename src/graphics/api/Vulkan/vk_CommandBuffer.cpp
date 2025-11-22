@@ -9,12 +9,32 @@
 #include "vk_RenderPass.hpp"
 #include "vk_FrameBuffer.hpp"
 #include "vk_Pipeline.hpp"
+#include "vk_VertexBuffer.hpp"
+#include "vk_ElementBuffer.hpp"
+#include "vk_Buffer.hpp"
 #include "../../../util/coders.hpp"
 
 namespace core
 {
 	namespace vulkan
 	{
+		static inline VkShaderStageFlags convertShaderStage(const SHADER_STAGES& stages)
+		{
+			switch (stages)
+			{
+			case GEOMETRY_STAGE:
+				return VK_SHADER_STAGE_GEOMETRY_BIT;
+			case FRAGMENT_STAGE:
+				return VK_SHADER_STAGE_FRAGMENT_BIT;
+			case VERTEX_STAGE:
+				return VK_SHADER_STAGE_VERTEX_BIT;
+			case VERTEX_FRAGMENT_STAGES:
+				return VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+			default:
+				return VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_GEOMETRY_BIT;
+			}
+		}
+
 		CommandBuffer::CommandBuffer(Device& device, CommandPool& commandPool) :
 			ptrDevice(&device.device),
 			ptrCommandPool(&commandPool.commandPool)
@@ -128,6 +148,75 @@ namespace core
 					instanceCount,
 					firstVertex,
 					firstInstance);
+		}
+
+		void CommandBuffer::pushConstants(const PushConstantsInfo& info)
+		{
+			vkCmdPushConstants(
+					this->commandBuffer,
+					info.ptrPipelineLayout->layout,
+					convertShaderStage(info.shaderStages),
+					info.offset,
+					info.size,
+					info.data);
+		}
+
+		void
+		CommandBuffer::bindVertexBuffers(
+				uint32_t firstBinding,
+				uint32_t bindingCount,
+				VertexBuffer* ptrBuffers,
+				uint64_t* ptrOffset)
+		{
+			auto buffer = new VkBuffer[bindingCount];
+			for(uint32_t index = 0; index < bindingCount; index++)
+				buffer[index] = ptrBuffers[index].buffer->buffer;
+			vkCmdBindVertexBuffers(
+					this->commandBuffer,
+					firstBinding,
+					bindingCount,
+					buffer,
+					ptrOffset);
+			delete[] buffer;
+		}
+
+		void CommandBuffer::bindElementBuffer(struct ElementBuffer& buffer)
+		{
+			vkCmdBindIndexBuffer(
+					this->commandBuffer,
+					buffer.buffer,
+					0,
+					VK_INDEX_TYPE_UINT32);
+		}
+
+		void CommandBuffer::drawElements(
+				uint32_t firstIndex,
+				uint32_t indexCount,
+				int32_t vertexOffset,
+				uint32_t firstInstance,
+				uint32_t instanceCount)
+		{
+			vkCmdDrawIndexed(
+					this->commandBuffer,
+					indexCount,
+					instanceCount,
+					firstIndex,
+					vertexOffset,
+					firstInstance);
+		}
+
+		void CommandBuffer::copyBuffer(Buffer* ptrSrcBuffer, Buffer* ptrDstBuffer, uint64_t size)
+		{
+			VkBufferCopy copyRegion{};
+			copyRegion.srcOffset = 0;
+			copyRegion.dstOffset = 0;
+			copyRegion.size = size;
+			vkCmdCopyBuffer(
+					this->commandBuffer,
+					ptrSrcBuffer->buffer,
+					ptrDstBuffer->buffer,
+					1,
+					&copyRegion);
 		}
 	} // vulkan
 } // core

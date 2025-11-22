@@ -27,10 +27,21 @@ namespace core
 			uint32_t clearStencil = 0;
 		};
 
+		struct PushConstantsInfo
+		{
+			uint32_t offset = 0;
+			uint32_t size = 0;
+			vulkan::SHADER_STAGES shaderStages = VERTEX_STAGE;
+			class PipelineLayout* ptrPipelineLayout = nullptr;
+			const void* data = nullptr;
+		};
+
 		class CommandBuffer
 		{
 		protected:
 			friend class Queue;
+			friend class VertexBuffer;
+			friend class ElementBuffer;
 
 		private:
 			VkCommandBuffer commandBuffer = {};
@@ -58,6 +69,25 @@ namespace core
 					uint32_t vertexCount,
 					uint32_t firstInstance = 0,
 					uint32_t instanceCount = 1);
+
+			void pushConstants(const PushConstantsInfo& info);
+
+			void bindVertexBuffers(
+					uint32_t firstBinding,
+					uint32_t bindingCount,
+					class VertexBuffer* ptrBuffers,
+					uint64_t* ptrOffset);
+
+			void bindElementBuffer(class ElementBuffer& buffer);
+
+			void drawElements(
+					uint32_t firstIndex,
+					uint32_t indexCount,
+					int32_t vertexOffset = 0,
+					uint32_t firstInstance = 0,
+					uint32_t instanceCount = 1);
+
+			void copyBuffer(class Buffer* ptrSrcBuffer, class Buffer* ptrDstBuffer, uint64_t size);
 		};
 	} // vulkan
 }// core

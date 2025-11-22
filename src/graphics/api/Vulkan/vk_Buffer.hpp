@@ -1,0 +1,69 @@
+//
+// Created by kisly on 22.11.2025.
+//
+
+#ifndef VK_BUFFER_HPP
+#define VK_BUFFER_HPP
+
+#include "../../../modules.hpp"
+#if defined(CORE_INCLUDE_VULKAN)
+#include <vulkan/vulkan.h>
+
+namespace core
+{
+	namespace vulkan
+	{
+		enum class TYPE_BUFFER : int
+		{
+			VERTEX,
+			INDEX,
+			UNIFORM,
+			STORAGE,
+			TRANSFER_SRC,
+			TRANSFER_DST,
+			INDIRECT,
+			VERTEX_TRANSFER_DST
+		};
+
+		enum class TYPE_MEMORY : int
+		{
+			DEVICE_LOCAL,
+			HOST
+		};
+
+		struct BufferCreateInfo
+		{
+			class Device* ptrDevice = nullptr;
+
+			TYPE_MEMORY typeMemory = TYPE_MEMORY::HOST;
+			TYPE_BUFFER typeBuffer = TYPE_BUFFER::VERTEX;
+			bool exclusiveMode = true;
+
+			uint64_t size = 0;
+			void* data = nullptr;
+		};
+
+		class Buffer
+		{
+		protected:
+			friend class VertexBuffer;
+			friend class CommandBuffer;
+
+		private:
+			VkDevice* ptrDevice = nullptr;
+			VkBuffer buffer = nullptr;
+			VkDeviceMemory memory = nullptr;
+
+			Buffer(const BufferCreateInfo& info);
+
+		public:
+			static Buffer create(const BufferCreateInfo& info);
+			static Buffer *ptrCreate(const BufferCreateInfo& info);
+
+			~Buffer();
+		};
+	} // vulkan
+} // core
+
+#endif //defined(CORE_INCLUDE_VULKAN)
+#endif //VK_BUFFER_HPP

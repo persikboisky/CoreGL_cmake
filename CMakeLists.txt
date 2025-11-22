@@ -34,6 +34,9 @@ set(CoreGL_source
         src/graphics/api/Vulkan/vk_Queue.cpp
         src/graphics/api/Vulkan/vk_Pipeline.cpp
         src/graphics/api/Vulkan/vk_ShaderStage.cpp
+        src/graphics/api/Vulkan/vk_VertexBuffer.cpp
+        src/graphics/api/Vulkan/vk_ElementBuffer.cpp
+        src/graphics/api/Vulkan/vk_Buffer.cpp
         src/file/code.cpp
         src/file/mtl.cpp
         src/file/obj.cpp

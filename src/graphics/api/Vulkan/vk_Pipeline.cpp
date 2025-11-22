@@ -33,11 +33,73 @@
 #include "vk_RenderPass.hpp"
 #include "vk_Device.hpp"
 #include "../../../util/coders.hpp"
+#include <vector>
 
 namespace core
 {
 	namespace vulkan
 	{
+		static inline VkShaderStageFlags convertShaderStage(const SHADER_STAGES& stages)
+		{
+			switch (stages)
+			{
+			case GEOMETRY_STAGE:
+				return VK_SHADER_STAGE_GEOMETRY_BIT;
+			case FRAGMENT_STAGE:
+				return VK_SHADER_STAGE_FRAGMENT_BIT;
+			case VERTEX_STAGE:
+				return VK_SHADER_STAGE_VERTEX_BIT;
+			case VERTEX_FRAGMENT_STAGES:
+				return VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+			default:
+				return VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_GEOMETRY_BIT;
+			}
+		}
+
+		PipelineLayout::PipelineLayout(const PipelineLayoutInfo& info) : ptrDevice(&info.ptrDevice->device)
+		{
+			uint32_t index = 0;
+			auto pushConstantRanges = new VkPushConstantRange[info.vecPushConstantInfos.size()];
+			for (const auto &pushConstInfo : info.vecPushConstantInfos)
+			{
+				pushConstantRanges[index].size = pushConstInfo.size;
+				pushConstantRanges[index].offset = pushConstInfo.offset;
+				pushConstantRanges[index].stageFlags = convertShaderStage(pushConstInfo.shaderStages);
+				index++;
+			}
+
+			VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
+			pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+			pipelineLayoutCreateInfo.pNext = nullptr;
+			pipelineLayoutCreateInfo.pSetLayouts = nullptr;
+			pipelineLayoutCreateInfo.setLayoutCount = 0;
+			pipelineLayoutCreateInfo.pPushConstantRanges = pushConstantRanges;
+			pipelineLayoutCreateInfo.pushConstantRangeCount = static_cast<uint32_t>(info.vecPushConstantInfos.size());
+			VkResult result = vkCreatePipelineLayout(
+					info.ptrDevice->device,
+					&pipelineLayoutCreateInfo,
+					nullptr,
+					&this->layout);
+			coders::vulkanProcessingError(result);
+
+			delete[] pushConstantRanges;
+		}
+
+		PipelineLayout::~PipelineLayout()
+		{
+			vkDestroyPipelineLayout(*this->ptrDevice, this->layout, nullptr);
+		}
+
+		PipelineLayout PipelineLayout::create(const PipelineLayoutInfo& info)
+		{
+			return PipelineLayout(info);
+		}
+
+		PipelineLayout* PipelineLayout::ptrCreate(const PipelineLayoutInfo& info)
+		{
+			return new PipelineLayout(info);
+		}
+
 		GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineInfo& info) : ptrDevice(&info.ptrDevice->device)
 		{
 			std::vector<VkPipelineShaderStageCreateInfo> shaderStages = {};
@@ -66,12 +128,41 @@ namespace core
 			pipelineColorBlendStateCreateInfo.attachmentCount = 1;
 			pipelineColorBlendStateCreateInfo.pAttachments = &colorBlendAttachment;
 
+			VkVertexInputBindingDescription* ptrBindingDescription = nullptr;
+			VkVertexInputAttributeDescription* ptrAttributeDescription = nullptr;
 			VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 			vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 			vertexInputInfo.vertexBindingDescriptionCount = 0;
 			vertexInputInfo.pVertexBindingDescriptions = nullptr;
 			vertexInputInfo.vertexAttributeDescriptionCount = 0;
 			vertexInputInfo.pVertexAttributeDescriptions = nullptr;
+			if (info.ptrPipelineVertexInputInfo != nullptr)
+			{
+				ptrBindingDescription = new VkVertexInputBindingDescription[info.ptrPipelineVertexInputInfo->vecVertexBindingDescriptions.size()];
+				ptrAttributeDescription = new VkVertexInputAttributeDescription[info.ptrPipelineVertexInputInfo->vecVertexAttributeDescriptions.size()];
+
+				for (uint32_t index = 0; index < info.ptrPipelineVertexInputInfo->vecVertexBindingDescriptions.size(); index++)
+				{
+					ptrBindingDescription[index].binding = info.ptrPipelineVertexInputInfo->vecVertexBindingDescriptions[index].binding;
+					ptrBindingDescription[index].stride = info.ptrPipelineVertexInputInfo->vecVertexBindingDescriptions[index].sizeVertex;
+					ptrBindingDescription[index].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+				}
+
+				for (uint32_t index = 0; index < info.ptrPipelineVertexInputInfo->vecVertexAttributeDescriptions.size(); index++)
+				{
+					ptrAttributeDescription[index].location = info.ptrPipelineVertexInputInfo->vecVertexAttributeDescriptions[index].location;
+					ptrAttributeDescription[index].binding = info.ptrPipelineVertexInputInfo->vecVertexAttributeDescriptions[index].binding;
+					ptrAttributeDescription[index].offset = info.ptrPipelineVertexInputInfo->vecVertexAttributeDescriptions[index].offset;
+					ptrAttributeDescription[index].format = convertFormat(
+							info.ptrPipelineVertexInputInfo->vecVertexAttributeDescriptions[index].format);
+				}
+
+				vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+				vertexInputInfo.vertexBindingDescriptionCount = info.ptrPipelineVertexInputInfo->vecVertexBindingDescriptions.size();
+				vertexInputInfo.pVertexBindingDescriptions = ptrBindingDescription;
+				vertexInputInfo.vertexAttributeDescriptionCount = info.ptrPipelineVertexInputInfo->vecVertexAttributeDescriptions.size();
+				vertexInputInfo.pVertexAttributeDescriptions = ptrAttributeDescription;
+			}
 
 			VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
 			inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -144,8 +235,8 @@ namespace core
 
 			VkPipelineDepthStencilStateCreateInfo depthStencil = {};
 			depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-			depthStencil.depthTestEnable = VK_TRUE;
-			depthStencil.depthWriteEnable = VK_TRUE;
+			depthStencil.depthTestEnable = info.flagDepthTest ? VK_TRUE : VK_FALSE;
+			depthStencil.depthWriteEnable = info.flagDepthTest ? VK_TRUE : VK_FALSE;
 			depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
 			depthStencil.depthBoundsTestEnable = VK_FALSE;
 			depthStencil.stencilTestEnable = VK_FALSE;
@@ -155,20 +246,6 @@ namespace core
 			dynamicState.dynamicStateCount = 0;
 			dynamicState.pDynamicStates = nullptr;
 
-			VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
-			pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-			pipelineLayoutCreateInfo.pNext = nullptr;
-			pipelineLayoutCreateInfo.pSetLayouts = nullptr;
-			pipelineLayoutCreateInfo.setLayoutCount = 0;
-			pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
-			pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
-			VkResult result = vkCreatePipelineLayout(
-					info.ptrDevice->device,
-					&pipelineLayoutCreateInfo,
-					nullptr,
-					&this->layout);
-			coders::vulkanProcessingError(result);
-
 			VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
 			pipelineCreateInfo.pNext = VK_NULL_HANDLE;
 			pipelineCreateInfo.flags = 0;
@@ -177,7 +254,7 @@ namespace core
 			pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 			pipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE;
 			pipelineCreateInfo.basePipelineIndex = -1;
-			pipelineCreateInfo.layout = this->layout;
+			pipelineCreateInfo.layout = info.ptrPipelineLayout->layout;
 			pipelineCreateInfo.stageCount = static_cast<uint32_t>(shaderStages.size());
 			pipelineCreateInfo.pStages = shaderStages.data();
 			pipelineCreateInfo.pColorBlendState = &pipelineColorBlendStateCreateInfo;
@@ -190,7 +267,7 @@ namespace core
 			pipelineCreateInfo.pRasterizationState = &rasterizer;
 			pipelineCreateInfo.pViewportState = &viewportState;
 
-			result = vkCreateGraphicsPipelines(
+			VkResult result = vkCreateGraphicsPipelines(
 					info.ptrDevice->device,
 					VK_NULL_HANDLE,
 					1,
@@ -198,6 +275,9 @@ namespace core
 					VK_NULL_HANDLE,
 					&this->pipeline);
 			coders::vulkanProcessingError(result);
+
+			delete[] ptrBindingDescription;
+			delete[] ptrAttributeDescription;
 		}
 
 		GraphicsPipeline GraphicsPipeline::create(const GraphicsPipelineInfo& info)
@@ -212,9 +292,10 @@ namespace core
 
 		GraphicsPipeline::~GraphicsPipeline()
 		{
-			vkDestroyPipelineLayout(*this->ptrDevice, this->layout, nullptr);
 			vkDestroyPipeline(*this->ptrDevice, this->pipeline, nullptr);
 		}
+
+
 	} // vulkan
 } // core
 

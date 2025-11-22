@@ -18,6 +18,7 @@ namespace core
 			bool debugInfo = false;
 		};
 
+		/// @brief класс для создание openGL текстуры
 		class Texture
 		{
 		private:

@@ -41,13 +41,17 @@ namespace core
 		{
 		protected:
 			friend class Queue;
+			friend class Buffer;
 			friend class SwapChain;
 			friend class Semaphore;
 			friend class RenderPass;
 			friend class FrameBuffer;
 			friend class CommandPool;
+			friend class VertexBuffer;
 			friend class ShaderModule;
+			friend class ElementBuffer;
 			friend class CommandBuffer;
+			friend class PipelineLayout;
 			friend class GraphicsPipeline;
 
 		private:
