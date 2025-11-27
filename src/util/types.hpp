@@ -87,7 +87,7 @@ namespace core
 		MOUSE_BUTTON_MIDDLE,
 		MOUSE_BUTTON_RIGHT
 	};
-    enum POSITION : int
+    enum class POSITION : int
     {
         CENTER,
         UP_CENTER_SIDE,
@@ -136,7 +136,8 @@ namespace core
 			FRAGMENT_STAGE,
 			GEOMETRY_STAGE,
 			VERTEX_FRAGMENT_STAGES,
-			VERTEX_GEOMETRY_FRAGMENT_STAGES
+			VERTEX_GEOMETRY_FRAGMENT_STAGES,
+			ALL_STAGES
 		};
 		enum FORMAT_VARIABLE : int
 		{
@@ -146,6 +147,17 @@ namespace core
 			VEC4,
 			UINT,
 			INT
+		};
+        enum class DYNAMIC_STATE : int
+        {
+            CULL_MODE,
+            SCISSOR,
+			PRIMITIVE_TOPOLOGY
+        };
+		enum class TYPE_MEMORY : int
+		{
+			DEVICE_LOCAL,
+			HOST
 		};
 
 		VkFormat convertFormat(const FORMAT_VARIABLE& format);
@@ -216,7 +228,7 @@ namespace core
 
     namespace color
     {
-        enum COLOR : int
+        enum class COLOR : int
         {
             ALICE_BLUE,
             ANTIQUE_WHITE,
@@ -513,6 +525,14 @@ namespace core
 		int32_t width = 0;
 		int32_t height = 0;
 	};
+
+	struct Extent3D
+	{
+		int32_t width = 0;
+		int32_t height = 0;
+		int32_t depth = 0;
+	};
+
 	struct Viewport
 	{
 		float x = 0;

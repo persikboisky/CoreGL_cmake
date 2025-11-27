@@ -88,6 +88,12 @@ namespace core
 					uint32_t instanceCount = 1);
 
 			void copyBuffer(class Buffer* ptrSrcBuffer, class Buffer* ptrDstBuffer, uint64_t size);
+
+			void bindDescriptorSet(class DescriptorSet& set, class PipelineLayout& layout);
+
+			void setCullMode(const TYPE_CULL_FACE& cullMode);
+			void setScissor(const Rect2D& rect2d);
+			void setPrimitiveTopology(const vulkan::PRIMITIVE& primitive);
 		};
 	} // vulkan
 }// core

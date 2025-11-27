@@ -340,285 +340,285 @@ core::color::RGB core::color::convertColor(const core::color::COLOR &color)
 {
     switch (color)
     {
-        case color::ALICE_BLUE:
+        case color::COLOR::ALICE_BLUE:
             return color::RGB(240, 248, 255);
-        case color::ANTIQUE_WHITE:
+        case color::COLOR::ANTIQUE_WHITE:
             return color::RGB(250, 235, 215);
-        case color::AQUA:
+        case color::COLOR::AQUA:
             return color::RGB(0, 255, 255);
-        case color::AQUAMARINE:
+        case color::COLOR::AQUAMARINE:
             return color::RGB(127, 255, 212);
-        case color::AZURE:
+        case color::COLOR::AZURE:
             return color::RGB(240, 255, 255);
-        case color::BEIGE:
+        case color::COLOR::BEIGE:
             return color::RGB(245, 245, 220);
-        case color::BISQUE:
+        case color::COLOR::BISQUE:
             return color::RGB(255, 228, 196);
-        case color::BLACK:
+        case color::COLOR::BLACK:
             return color::RGB(0, 0, 0);
-        case color::BLANCHED_ALMOND:
+        case color::COLOR::BLANCHED_ALMOND:
             return color::RGB(255, 235, 205);
-        case color::BLUE:
+        case color::COLOR::BLUE:
             return color::RGB(0, 0, 255);
-        case color::BLUE_VIOLET:
+        case color::COLOR::BLUE_VIOLET:
             return color::RGB(138, 43, 226);
-        case color::BROWN:
+        case color::COLOR::BROWN:
             return color::RGB(165, 42, 42);
-        case color::BURTLY_WOOD:
+        case color::COLOR::BURTLY_WOOD:
             return color::RGB(222, 184, 135);
-        case color::CADET_BLUE:
+        case color::COLOR::CADET_BLUE:
             return color::RGB(95, 158, 160);
-        case color::CHARTREUSE:
+        case color::COLOR::CHARTREUSE:
             return color::RGB(127, 255, 0);
-        case color::CHOCOLATE:
+        case color::COLOR::CHOCOLATE:
             return color::RGB(210, 105, 30);
-        case color::CORAL:
+        case color::COLOR::CORAL:
             return color::RGB(255, 127, 80);
-        case color::CORNFLOWER_BLUE:
+        case color::COLOR::CORNFLOWER_BLUE:
             return color::RGB(100, 149, 237);
-        case color::CORNSILK:
+        case color::COLOR::CORNSILK:
             return color::RGB(255, 248, 220);
-        case color::CRIMSON:
+        case color::COLOR::CRIMSON:
             return color::RGB(220, 20, 60);
-        case color::CYAN:
+        case color::COLOR::CYAN:
             return color::RGB(0, 255, 255);
-        case color::DARK_BLUE:
+        case color::COLOR::DARK_BLUE:
             return color::RGB(0, 0, 139);
-        case color::DARK_CYAN:
+        case color::COLOR::DARK_CYAN:
             return color::RGB(0, 139, 139);
-        case color::DARK_GOLDEN_ROD:
+        case color::COLOR::DARK_GOLDEN_ROD:
             return color::RGB(184, 134, 11);
-        case color::DARK_GREY:
+        case color::COLOR::DARK_GREY:
             return color::RGB(169, 169, 169);
-        case color::DARK_GREEN:
+        case color::COLOR::DARK_GREEN:
             return color::RGB(0, 100, 0);
-        case color::DARK_KHAKI:
+        case color::COLOR::DARK_KHAKI:
             return color::RGB(189, 183, 107);
-        case color::DARK_MAGENTA:
+        case color::COLOR::DARK_MAGENTA:
             return color::RGB(139, 0, 139);
-        case color::DARK_OLIVE_GREEN:
+        case color::COLOR::DARK_OLIVE_GREEN:
             return color::RGB(85, 107, 47);
-        case color::DARK_ORANGE:
+        case color::COLOR::DARK_ORANGE:
             return color::RGB(255, 140, 0);
-        case color::DARK_ORCHID:
+        case color::COLOR::DARK_ORCHID:
             return color::RGB(153, 50, 204);
-        case color::DARK_RED:
+        case color::COLOR::DARK_RED:
             return color::RGB(139, 0, 0);
-        case color::DARK_SALMON:
+        case color::COLOR::DARK_SALMON:
             return color::RGB(143, 188, 143);
-        case color::DARK_SLATE_BLUE:
+        case color::COLOR::DARK_SLATE_BLUE:
             return color::RGB(72, 61, 139);
-        case color::DARK_SLATE_GREY:
+        case color::COLOR::DARK_SLATE_GREY:
             return color::RGB(47, 79, 79);
-        case color::DARK_TURQUOISE:
+        case color::COLOR::DARK_TURQUOISE:
             return color::RGB(0, 206, 209);
-        case color::DARK_VIOLET:
+        case color::COLOR::DARK_VIOLET:
             return color::RGB(148, 0, 211);
-        case color::DEEP_PINK:
+        case color::COLOR::DEEP_PINK:
             return color::RGB(255, 20, 147);
-        case color::DEEP_SKY_BLUE:
+        case color::COLOR::DEEP_SKY_BLUE:
             return color::RGB(0, 191, 255);
-        case color::DIM_GREY:
+        case color::COLOR::DIM_GREY:
             return color::RGB(105, 105, 105);
-        case color::DODGER_BLUE:
+        case color::COLOR::DODGER_BLUE:
             return color::RGB(30, 144, 255);
-        case color::FIRE_BRICK:
+        case color::COLOR::FIRE_BRICK:
             return color::RGB(178, 34, 34);
-        case color::FLORAL_WHITE:
+        case color::COLOR::FLORAL_WHITE:
             return color::RGB(255, 250, 240);
-        case color::FOREST_GREEN:
+        case color::COLOR::FOREST_GREEN:
             return color::RGB(34, 139, 34);
-        case color::FUCHSIA:
+        case color::COLOR::FUCHSIA:
             return color::RGB(255, 0, 255);
-        case color::GAINSBORO:
+        case color::COLOR::GAINSBORO:
             return color::RGB(220, 220, 220);
-        case color::GHOST_WHITE:
+        case color::COLOR::GHOST_WHITE:
             return color::RGB(248, 248, 255);
-        case color::GOLD:
+        case color::COLOR::GOLD:
             return color::RGB(255, 215, 0);
-        case color::GOLDEN_ROD:
+        case color::COLOR::GOLDEN_ROD:
             return color::RGB(218, 165, 32);
-        case color::GREY:
+        case color::COLOR::GREY:
             return color::RGB(128, 128, 128);
-        case color::GREEN:
+        case color::COLOR::GREEN:
             return color::RGB(0, 128, 0);
-        case color::GREEN_YELLOW:
+        case color::COLOR::GREEN_YELLOW:
             return color::RGB(173, 255, 47);
-        case color::HONEY_DEW:
+        case color::COLOR::HONEY_DEW:
             return color::RGB(240, 255, 240);
-        case color::HOT_PINK:
+        case color::COLOR::HOT_PINK:
             return color::RGB(255, 105, 180);
-        case color::INDIAN_RED:
+        case color::COLOR::INDIAN_RED:
             return color::RGB(205, 92, 92);
-        case color::INDIGO:
+        case color::COLOR::INDIGO:
             return color::RGB(75, 0, 130);
-        case color::IVORY:
+        case color::COLOR::IVORY:
             return color::RGB(255, 255, 240);
-        case color::KHAKI:
+        case color::COLOR::KHAKI:
             return color::RGB(240, 230, 140);
-        case color::LAVENDER:
+        case color::COLOR::LAVENDER:
             return color::RGB(230, 230, 250);
-        case color::LAVENDER_BLUSH:
+        case color::COLOR::LAVENDER_BLUSH:
             return color::RGB(255, 240, 245);
-        case color::LAWN_GREEN:
+        case color::COLOR::LAWN_GREEN:
             return color::RGB(124, 252, 0);
-        case color::LEMON_CHIFFON:
+        case color::COLOR::LEMON_CHIFFON:
             return color::RGB(255, 250, 205);
-        case color::LIGHT_BLUE:
+        case color::COLOR::LIGHT_BLUE:
             return color::RGB(173, 216, 230);
-        case color::LIGHT_CORAL:
+        case color::COLOR::LIGHT_CORAL:
             return color::RGB(240, 128, 128);
-        case color::LIGHT_CYAN:
+        case color::COLOR::LIGHT_CYAN:
             return color::RGB(224, 255, 255);
-        case color::LIGHT_GOLDEN_ROD_YELLOW:
+        case color::COLOR::LIGHT_GOLDEN_ROD_YELLOW:
             return color::RGB(250, 250, 210);
-        case color::LIGHT_GREY:
+        case color::COLOR::LIGHT_GREY:
             return color::RGB(211, 211, 211);
-        case color::LIGHT_GREEN:
+        case color::COLOR::LIGHT_GREEN:
             return color::RGB(144, 238, 144);
-        case color::LIGHT_PINK:
+        case color::COLOR::LIGHT_PINK:
             return color::RGB(255, 182, 193);
-        case color::LIGHT_SALMON:
+        case color::COLOR::LIGHT_SALMON:
             return color::RGB(255, 160, 122);
-        case color::LIGHT_SEA_GREEN:
+        case color::COLOR::LIGHT_SEA_GREEN:
             return color::RGB(32, 178, 170);
-        case color::LIGHT_SKY_BLUE:
+        case color::COLOR::LIGHT_SKY_BLUE:
             return color::RGB(135, 206, 250);
-        case color::LIGHT_SLATE_GREY:
+        case color::COLOR::LIGHT_SLATE_GREY:
             return color::RGB(119, 136, 153);
-        case color::LIGHT_STEEL_BLUE:
+        case color::COLOR::LIGHT_STEEL_BLUE:
             return color::RGB(176, 196, 222);
-        case color::LIGHT_YELLOW:
+        case color::COLOR::LIGHT_YELLOW:
             return color::RGB(255, 255, 224);
-        case color::LIME:
+        case color::COLOR::LIME:
             return color::RGB(0, 255, 0);
-        case color::LIME_GREEN:
+        case color::COLOR::LIME_GREEN:
             return color::RGB(50, 205, 50);
-        case color::LINEN:
+        case color::COLOR::LINEN:
             return color::RGB(250, 240, 230);
-        case color::MAGENTA:
+        case color::COLOR::MAGENTA:
             return color::RGB(255, 0, 255);
-        case color::MAROON:
+        case color::COLOR::MAROON:
             return color::RGB(128, 0, 0);
-        case color::MEDIUM_AQUA_MARINE:
+        case color::COLOR::MEDIUM_AQUA_MARINE:
             return color::RGB(102, 205, 170);
-        case color::MEDIUM_BLUE:
+        case color::COLOR::MEDIUM_BLUE:
             return color::RGB(0, 0, 205);
-        case color::MEDIUM_ORCHID:
+        case color::COLOR::MEDIUM_ORCHID:
             return color::RGB(186, 85, 211);
-        case color::MEDIUM_PURPLE:
+        case color::COLOR::MEDIUM_PURPLE:
             return color::RGB(147, 112, 219);
-        case color::MEDIUM_SEA_GREEN:
+        case color::COLOR::MEDIUM_SEA_GREEN:
             return color::RGB(60, 179, 113);
-        case color::MEDIUM_SLATE_BLUE:
+        case color::COLOR::MEDIUM_SLATE_BLUE:
             return color::RGB(123, 104, 238);
-        case color::MEDIUM_SPRING_GREEN:
+        case color::COLOR::MEDIUM_SPRING_GREEN:
             return color::RGB(0, 250, 154);
-        case color::MEDIUM_TURQUOISE:
+        case color::COLOR::MEDIUM_TURQUOISE:
             return color::RGB(72, 209, 204);
-        case color::MEDIUM_VIOLET_RED:
+        case color::COLOR::MEDIUM_VIOLET_RED:
             return color::RGB(199, 21, 133);
-        case color::MIDNIGHT_BLUE:
+        case color::COLOR::MIDNIGHT_BLUE:
             return color::RGB(25, 25, 112);
-        case color::MINT_CREAM:
+        case color::COLOR::MINT_CREAM:
             return color::RGB(245, 255, 250);
-        case color::MISTY_ROSE:
+        case color::COLOR::MISTY_ROSE:
             return color::RGB(255, 228, 225);
-        case color::MOCCASIN:
+        case color::COLOR::MOCCASIN:
             return color::RGB(255, 228, 181);
-        case color::NAVAJO_WHITE:
+        case color::COLOR::NAVAJO_WHITE:
             return color::RGB(255, 222, 173);
-        case color::NAVY:
+        case color::COLOR::NAVY:
             return color::RGB(0, 0, 128);
-        case color::OLD_LACE:
+        case color::COLOR::OLD_LACE:
             return color::RGB(253, 245, 230);
-        case color::OLIVE:
+        case color::COLOR::OLIVE:
             return color::RGB(128, 128, 0);
-        case color::OLIVE_DRAB:
+        case color::COLOR::OLIVE_DRAB:
             return color::RGB(107, 142, 35);
-        case color::ORANGE:
+        case color::COLOR::ORANGE:
             return color::RGB(255, 165, 0);
-        case color::ORANGE_RED:
+        case color::COLOR::ORANGE_RED:
             return color::RGB(255, 69, 0);
-        case color::ORCHID:
+        case color::COLOR::ORCHID:
             return color::RGB(218, 112, 214);
-        case color::PALE_GOLDEN_ROD:
+        case color::COLOR::PALE_GOLDEN_ROD:
             return color::RGB(238, 232, 170);
-        case color::PALE_GREEN:
+        case color::COLOR::PALE_GREEN:
             return color::RGB(152, 251, 152);
-        case color::PALE_TURQUOISE:
+        case color::COLOR::PALE_TURQUOISE:
             return color::RGB(175, 238, 238);
-        case color::PALE_VIOLET_RED:
+        case color::COLOR::PALE_VIOLET_RED:
             return color::RGB(219, 112, 147);
-        case color::PAPAYA_WHIP:
+        case color::COLOR::PAPAYA_WHIP:
             return color::RGB(255, 239, 213);
-        case color::PEACH_PUFF:
+        case color::COLOR::PEACH_PUFF:
             return color::RGB(255, 218, 185);
-        case color::PERU:
+        case color::COLOR::PERU:
             return color::RGB(205, 133, 63);
-        case color::PINK:
+        case color::COLOR::PINK:
             return color::RGB(255, 192, 203);
-        case color::PLUM:
+        case color::COLOR::PLUM:
             return color::RGB(221, 160, 221);
-        case color::POWDER_BLUE:
+        case color::COLOR::POWDER_BLUE:
             return color::RGB(176, 224, 230);
-        case color::PURPLE:
+        case color::COLOR::PURPLE:
             return color::RGB(128, 0, 128);
-        case color::REBECCA_PURPLE:
+        case color::COLOR::REBECCA_PURPLE:
             return color::RGB(102, 51, 153);
-        case color::RED:
+        case color::COLOR::RED:
             return color::RGB(255, 0, 0);
-        case color::ROSY_BROWN:
+        case color::COLOR::ROSY_BROWN:
             return color::RGB(188, 143, 143);
-        case color::ROYAL_BLUE:
+        case color::COLOR::ROYAL_BLUE:
             return color::RGB(65, 105, 225);
-        case color::SADDLE_BROWN:
+        case color::COLOR::SADDLE_BROWN:
             return color::RGB(139, 69, 19);
-        case color::SALMON:
+        case color::COLOR::SALMON:
             return color::RGB(250, 128, 114);
-        case color::SANDY_BROWN:
+        case color::COLOR::SANDY_BROWN:
             return color::RGB(244, 164, 96);
-        case color::SEA_GREEN:
+        case color::COLOR::SEA_GREEN:
             return color::RGB(46, 139, 87);
-        case color::SEA_SHELL:
+        case color::COLOR::SEA_SHELL:
             return color::RGB(255, 245, 238);
-        case color::SIENNA:
+        case color::COLOR::SIENNA:
             return color::RGB(160, 82, 45);
-        case color::SILVER:
+        case color::COLOR::SILVER:
             return color::RGB(192, 192, 192);
-        case color::SKY_BLUE:
+        case color::COLOR::SKY_BLUE:
             return color::RGB(135, 206, 235);
-        case color::SLATE_BLUE:
+        case color::COLOR::SLATE_BLUE:
             return color::RGB(106, 90, 205);
-        case color::SLATE_GREY:
+        case color::COLOR::SLATE_GREY:
             return color::RGB(112, 128, 144);
-        case color::SNOW:
+        case color::COLOR::SNOW:
             return color::RGB(255, 250, 250);
-        case color::SPRING_GREEN:
+        case color::COLOR::SPRING_GREEN:
             return color::RGB(0, 255, 127);
-        case color::STEEL_BLUE:
+        case color::COLOR::STEEL_BLUE:
             return color::RGB(70, 130, 180);
-        case color::TAN:
+        case color::COLOR::TAN:
             return color::RGB(210, 180, 140);
-        case color::TEAL:
+        case color::COLOR::TEAL:
             return color::RGB(0, 128, 128);
-        case color::THISTLE:
+        case color::COLOR::THISTLE:
             return color::RGB(216, 191, 216);
-        case color::TOMATO:
+        case color::COLOR::TOMATO:
             return color::RGB(255, 99, 71);
-        case color::TURQUOISE:
+        case color::COLOR::TURQUOISE:
             return color::RGB(64, 224, 208);
-        case color::VIOLET:
+        case color::COLOR::VIOLET:
             return color::RGB(238, 130, 238);
-        case color::WHEAT:
+        case color::COLOR::WHEAT:
             return color::RGB(245, 222, 179);
-        case color::WHITE:
+        case color::COLOR::WHITE:
             return color::RGB(255, 255, 255);
-        case color::WHITE_SMOKE:
+        case color::COLOR::WHITE_SMOKE:
             return color::RGB(245, 245, 245);
-        case color::YELLOW:
+        case color::COLOR::YELLOW:
             return color::RGB(255, 255, 0);
-        case color::YELLOW_GREEN:
+        case color::COLOR::YELLOW_GREEN:
             return color::RGB(154, 205, 50);
         default:
             return color::RGB(0, 0, 0);

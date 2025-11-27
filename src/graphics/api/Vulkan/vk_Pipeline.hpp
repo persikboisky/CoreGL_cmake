@@ -23,6 +23,7 @@ namespace core
 			struct PipelineVertexInputInfo* ptrPipelineVertexInputInfo = nullptr;
 
 			std::vector<class ShaderModule*> ptrShaderModules = {};
+			std::vector<DYNAMIC_STATE> dynamicState = {};
 
 			Rect2D scissor = {};
 			Viewport viewport = {};
@@ -46,6 +47,7 @@ namespace core
 		{
 			class Device* ptrDevice = nullptr;
 			std::vector<PipelinePushConstantInfo> vecPushConstantInfos = {};
+			std::vector<class DescriptorSetLayout*> vecPtrDescriptorSetsLayouts = {};
 		};
 
 		struct PipelineVertexAttributeDescription

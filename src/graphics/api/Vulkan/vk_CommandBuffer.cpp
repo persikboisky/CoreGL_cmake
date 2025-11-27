@@ -12,13 +12,14 @@
 #include "vk_VertexBuffer.hpp"
 #include "vk_ElementBuffer.hpp"
 #include "vk_Buffer.hpp"
+#include "vk_Descriptor.hpp"
 #include "../../../util/coders.hpp"
 
 namespace core
 {
 	namespace vulkan
 	{
-		static inline VkShaderStageFlags convertShaderStage(const SHADER_STAGES& stages)
+		static inline VkShaderStageFlags convertShaderStage(const SHADER_STAGES &stages)
 		{
 			switch (stages)
 			{
@@ -35,9 +36,8 @@ namespace core
 			}
 		}
 
-		CommandBuffer::CommandBuffer(Device& device, CommandPool& commandPool) :
-			ptrDevice(&device.device),
-			ptrCommandPool(&commandPool.commandPool)
+		CommandBuffer::CommandBuffer(Device &device, CommandPool &commandPool) : ptrDevice(&device.device),
+																				 ptrCommandPool(&commandPool.commandPool)
 		{
 			VkCommandBufferAllocateInfo commandBufferAllocateInfo = {};
 			commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -47,27 +47,27 @@ namespace core
 			commandBufferAllocateInfo.commandBufferCount = 1;
 
 			VkResult result = vkAllocateCommandBuffers(
-					device.device,
-					&commandBufferAllocateInfo,
-					&this->commandBuffer);
+				device.device,
+				&commandBufferAllocateInfo,
+				&this->commandBuffer);
 			coders::vulkanProcessingError(result);
 		}
 
 		CommandBuffer::~CommandBuffer()
 		{
 			vkFreeCommandBuffers(
-					*this->ptrDevice,
-					*this->ptrCommandPool,
-					1,
-					&this->commandBuffer);
+				*this->ptrDevice,
+				*this->ptrCommandPool,
+				1,
+				&this->commandBuffer);
 		}
 
-		CommandBuffer CommandBuffer::create(Device& device, CommandPool& commandPool)
+		CommandBuffer CommandBuffer::create(Device &device, CommandPool &commandPool)
 		{
 			return CommandBuffer(device, commandPool);
 		}
 
-		CommandBuffer* CommandBuffer::ptrCreate(Device& device, CommandPool& commandPool)
+		CommandBuffer *CommandBuffer::ptrCreate(Device &device, CommandPool &commandPool)
 		{
 			return new CommandBuffer(device, commandPool);
 		}
@@ -76,7 +76,7 @@ namespace core
 		{
 			VkCommandBufferBeginInfo beginInfo{};
 			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			beginInfo.flags = 0; // Опциональные флаги
+			beginInfo.flags = 0;				  // Опциональные флаги
 			beginInfo.pInheritanceInfo = nullptr; // Только для вторичных буферов
 
 			VkResult result = vkBeginCommandBuffer(commandBuffer, &beginInfo);
@@ -89,7 +89,7 @@ namespace core
 			coders::vulkanProcessingError(result);
 		}
 
-		void CommandBuffer::beginRenderPass(const BeginRenderPassInfo& info)
+		void CommandBuffer::beginRenderPass(const BeginRenderPassInfo &info)
 		{
 			VkRenderPassBeginInfo renderPassBeginInfo = {};
 			renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -131,94 +131,155 @@ namespace core
 			vkCmdEndRenderPass(this->commandBuffer);
 		}
 
-		void CommandBuffer::bindGraphicsPipeline(const GraphicsPipeline& pipeline)
+		void CommandBuffer::bindGraphicsPipeline(const GraphicsPipeline &pipeline)
 		{
 			vkCmdBindPipeline(this->commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
 		}
 
 		void CommandBuffer::draw(
-				uint32_t firstVertex,
-				uint32_t vertexCount,
-				uint32_t firstInstance,
-				uint32_t instanceCount)
+			uint32_t firstVertex,
+			uint32_t vertexCount,
+			uint32_t firstInstance,
+			uint32_t instanceCount)
 		{
 			vkCmdDraw(
-					this->commandBuffer,
-					vertexCount,
-					instanceCount,
-					firstVertex,
-					firstInstance);
+				this->commandBuffer,
+				vertexCount,
+				instanceCount,
+				firstVertex,
+				firstInstance);
 		}
 
-		void CommandBuffer::pushConstants(const PushConstantsInfo& info)
+		void CommandBuffer::pushConstants(const PushConstantsInfo &info)
 		{
 			vkCmdPushConstants(
-					this->commandBuffer,
-					info.ptrPipelineLayout->layout,
-					convertShaderStage(info.shaderStages),
-					info.offset,
-					info.size,
-					info.data);
+				this->commandBuffer,
+				info.ptrPipelineLayout->layout,
+				convertShaderStage(info.shaderStages),
+				info.offset,
+				info.size,
+				info.data);
 		}
 
 		void
 		CommandBuffer::bindVertexBuffers(
-				uint32_t firstBinding,
-				uint32_t bindingCount,
-				VertexBuffer* ptrBuffers,
-				uint64_t* ptrOffset)
+			uint32_t firstBinding,
+			uint32_t bindingCount,
+			VertexBuffer *ptrBuffers,
+			uint64_t *ptrOffset)
 		{
 			auto buffer = new VkBuffer[bindingCount];
-			for(uint32_t index = 0; index < bindingCount; index++)
+			for (uint32_t index = 0; index < bindingCount; index++)
 				buffer[index] = ptrBuffers[index].buffer->buffer;
 			vkCmdBindVertexBuffers(
-					this->commandBuffer,
-					firstBinding,
-					bindingCount,
-					buffer,
-					ptrOffset);
+				this->commandBuffer,
+				firstBinding,
+				bindingCount,
+				buffer,
+				ptrOffset);
 			delete[] buffer;
 		}
 
-		void CommandBuffer::bindElementBuffer(struct ElementBuffer& buffer)
+		void CommandBuffer::bindElementBuffer(struct ElementBuffer &buffer)
 		{
 			vkCmdBindIndexBuffer(
-					this->commandBuffer,
-					buffer.buffer,
-					0,
-					VK_INDEX_TYPE_UINT32);
+				this->commandBuffer,
+				buffer.buffer,
+				0,
+				VK_INDEX_TYPE_UINT32);
 		}
 
 		void CommandBuffer::drawElements(
-				uint32_t firstIndex,
-				uint32_t indexCount,
-				int32_t vertexOffset,
-				uint32_t firstInstance,
-				uint32_t instanceCount)
+			uint32_t firstIndex,
+			uint32_t indexCount,
+			int32_t vertexOffset,
+			uint32_t firstInstance,
+			uint32_t instanceCount)
 		{
 			vkCmdDrawIndexed(
-					this->commandBuffer,
-					indexCount,
-					instanceCount,
-					firstIndex,
-					vertexOffset,
-					firstInstance);
+				this->commandBuffer,
+				indexCount,
+				instanceCount,
+				firstIndex,
+				vertexOffset,
+				firstInstance);
 		}
 
-		void CommandBuffer::copyBuffer(Buffer* ptrSrcBuffer, Buffer* ptrDstBuffer, uint64_t size)
+		void CommandBuffer::copyBuffer(Buffer *ptrSrcBuffer, Buffer *ptrDstBuffer, uint64_t size)
 		{
 			VkBufferCopy copyRegion{};
 			copyRegion.srcOffset = 0;
 			copyRegion.dstOffset = 0;
 			copyRegion.size = size;
 			vkCmdCopyBuffer(
-					this->commandBuffer,
-					ptrSrcBuffer->buffer,
-					ptrDstBuffer->buffer,
-					1,
-					&copyRegion);
+				this->commandBuffer,
+				ptrSrcBuffer->buffer,
+				ptrDstBuffer->buffer,
+				1,
+				&copyRegion);
 		}
+
+		void CommandBuffer::bindDescriptorSet(DescriptorSet &set, PipelineLayout &layout)
+		{
+			vkCmdBindDescriptorSets(
+				this->commandBuffer,
+				VK_PIPELINE_BIND_POINT_GRAPHICS,
+				layout.layout,
+				0,
+				1,
+				&set.descriptorSet,
+				0,
+				nullptr);
+		}
+
+		void CommandBuffer::setCullMode(const TYPE_CULL_FACE &cullFace)
+		{
+			vkCmdSetCullMode(this->commandBuffer,
+							 (cullFace == CULL_NONE) ? VK_CULL_MODE_NONE : 
+							 (cullFace == CULL_BACK) ? VK_CULL_MODE_BACK_BIT : 
+							 (cullFace == CULL_FRONT) ? VK_CULL_MODE_FRONT_BIT : 
+							 VK_CULL_MODE_FRONT_AND_BACK);
+		}
+
+		void CommandBuffer::setScissor(const Rect2D& rect2d)
+		{
+			VkRect2D rect2D = {};
+			rect2D.offset.x = rect2d.x;
+			rect2D.offset.y = rect2d.y;
+			rect2D.extent.width = rect2d.width;
+			rect2D.extent.height = rect2d.height;
+			vkCmdSetScissor(this->commandBuffer, 0, 1, &rect2D);
+		}
+
+		void CommandBuffer::setPrimitiveTopology(const PRIMITIVE& primitive)
+		{
+			VkPrimitiveTopology topology;
+			switch (primitive)
+			{
+			case TRIANGLE_STRIP:
+				topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
+				break;
+			case TRIANGLE_LIST:
+				topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+				break;
+			case TRIANGLE_FAN:
+				topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN;
+				break;
+			case LINE_STRIP:
+				topology = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP;
+				break;
+			case POINT_LIST:
+				topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+				break;
+			default:
+				topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+				break;
+			}
+
+			vkCmdSetPrimitiveTopology(this->commandBuffer, topology);
+		}
+
 	} // vulkan
 } // core
 
-#endif //defined(CORE_INCLUDE_VULKAN)
+#endif // defined(CORE_INCLUDE_VULKAN)

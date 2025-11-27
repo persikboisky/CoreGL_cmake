@@ -21,6 +21,11 @@ namespace core
 			TRANSFER
 		};
 
+		struct DeviceExtensionsInfo
+		{
+
+		};
+
 		/// @brief информация для создания vulkan::Device
 		struct DeviceInfo
 		{
@@ -35,6 +40,8 @@ namespace core
 
 			/// @brief индекс выбранной видиокарты согласно списку vulkan::PhysicalDevices
 			unsigned int idPhDevice = 0;
+
+			DeviceExtensionsInfo* ptrDeviceExtensionsInfo = nullptr;
 		};
 
 		class Device
@@ -49,10 +56,13 @@ namespace core
 			friend class CommandPool;
 			friend class VertexBuffer;
 			friend class ShaderModule;
+			friend class DescriptorSet;
 			friend class ElementBuffer;
 			friend class CommandBuffer;
+			friend class DescriptorPool;
 			friend class PipelineLayout;
 			friend class GraphicsPipeline;
+			friend class DescriptorSetLayout;
 
 		private:
 			VkPhysicalDevice physicalDevice = {};

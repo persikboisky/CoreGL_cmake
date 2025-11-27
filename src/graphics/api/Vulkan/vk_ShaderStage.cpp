@@ -16,6 +16,23 @@ namespace core
 {
 	namespace vulkan
 	{
+		VkShaderStageFlags ShaderModule::convertStage(const SHADER_STAGES& stages)
+		{
+			return (stages == SHADER_STAGES::VERTEX_STAGE) ? VK_SHADER_STAGE_VERTEX_BIT :
+				   (stages == SHADER_STAGES::FRAGMENT_STAGE) ? VK_SHADER_STAGE_FRAGMENT_BIT :
+				   (stages == SHADER_STAGES::GEOMETRY_STAGE) ? VK_SHADER_STAGE_GEOMETRY_BIT :
+				   (stages == SHADER_STAGES::VERTEX_FRAGMENT_STAGES) ? VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT:
+				   (stages == SHADER_STAGES::VERTEX_GEOMETRY_FRAGMENT_STAGES) ? VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_GEOMETRY_BIT:
+				   VK_SHADER_STAGE_ALL;
+		}
+
+		VkShaderStageFlagBits ShaderModule::convertType(const TYPE_SHADER& type)
+		{
+			return (type == VERTEX) ? VK_SHADER_STAGE_VERTEX_BIT :
+				   (type == FRAGMENT) ? VK_SHADER_STAGE_FRAGMENT_BIT :
+				   VK_SHADER_STAGE_GEOMETRY_BIT;
+		}
+
 		ShaderModule::ShaderModule(const ShaderModuleInfo& info) : ptrDevice(&info.ptrDevice->device)
 		{
 			std::ifstream file(info.filename, std::ios::ate | std::ios::binary);
@@ -56,9 +73,7 @@ namespace core
 			}
 
 			this->stage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-			this->stage.stage = (info.type == VERTEX) ? VK_SHADER_STAGE_VERTEX_BIT :
-								(info.type == FRAGMENT) ? VK_SHADER_STAGE_FRAGMENT_BIT :
-								VK_SHADER_STAGE_GEOMETRY_BIT;
+			this->stage.stage = convertType(info.type);
 			this->stage.module = this->shaderModule;
 			this->stage.flags = 0;
 			this->stage.pNext = nullptr;
@@ -80,6 +95,7 @@ namespace core
 		{
 			vkDestroyShaderModule(*this->ptrDevice, this->shaderModule, nullptr);
 		}
+
 	} // vulkan
 } // core
 

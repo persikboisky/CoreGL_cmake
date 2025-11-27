@@ -8,11 +8,10 @@
 #include <GLFW/glfw3.h>
 #include <cstring>
 
-
 bool Key[MAX_KEY_CODE];
 bool MouseKey[MAX_MOUSE_KEY_CODE];
 
-static inline void setCallbackKey(GLFWwindow* window, int key, int scancode, int action, int mods)
+static inline void setCallbackKey(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
     if (action == GLFW_PRESS)
     {
@@ -24,7 +23,7 @@ static inline void setCallbackKey(GLFWwindow* window, int key, int scancode, int
     }
 }
 
-static inline void setCallbackMouseKey(GLFWwindow* window, int key, int action, int mods)
+static inline void setCallbackMouseKey(GLFWwindow *window, int key, int action, int mods)
 {
     if (action == GLFW_PRESS)
     {
@@ -36,18 +35,32 @@ static inline void setCallbackMouseKey(GLFWwindow* window, int key, int action, 
     }
 }
 
-core::Event::Event(core::Window &window) : window(window.getWindowOBJ()), key(new bool[MAX_KEY_CODE]),
-    saveKey(new bool[MAX_KEY_CODE]), mouseKey(new bool[MAX_MOUSE_KEY_CODE]), mouseSaveKey(new bool[MAX_MOUSE_KEY_CODE])
+core::Event::Event(core::Window &window) : 
+    window(window.getWindowOBJ()), 
+    key(new bool[MAX_KEY_CODE]),
+    saveKey(new bool[MAX_KEY_CODE]), 
+    mouseKey(new bool[MAX_MOUSE_KEY_CODE]), 
+    mouseSaveKey(new bool[MAX_MOUSE_KEY_CODE])
 {
     memset(this->saveKey, false, MAX_KEY_CODE);
+    memset(this->mouseKey, false, MAX_MOUSE_KEY_CODE);
+    memset(key, false, MAX_KEY_CODE);
+    memset(mouseKey, false, MAX_MOUSE_KEY_CODE);
     glfwSetKeyCallback(window.getWindowOBJ(), setCallbackKey);
     glfwSetMouseButtonCallback(window.getWindowOBJ(), setCallbackMouseKey);
 }
 
-core::Event::Event(GLFWwindow &addrWindow) : window(&addrWindow), key(new bool[MAX_KEY_CODE]),
-    saveKey(new bool[MAX_KEY_CODE]), mouseKey(new bool[MAX_MOUSE_KEY_CODE]), mouseSaveKey(new bool[MAX_MOUSE_KEY_CODE])
+core::Event::Event(GLFWwindow &addrWindow) : 
+    window(&addrWindow), 
+    key(new bool[MAX_KEY_CODE]),                                 
+    saveKey(new bool[MAX_KEY_CODE]), 
+    mouseKey(new bool[MAX_MOUSE_KEY_CODE]), 
+    mouseSaveKey(new bool[MAX_MOUSE_KEY_CODE])
 {
     memset(this->saveKey, false, MAX_KEY_CODE);
+    memset(this->mouseKey, false, MAX_MOUSE_KEY_CODE);
+    memset(key, false, MAX_KEY_CODE);
+    memset(mouseKey, false, MAX_MOUSE_KEY_CODE);
     glfwSetKeyCallback(window, setCallbackKey);
     glfwSetMouseButtonCallback(window, setCallbackMouseKey);
 }
@@ -91,10 +104,11 @@ bool core::Event::stateKey(int key)
         throw core::coders(4, "Function: core::Event::stateKey(int key)");
     }
 
-    else return this->key[key];
+    else
+        return this->key[key];
 }
 
-bool core::Event::stateKey(const core::KEY_CODE& key)
+bool core::Event::stateKey(const core::KEY_CODE &key)
 {
     return this->stateKey(convertKeyCode(key));
 }
@@ -108,7 +122,7 @@ bool core::Event::downKey(int key)
     return false;
 }
 
-bool core::Event::downKey(const core::KEY_CODE& key)
+bool core::Event::downKey(const core::KEY_CODE &key)
 {
     return this->downKey(convertKeyCode(key));
 }
@@ -122,7 +136,7 @@ bool core::Event::upKey(int key)
     return false;
 }
 
-bool core::Event::upKey(const core::KEY_CODE& key)
+bool core::Event::upKey(const core::KEY_CODE &key)
 {
     return this->upKey(convertKeyCode(key));
 }
@@ -134,10 +148,11 @@ bool core::Event::stateMouseKey(int key)
         throw core::coders(4, "Function: core::Event::stateMouseKey(int key)");
     }
 
-    else return this->mouseKey[key];
+    else
+        return this->mouseKey[key];
 }
 
-bool core::Event::stateMouseKey(const core::MOUSE_KEY_CODE& key)
+bool core::Event::stateMouseKey(const core::MOUSE_KEY_CODE &key)
 {
     return stateMouseKey(convertMouseKeyCode(key));
 }
@@ -151,7 +166,7 @@ bool core::Event::downMouseKey(int key)
     return false;
 }
 
-bool core::Event::downMouseKey(const core::MOUSE_KEY_CODE& key)
+bool core::Event::downMouseKey(const core::MOUSE_KEY_CODE &key)
 {
     return downMouseKey(convertMouseKeyCode(key));
 }
@@ -165,8 +180,7 @@ bool core::Event::upMouseKey(int key)
     return false;
 }
 
-bool core::Event::upMouseKey(const core::MOUSE_KEY_CODE& key)
+bool core::Event::upMouseKey(const core::MOUSE_KEY_CODE &key)
 {
     return upMouseKey(convertMouseKeyCode(key));
 }
-

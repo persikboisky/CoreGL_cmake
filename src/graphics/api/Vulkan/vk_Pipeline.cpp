@@ -32,6 +32,7 @@
 #include "vk_ShaderStage.hpp"
 #include "vk_RenderPass.hpp"
 #include "vk_Device.hpp"
+#include "vk_Descriptor.hpp"
 #include "../../../util/coders.hpp"
 #include <vector>
 
@@ -39,23 +40,6 @@ namespace core
 {
 	namespace vulkan
 	{
-		static inline VkShaderStageFlags convertShaderStage(const SHADER_STAGES& stages)
-		{
-			switch (stages)
-			{
-			case GEOMETRY_STAGE:
-				return VK_SHADER_STAGE_GEOMETRY_BIT;
-			case FRAGMENT_STAGE:
-				return VK_SHADER_STAGE_FRAGMENT_BIT;
-			case VERTEX_STAGE:
-				return VK_SHADER_STAGE_VERTEX_BIT;
-			case VERTEX_FRAGMENT_STAGES:
-				return VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
-			default:
-				return VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_GEOMETRY_BIT;
-			}
-		}
-
 		PipelineLayout::PipelineLayout(const PipelineLayoutInfo& info) : ptrDevice(&info.ptrDevice->device)
 		{
 			uint32_t index = 0;
@@ -64,15 +48,21 @@ namespace core
 			{
 				pushConstantRanges[index].size = pushConstInfo.size;
 				pushConstantRanges[index].offset = pushConstInfo.offset;
-				pushConstantRanges[index].stageFlags = convertShaderStage(pushConstInfo.shaderStages);
+				pushConstantRanges[index].stageFlags = ShaderModule::convertStage(pushConstInfo.shaderStages);
 				index++;
+			}
+
+			auto setLayouts = new VkDescriptorSetLayout[info.vecPtrDescriptorSetsLayouts.size()];
+			for (index = 0; index < info.vecPtrDescriptorSetsLayouts.size(); index++)
+			{
+				setLayouts[index] = info.vecPtrDescriptorSetsLayouts[index]->layout;
 			}
 
 			VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
 			pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 			pipelineLayoutCreateInfo.pNext = nullptr;
-			pipelineLayoutCreateInfo.pSetLayouts = nullptr;
-			pipelineLayoutCreateInfo.setLayoutCount = 0;
+			pipelineLayoutCreateInfo.pSetLayouts = setLayouts;
+			pipelineLayoutCreateInfo.setLayoutCount = static_cast<uint32_t>(info.vecPtrDescriptorSetsLayouts.size());
 			pipelineLayoutCreateInfo.pPushConstantRanges = pushConstantRanges;
 			pipelineLayoutCreateInfo.pushConstantRangeCount = static_cast<uint32_t>(info.vecPushConstantInfos.size());
 			VkResult result = vkCreatePipelineLayout(
@@ -83,6 +73,7 @@ namespace core
 			coders::vulkanProcessingError(result);
 
 			delete[] pushConstantRanges;
+			delete[] setLayouts;
 		}
 
 		PipelineLayout::~PipelineLayout()
@@ -241,10 +232,19 @@ namespace core
 			depthStencil.depthBoundsTestEnable = VK_FALSE;
 			depthStencil.stencilTestEnable = VK_FALSE;
 
+			auto ptrDynamicStates = new VkDynamicState[info.dynamicState.size()];
+			for (size_t index = 0; index < info.dynamicState.size(); index++)
+			{
+				ptrDynamicStates[index] = (info.dynamicState[index] == DYNAMIC_STATE::CULL_MODE) ?
+					VK_DYNAMIC_STATE_CULL_MODE : (info.dynamicState[index] == DYNAMIC_STATE::SCISSOR) ?
+					VK_DYNAMIC_STATE_SCISSOR : VK_DYNAMIC_STATE_PRIMITIVE_TOPOLOGY;
+			}
+
 			VkPipelineDynamicStateCreateInfo dynamicState = {};
 			dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-			dynamicState.dynamicStateCount = 0;
-			dynamicState.pDynamicStates = nullptr;
+			dynamicState.dynamicStateCount = static_cast<uint32_t>(info.dynamicState.size());
+			dynamicState.pDynamicStates = ptrDynamicStates;
+			// VK_ 
 
 			VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
 			pipelineCreateInfo.pNext = VK_NULL_HANDLE;
@@ -276,6 +276,7 @@ namespace core
 					&this->pipeline);
 			coders::vulkanProcessingError(result);
 
+			delete[] ptrDynamicStates;
 			delete[] ptrBindingDescription;
 			delete[] ptrAttributeDescription;
 		}

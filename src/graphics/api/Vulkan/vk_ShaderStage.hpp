@@ -26,12 +26,17 @@ namespace core
 		class ShaderModule
 		{
 		protected:
+			friend class PipelineLayout;
 			friend class GraphicsPipeline;
+			friend class DescriptorSetLayout;
 
 		private:
 			VkDevice *ptrDevice = nullptr;
 			VkShaderModule shaderModule = {};
 			VkPipelineShaderStageCreateInfo stage = {};
+
+			static VkShaderStageFlags convertStage(const SHADER_STAGES& stages);
+			static VkShaderStageFlagBits convertType(const TYPE_SHADER& type);
 
 			ShaderModule(const ShaderModuleInfo& info);
 

@@ -7,6 +7,7 @@
 
 #include "../../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
+#include "../../../util/types.hpp"
 #include <vulkan/vulkan.h>
 
 namespace core
@@ -23,12 +24,6 @@ namespace core
 			TRANSFER_DST,
 			INDIRECT,
 			VERTEX_TRANSFER_DST
-		};
-
-		enum class TYPE_MEMORY : int
-		{
-			DEVICE_LOCAL,
-			HOST
 		};
 
 		struct BufferCreateInfo
@@ -48,11 +43,13 @@ namespace core
 		protected:
 			friend class VertexBuffer;
 			friend class CommandBuffer;
+			friend class DescriptorSet;
 
 		private:
 			VkDevice* ptrDevice = nullptr;
 			VkBuffer buffer = nullptr;
 			VkDeviceMemory memory = nullptr;
+			uint64_t size = 0;
 
 			Buffer(const BufferCreateInfo& info);
 
@@ -61,6 +58,10 @@ namespace core
 			static Buffer *ptrCreate(const BufferCreateInfo& info);
 
 			~Buffer();
+
+			void copy(void* data, uint64_t size);
+
+			uint64_t getSzie() const;
 		};
 	} // vulkan
 } // core

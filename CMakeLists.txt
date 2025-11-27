@@ -37,6 +37,8 @@ set(CoreGL_source
         src/graphics/api/Vulkan/vk_VertexBuffer.cpp
         src/graphics/api/Vulkan/vk_ElementBuffer.cpp
         src/graphics/api/Vulkan/vk_Buffer.cpp
+        src/graphics/api/Vulkan/vk_Descriptor.cpp
+        src/graphics/api/Vulkan/vk_Image.cpp
         src/file/code.cpp
         src/file/mtl.cpp
         src/file/obj.cpp
@@ -88,13 +90,11 @@ target_link_libraries(${PROJECT_NAME} OpenAL)
 target_include_directories(${PROJECT_NAME} PRIVATE package/openal-soft/include)
 
 # link vulkan
+set(VULKAN_SDK $ENV{VULKAN_SDK} CACHE PATH "Path to the Vulkan SDK")
+message(STATUS "VULKAN_SDK: ${VULKAN_SDK}")
 find_package(Vulkan REQUIRED)
-target_link_libraries(${PROJECT_NAME} ${Vulkan_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} Vulkan::Vulkan)
 target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
-
-## link gslang
-#find_package(Shaderc REQUIRED)
-#target_link_libraries(${PROJECT_NAME} shaderc)
 
 #link assimp
 set(BUILD_SHARED_LIBS OFF)
@@ -103,9 +103,4 @@ set(DASSIMP_BUILD_ZLIB ON)
 add_subdirectory(package/assimp)
 target_link_libraries(${PROJECT_NAME} assimp)
 target_include_directories(${PROJECT_NAME} PRIVATE package/assimp/include)
-
-# link zlib
-#add_subdirectory(package/zlib)
-#target_link_libraries(${PROJECT_NAME} ZLIB::ZLIBSTATIC)
-#target_include_directories(${PROJECT_NAME} PRIVATE package/zlib)
 

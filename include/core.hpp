@@ -38,6 +38,8 @@
 #include "../src/graphics/api/Vulkan/vk_VertexBuffer.hpp"
 #include "../src/graphics/api/Vulkan/vk_ElementBuffer.hpp"
 #include "../src/graphics/api/Vulkan/vk_Buffer.hpp"
+#include "../src/graphics/api/Vulkan/vk_Descriptor.hpp"
+#include "../src/graphics/api/Vulkan/vk_Image.hpp"
 #include "../src/file/image.hpp"
 #include "../src/file/code.hpp"
 #include "../src/file/mtl.hpp"

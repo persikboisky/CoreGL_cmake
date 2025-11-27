@@ -1,0 +1,177 @@
+//
+// Created by kisly on 23.11.2025.
+//
+
+#include "vk_Descriptor.hpp"
+#if defined(CORE_INCLUDE_VULKAN)
+#include "vk_Device.hpp"
+#include "vk_ShaderStage.hpp"
+#include "vk_Buffer.hpp"
+#include "../../../util/coders.hpp"
+
+namespace core
+{
+	namespace vulkan
+	{
+		static inline VkDescriptorType convertDescriptorType(const DESCRIPTOR_TYPE& type)
+		{
+			return (type == DESCRIPTOR_TYPE::UNIFORM_BUFFER) ?
+				   VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER :
+				   VK_DESCRIPTOR_TYPE_SAMPLER;
+		}
+
+		DescriptorPool::DescriptorPool(const DescriptorPoolCreateInfo& info) : prtDevice(&info.ptrDevice->device)
+		{
+			auto pPoolSizes = new VkDescriptorPoolSize[info.descriptorPoolSize.size()];
+			for (size_t index = 0; index < info.descriptorPoolSize.size(); index++)
+			{
+				pPoolSizes[index].descriptorCount = info.descriptorPoolSize[index].count * info.maxSets;
+				pPoolSizes[index].type = convertDescriptorType(info.descriptorPoolSize[index].type);
+			}
+
+			VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = {};
+			descriptorPoolCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+			descriptorPoolCreateInfo.poolSizeCount = static_cast<uint32_t>(info.descriptorPoolSize.size());
+			descriptorPoolCreateInfo.pPoolSizes = pPoolSizes;
+			descriptorPoolCreateInfo.maxSets = info.maxSets;
+			descriptorPoolCreateInfo.pNext = nullptr;
+			descriptorPoolCreateInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+
+			VkResult result = vkCreateDescriptorPool(
+					info.ptrDevice->device,
+					&descriptorPoolCreateInfo,
+					nullptr,
+					&this->descriptorPool);
+			coders::vulkanProcessingError(result);
+
+			delete[] pPoolSizes;
+		}
+
+		DescriptorPool DescriptorPool::create(const DescriptorPoolCreateInfo& info)
+		{
+			return DescriptorPool(info);
+		}
+
+		DescriptorPool* DescriptorPool::ptrCreate(const DescriptorPoolCreateInfo& info)
+		{
+			return new DescriptorPool(info);
+		}
+
+		DescriptorPool::~DescriptorPool()
+		{
+			vkDestroyDescriptorPool(*this->prtDevice, this->descriptorPool, nullptr);
+		}
+
+		DescriptorSetLayout::DescriptorSetLayout(const DescriptorSetLayoutCreateInfo& info) : prtDevice(&info.ptrDevice->device)
+		{
+			auto bindings = new VkDescriptorSetLayoutBinding[info.layoutBinding.size()];
+			for (size_t index = 0; index < info.layoutBinding.size(); index++)
+			{
+				bindings[index].binding = info.layoutBinding[index].binding;
+				bindings[index].descriptorCount = info.layoutBinding[index].count;
+				bindings[index].stageFlags = ShaderModule::convertStage(info.layoutBinding[index].shaderStages);
+				bindings[index].descriptorType = convertDescriptorType(info.layoutBinding[index].type);
+			}
+
+			VkDescriptorSetLayoutCreateInfo layoutInfo = {};
+			layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+			layoutInfo.bindingCount = static_cast<uint32_t>(info.layoutBinding.size());
+			layoutInfo.pBindings = bindings;
+			layoutInfo.flags = 0;
+			layoutInfo.pNext = nullptr;
+
+			VkResult result = vkCreateDescriptorSetLayout(
+					info.ptrDevice->device,
+					&layoutInfo,
+					nullptr,
+					&this->layout);
+			coders::vulkanProcessingError(result);
+
+			delete[] bindings;
+		}
+
+		DescriptorSetLayout::~DescriptorSetLayout()
+		{
+			vkDestroyDescriptorSetLayout(*this->prtDevice, this->layout, nullptr);
+		}
+
+		DescriptorSetLayout DescriptorSetLayout::create(const DescriptorSetLayoutCreateInfo& info)
+		{
+			return DescriptorSetLayout(info);
+		}
+
+		DescriptorSetLayout* DescriptorSetLayout::ptrCreate(const DescriptorSetLayoutCreateInfo& info)
+		{
+			return new DescriptorSetLayout(info);
+		}
+
+		DescriptorSet::DescriptorSet(const DescriptorSetCreateInfo& info) :
+			ptrDevice(&info.ptrDevice->device),
+			ptrDescriptorPool(&info.ptrDescriptorPool->descriptorPool)
+		{
+			VkDescriptorSetAllocateInfo allocInfo = {};
+			allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+			allocInfo.descriptorPool = info.ptrDescriptorPool->descriptorPool;
+			allocInfo.descriptorSetCount = 1;
+			allocInfo.pSetLayouts = &info.ptrLayout->layout;
+
+			VkResult result = vkAllocateDescriptorSets(
+					info.ptrDevice->device,
+					&allocInfo,
+					&this->descriptorSet);
+			coders::vulkanProcessingError(result);
+		}
+
+		DescriptorSet::~DescriptorSet()
+		{
+			vkFreeDescriptorSets(
+					*this->ptrDevice,
+					*this->ptrDescriptorPool,
+					1,
+					&this->descriptorSet);
+		}
+
+		DescriptorSet DescriptorSet::create(const DescriptorSetCreateInfo& info)
+		{
+			return DescriptorSet(info);
+		}
+
+		DescriptorSet* DescriptorSet::ptrCreate(const DescriptorSetCreateInfo& info)
+		{
+			return new DescriptorSet(info);
+		}
+
+		void DescriptorSet::update(const DescriptorSetUpdateInfo& info)
+		{
+			if (info.ptrBuffer != nullptr)
+			{
+				VkDescriptorBufferInfo bufferInfo = {};
+				bufferInfo.buffer = info.ptrBuffer->buffer;
+				bufferInfo.offset = info.offset;
+				bufferInfo.range = info.ptrBuffer->size;
+
+				VkWriteDescriptorSet descriptorWrite = {};
+				descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+				descriptorWrite.dstSet = this->descriptorSet;
+				descriptorWrite.dstBinding = 0;
+				descriptorWrite.dstArrayElement = 0;
+				descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+				descriptorWrite.descriptorCount = 1;
+				descriptorWrite.pBufferInfo = &bufferInfo;
+				vkUpdateDescriptorSets(
+						*this->ptrDevice,
+						1,
+						&descriptorWrite,
+						0,
+						nullptr
+				);
+			}
+			else
+			{
+
+			}
+		}
+	} // vulkan
+} // core
+
+#endif //defined(CORE_INCLUDE_VULKAN)

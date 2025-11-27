@@ -34,7 +34,7 @@ namespace core
 			}
 		}
 
-		Buffer::Buffer(const BufferCreateInfo& info) : ptrDevice(&info.ptrDevice->device)
+		Buffer::Buffer(const BufferCreateInfo& info) : ptrDevice(&info.ptrDevice->device), size(info.size)
 		{
 			VkBufferCreateInfo bufferInfo = {};
 			bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -74,12 +74,9 @@ namespace core
 			coders::vulkanProcessingError(result);
 			vkBindBufferMemory(info.ptrDevice->device, this->buffer, this->memory, 0);
 
-			if (info.typeMemory != TYPE_MEMORY::DEVICE_LOCAL)
+			if (info.typeMemory != TYPE_MEMORY::DEVICE_LOCAL && info.data != nullptr)
 			{
-				void* data;
-				vkMapMemory(info.ptrDevice->device, this->memory, 0, info.size, 0, &data);
-				memcpy(data, info.data, info.size);
-				vkUnmapMemory(info.ptrDevice->device, this->memory);
+				this->copy(info.data, info.size);
 			}
 		}
 
@@ -97,6 +94,19 @@ namespace core
 		{
 			vkFreeMemory(*this->ptrDevice, this->memory, nullptr);
 			vkDestroyBuffer(*this->ptrDevice, this->buffer, nullptr);
+		}
+
+		void Buffer::copy(void* data, uint64_t size)
+		{
+			void* ptrMemory;
+			vkMapMemory(*this->ptrDevice, this->memory, 0, size, 0, &ptrMemory);
+			memcpy(ptrMemory, data, size);
+			vkUnmapMemory(*this->ptrDevice, this->memory);
+		}
+
+		uint64_t Buffer::getSzie() const
+		{
+			return this->size;
 		}
 	} // vulkan
 } // core

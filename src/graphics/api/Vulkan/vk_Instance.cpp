@@ -35,6 +35,7 @@ namespace core::vulkan
 		appInfo.pNext = nullptr;
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 
+		// nameValidationLayer.push_back("VK_EXT_extended_dynamic_state");
 		VkInstanceCreateInfo instanceCreateInfo = {};
 		instanceCreateInfo.ppEnabledExtensionNames = glfwGetRequiredInstanceExtensions(
 			&instanceCreateInfo.enabledExtensionCount

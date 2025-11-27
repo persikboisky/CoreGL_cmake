@@ -20,9 +20,9 @@
 #include <vulkan/vulkan.h>
 #endif // defined(CORE_INCLUDE_VULKAN)
 
-constexpr int HEIGHT_HEAD_WINDOW = 30;
+#define HEIGHT_HEAD_WINDOW 30
 
-bool core::Window::flagGladInit = true;
+bool core::Window::flagGladInit = false;
 
 void core::Window::createWindow(int width, int height, const char *title, bool resizable, bool vkAPI, GLFWmonitor *ptrMon)
 {
@@ -33,12 +33,12 @@ void core::Window::createWindow(int width, int height, const char *title, bool r
 #endif // defined(CORE_INCLUDE_VULKAN)
     {
         glfwWindowHint(GLFW_OPENGL_API, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_RED_BITS, 8);      // Биты на красный канал
-        glfwWindowHint(GLFW_GREEN_BITS, 8);    // Биты на зеленый канал
-        glfwWindowHint(GLFW_BLUE_BITS, 8);     // Биты на синий канал
-        glfwWindowHint(GLFW_ALPHA_BITS, 8);    // Биты на альфа-канал
-        glfwWindowHint(GLFW_DEPTH_BITS, 24);   // Биты буфера глубины
-        glfwWindowHint(GLFW_STENCIL_BITS, 8);  // Биты буфера трафарета
+        glfwWindowHint(GLFW_RED_BITS, 8);     // Биты на красный канал
+        glfwWindowHint(GLFW_GREEN_BITS, 8);   // Биты на зеленый канал
+        glfwWindowHint(GLFW_BLUE_BITS, 8);    // Биты на синий канал
+        glfwWindowHint(GLFW_ALPHA_BITS, 8);   // Биты на альфа-канал
+        glfwWindowHint(GLFW_DEPTH_BITS, 24);  // Биты буфера глубины
+        glfwWindowHint(GLFW_STENCIL_BITS, 8); // Биты буфера трафарета
     }
 
     glfwWindowHint(GLFW_RESIZABLE, resizable);
@@ -68,11 +68,10 @@ void core::Window::Init()
     this->cursor = new Cursor(*this->window);
 }
 
-core::Window::Window(const core::WindowInfo &winInfo) :
-    window(nullptr), event(nullptr), width(winInfo.width), height(winInfo.height),
-    posX(winInfo.posX), posY(winInfo.posY), saveWidth(winInfo.width), saveHeight(winInfo.height),
-    cursor(nullptr), monitor(new Monitor()), flagFullScreen(winInfo.fullScreen),
-    time(glfwGetTime()), deltaTime(glfwGetTime())
+core::Window::Window(const core::WindowInfo &winInfo) : window(nullptr), event(nullptr), width(winInfo.width), height(winInfo.height),
+                                                        posX(winInfo.posX), posY(winInfo.posY), saveWidth(winInfo.width), saveHeight(winInfo.height),
+                                                        cursor(nullptr), monitor(new Monitor()), flagFullScreen(winInfo.fullScreen),
+                                                        time(glfwGetTime()), deltaTime(glfwGetTime())
 {
 #if defined(CORE_INCLUDE_VULKAN)
     this->VulknanAPI = winInfo.VulkanAPI;
@@ -116,10 +115,9 @@ core::Window::Window(const core::WindowInfo &winInfo) :
     }
 }
 
-core::Window::Window(int width, int height, const char *title, bool resizable, bool vkAPI) :
-    window(nullptr), cursor(nullptr), VSfps(true), monitor(nullptr),
-    event(nullptr), width(width), height(height), posX(0), posY(0), saveWidth(width), saveHeight(height),
-    time(glfwGetTime()), deltaTime(glfwGetTime())
+core::Window::Window(int width, int height, const char *title, bool resizable, bool vkAPI) : window(nullptr), cursor(nullptr), VSfps(true), monitor(nullptr),
+                                                                                             event(nullptr), width(width), height(height), posX(0), posY(0), saveWidth(width), saveHeight(height),
+                                                                                             time(glfwGetTime()), deltaTime(glfwGetTime())
 {
     GLFWmonitor *ptrMon = nullptr;
     if (!this->VulknanAPI)
@@ -175,12 +173,13 @@ GLFWwindow *core::Window::getWindowOBJ()
 bool core::Window::isContext()
 {
 #if defined(CORE_INCLUDE_VULKAN)
-    if (this->VulknanAPI) return false;
-#endif //defined(CORE_INCLUDE_VULKAN)
+    if (this->VulknanAPI)
+        return false;
+#endif // defined(CORE_INCLUDE_VULKAN)
 
     if (this->window == glfwGetCurrentContext())
     {
-            return true;
+        return true;
     }
 
     return false;
@@ -220,7 +219,8 @@ static inline void glInit()
         glGetIntegerv(GL_MINOR_VERSION, &minor);
         std::cout << "Core Version: " << major << "." << minor << std::endl;
         core::console::printTime();
-        if (glewIsSupported("GL_VERSION_4_5")) {
+        if (glewIsSupported("GL_VERSION_4_5"))
+        {
             std::cout << "OpenGL 4.5 is supported!" << std::endl;
         }
         core::console::printTime();
@@ -261,15 +261,6 @@ void core::Window::swapBuffers()
     {
 #endif // defined(CORE_INCLUDE_VULKAN)
         (this->VSfps) ? glfwSwapInterval(1) : glfwSwapInterval(0);
-
-        glfwSwapBuffers(this->window);
-        this->getSizeWindow();
-
-        if (!this->flagFullScreen)
-            glfwGetWindowPos(this->window, &this->posX, &this->posY);
-
-        this->deltaTime = glfwGetTime() - this->time;
-        this->time = glfwGetTime();
 #if defined(CORE_INCLUDE_VULKAN)
     }
 #endif // defined(CORE_INCLUDE_VULKAN)
@@ -327,55 +318,55 @@ void core::Window::setPos(const POSITION &pos)
 {
     switch (pos)
     {
-    case CENTER:
+    case POSITION::CENTER:
         this->setPos(
             this->monitor->getSize().width / 2 - this->width / 2,
             this->monitor->getSize().height / 2 - this->height / 2 + HEIGHT_HEAD_WINDOW);
         break;
 
-    case UP_CENTER_SIDE:
+    case POSITION::UP_CENTER_SIDE:
         this->setPos(
             this->monitor->getSize().width / 2 - this->width / 2,
             HEIGHT_HEAD_WINDOW);
         break;
 
-    case DOWN_CENTER_SIDE:
+    case POSITION::DOWN_CENTER_SIDE:
         this->setPos(
             this->monitor->getSize().width / 2 - this->width / 2,
             this->monitor->getSize().height - HEIGHT_HEAD_WINDOW - this->height);
         break;
 
-    case LEFT_UP_CORNER:
+    case POSITION::LEFT_UP_CORNER:
         this->setPos(
             0,
             HEIGHT_HEAD_WINDOW);
         break;
 
-    case LEFT_CENTER_SIDE:
+    case POSITION::LEFT_CENTER_SIDE:
         this->setPos(
             0,
             this->monitor->getSize().height / 2 - this->height / 2 + HEIGHT_HEAD_WINDOW);
         break;
 
-    case LEFT_DOWN_CORNER:
+    case POSITION::LEFT_DOWN_CORNER:
         this->setPos(
             0,
             this->monitor->getSize().height - HEIGHT_HEAD_WINDOW - this->height);
         break;
 
-    case RIGHT_UP_CORNER:
+    case POSITION::RIGHT_UP_CORNER:
         this->setPos(
             this->monitor->getSize().width - this->width,
             HEIGHT_HEAD_WINDOW);
         break;
 
-    case RIGHT_CENTER_SIDE:
+    case POSITION::RIGHT_CENTER_SIDE:
         this->setPos(
             this->monitor->getSize().width - this->width,
             this->monitor->getSize().height / 2 - this->height / 2 + HEIGHT_HEAD_WINDOW);
         break;
 
-    case RIGHT_DOWN_CORNER:
+    case POSITION::RIGHT_DOWN_CORNER:
         this->setPos(
             this->monitor->getSize().width - this->width,
             this->monitor->getSize().height - HEIGHT_HEAD_WINDOW - this->height);
@@ -428,4 +419,18 @@ double core::Window::getDeltaTime() const
 void core::Window::close()
 {
     glfwSetWindowShouldClose(this->window, true);
+}
+
+void core::Window::update()
+{
+    glfwSwapBuffers(this->window);
+    this->getSizeWindow();
+
+    if (!this->flagFullScreen)
+        glfwGetWindowPos(this->window, &this->posX, &this->posY);
+
+    this->deltaTime = glfwGetTime() - this->time;
+    this->time = glfwGetTime();
+
+    this->event->update();
 }

@@ -13,7 +13,8 @@ namespace core
         class Vector3;
         class Vector4;
         class Matrix4;
-
+        
+        /// @brief класс двух мерного вектора
         class Vector2 final
         {
         public:

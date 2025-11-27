@@ -195,6 +195,7 @@ namespace core
 
 			std::array<const char*, 1> enabledExtensionNames = {
 					VK_KHR_SWAPCHAIN_EXTENSION_NAME
+//					"VK_EXT_extended_dynamic_state"
 			};
 
 			VkDeviceQueueCreateInfo deviceQueueCreateInfo = {};
