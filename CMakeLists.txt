@@ -7,7 +7,6 @@ set(CoreGL_source
         src/core.cpp
         src/util/coders.cpp
         src/util/console.cpp
-        src/util/types.cpp
         src/util/vector.cpp
         src/util/time.cpp
         src/window/Window.cpp
@@ -40,11 +39,8 @@ set(CoreGL_source
         src/graphics/api/Vulkan/vk_Descriptor.cpp
         src/graphics/api/Vulkan/vk_Image.cpp
         src/file/code.cpp
-        src/file/mtl.cpp
-        src/file/obj.cpp
         src/file/image.cpp
         src/file/wav.cpp
-        src/file/ttf.cpp
         src/file/models/m_OBJ.cpp
         src/file/animation/a_FBX.cpp
         src/math/math.cpp
@@ -56,6 +52,11 @@ set(CoreGL_source
         src/audio/aDevice.cpp
         src/audio/aBuffer.cpp
         src/audio/aSource.cpp
+        src/types/color.cpp
+        src/types/pos.hpp
+        src/types/apiTypes.hpp
+        src/types/key.hpp
+        src/types/apiTypes.cpp
 )
 
 add_library(CoreGL STATIC ${CoreGL_source})
