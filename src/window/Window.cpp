@@ -10,7 +10,8 @@
 #include "../util/console.hpp"
 #include "../util/coders.hpp"
 #include "../config.hpp"
-#include "../util/types.hpp"
+#include "../types/size.hpp"
+#include "../types/pos.hpp"
 #include "../file/image.hpp"
 #include "../graphics/api/OpenGL/gl_commands.hpp"
 #include "../../package/glew-2.1.0/include/GL/glew.h"
@@ -287,9 +288,9 @@ int core::Window::getHeight() const
     return this->height;
 }
 
-core::size2i core::Window::getSize() const
+core::Size2i core::Window::getSize() const
 {
-    return size2i(this->width, this->height);
+    return Size2i(this->width, this->height);
 }
 
 float core::Window::getAspect()
@@ -309,7 +310,7 @@ void core::Window::setPos(int posX, int posY)
     glfwSetWindowPos(this->window, posX, posY);
 }
 
-void core::Window::setPos(const pos2i &pos)
+void core::Window::setPos(const Pos2i &pos)
 {
     this->setPos(pos.x, pos.y);
 }
@@ -379,7 +380,7 @@ void core::Window::setSize(int width, int height)
     glfwSetWindowSize(this->window, width, height);
 }
 
-void core::Window::setSize(const size2i &size)
+void core::Window::setSize(const Size2i &size)
 {
     glfwSetWindowSize(this->window, size.width, size.height);
 }

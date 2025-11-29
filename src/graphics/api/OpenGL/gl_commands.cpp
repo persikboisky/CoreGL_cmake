@@ -3,8 +3,39 @@
 //
 
 #include "gl_commands.hpp"
-#include "../../../util/types.hpp"
+#include "../../../types/color.hpp"
+#include "../../../types/apiTypes.hpp"
 #include "../../../package/glew-2.1.0/include/GL/glew.h"
+
+static inline int convertPrimitive(const core::PRIMITIVE& primitive)
+{
+	switch (primitive)
+	{
+	case core::PRIMITIVE::POINTS:
+		return GL_POINTS;
+
+	case core::PRIMITIVE::TRIANGLES:
+		return GL_TRIANGLES;
+
+	case core::PRIMITIVE::LINES:
+		return GL_LINES;
+
+	case core::PRIMITIVE::LINE_STRIP:
+		return GL_LINE_STRIP;
+
+	case core::PRIMITIVE::LINE_LOOP:
+		return GL_LINE_LOOP;
+
+	case core::PRIMITIVE::TRIANGLES_FAN:
+		return GL_TRIANGLE_FAN;
+
+	case core::PRIMITIVE::TRIANGLES_STRIP:
+		return GL_TRIANGLE_STRIP;
+
+	default:
+		return 0;
+	}
+}
 
 namespace core
 {
@@ -52,18 +83,18 @@ namespace core
 				glDisable(GL_DEPTH_TEST);
 		}
 
-		void setPolygonMode(POLYGONS fp, POLYGON_MODE mode)
+		void setPolygonMode(POLYGON fp, POLYGON_MODE mode)
 		{
 			int glDFP = 0;
 			int glPM = 0;
 
 			switch (fp)
 			{
-			case POLYGON_BACK:
+			case POLYGON::BACK:
 				glDFP = GL_BACK;
 				break;
 
-			case POLYGON_FRONT:
+			case POLYGON::FRONT:
 				glDFP = GL_FRONT;
 				break;
 
@@ -74,14 +105,15 @@ namespace core
 
 			switch (mode)
 			{
-			case POLYGON_POINT:
+			case POLYGON_MODE::POINT:
 				glPM = GL_POINT;
 				break;
 
-			case POLYGON_LINE:
+			case POLYGON_MODE::LINE:
 				glPM = GL_LINE;
 				break;
 
+			case POLYGON_MODE::FILL:
 			default:
 				glPM = GL_FILL;
 				break;
@@ -98,14 +130,14 @@ namespace core
 				glDisable(GL_CULL_FACE);
 		}
 
-		void setCullFace(const POLYGONS& fp)
+		void setCullFace(const POLYGON& fp)
 		{
-			switch(fp)
+			switch (fp)
 			{
-			case POLYGON_BACK:
+			case POLYGON::BACK:
 				glCullFace(GL_BACK);
 				break;
-			case POLYGON_FRONT:
+			case POLYGON::FRONT:
 				glCullFace(GL_FRONT);
 				break;
 			default:
@@ -114,9 +146,9 @@ namespace core
 			}
 		}
 
-		void setFacePolygons(const FRONT_FACE & dfp)
+		void setFacePolygons(const FRONT_FACE& dfp)
 		{
-			if (dfp == FRONT_FACE_CLOCKWISE)
+			if (dfp == FRONT_FACE::CLOCKWISE)
 				glFrontFace(GL_CW);
 			else
 				glFrontFace(GL_CCW);
@@ -137,10 +169,10 @@ namespace core
 			color::RGBA normalColor = color;
 			if (normalize) normalColor.normalize();
 			glClearColor(
-				normalColor.red,
-				normalColor.green,
-				normalColor.blue,
-				normalColor.alpha
+					normalColor.red,
+					normalColor.green,
+					normalColor.blue,
+					normalColor.alpha
 			);
 		}
 

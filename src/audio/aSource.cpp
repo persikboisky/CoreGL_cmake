@@ -4,7 +4,7 @@
 
 #include "aSource.hpp"
 #include "Abuffer.hpp"
-#include "../util/types.hpp"
+#include "../types/pos.hpp"
 #include "../util/coders.hpp"
 #include <AL/al.h>
 #include <iostream>
@@ -90,7 +90,7 @@ namespace core
         alSource3f(this->id, AL_POSITION, x, y, z);
     }
 
-    void audio::Source::setPos(const pos3f& pos) const
+    void audio::Source::setPos(const Pos3f& pos) const
     {
         alSource3f(this->id, AL_POSITION, pos.x, pos.y, pos.z);
     }

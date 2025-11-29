@@ -3,7 +3,8 @@
 //
 
 #include "console.hpp"
-#include "types.hpp"
+#include "../types/pos.hpp"
+#include "../types/color.hpp"
 #include "../math/Matrix4.hpp"
 #include <windows.h>
 #include <string>
@@ -33,7 +34,7 @@ void core::console::setPosCursor(int x, int y)
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-void core::console::setPosCursor(const core::pos2i &pos)
+void core::console::setPosCursor(const core::Pos2i &pos)
 {
     core::console::setPosCursor(pos.x, pos.y);
 }
@@ -119,11 +120,11 @@ void core::console::getPosCursor(int &x, int &y)
     }
 }
 
-core::pos2i core::console::getPosCursor()
+core::Pos2i core::console::getPosCursor()
 {
     int x, y;
     getPosCursor(x, y);
-    return pos2i(x, y);
+    return {x, y};
 }
 
 void core::console::printProgressBar(unsigned int length, unsigned int percent)

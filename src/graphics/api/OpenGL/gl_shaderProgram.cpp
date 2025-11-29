@@ -3,7 +3,8 @@
 //
 
 #include "gl_shaderProgram.hpp"
-#include "../../../util/types.hpp"
+#include "../../../types/apiTypes.hpp"
+#include "../../../types/color.hpp"
 #include "../../../util/coders.hpp"
 #include "../../../util/console.hpp"
 #include "../../../file/code.hpp"
@@ -21,11 +22,11 @@ namespace core
 	{
 		switch (type)
 		{
-		case VERTEX:
+		case TYPE_SHADER::VERTEX:
 			return "Vertex";
-		case GEOMETRY:
+		case TYPE_SHADER::GEOMETRY:
 			return "Geometry";
-		case FRAGMENT:
+		case TYPE_SHADER::FRAGMENT:
 			return "Fragment";
 		default:
 			return "";
@@ -51,13 +52,13 @@ namespace core
 		{
 			switch (type)
 			{
-			case VERTEX:
+			case TYPE_SHADER::VERTEX:
 				this->id = glCreateShader(GL_VERTEX_SHADER);
 				break;
-			case GEOMETRY:
+			case TYPE_SHADER::GEOMETRY:
 				this->id = glCreateShader(GL_GEOMETRY_SHADER);
 				break;
-			case FRAGMENT:
+			case TYPE_SHADER::FRAGMENT:
 				this->id = glCreateShader(GL_FRAGMENT_SHADER);
 				break;
 			}
@@ -83,11 +84,11 @@ namespace core
 
 				switch (type)
 				{
-				case core::FRAGMENT:
+				case core::TYPE_SHADER::FRAGMENT:
 					throw coders(8, err);
-				case core::GEOMETRY:
+				case core::TYPE_SHADER::GEOMETRY:
 					throw coders(10, err);
-				case core::VERTEX:
+				case core::TYPE_SHADER::VERTEX:
 					throw coders(7, err);
 				}
 			}

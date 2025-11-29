@@ -5,19 +5,21 @@
 #ifndef WINDOW_HPP
 #define WINDOW_HPP
 
-#include "../util/types.hpp"
 #include "../modules.hpp"
+#include "../types/apiTypes.hpp"
 
 struct GLFWwindow;
 struct GLFWmonitor;
 
 namespace core
 {
+    enum class POSITION : int;
+
     /// @brief структура описывающая openGL контекст
     struct WindowApiGlInfo
     {
         bool VerticalSynchronization = true;
-        version2 OpenGlVersion = {3, 3};
+        Version2 OpenGlVersion = {3, 3};
     };
 
     /// @brief структура описывающая параметры для создания окна
@@ -154,8 +156,8 @@ namespace core
         [[nodiscard]] int getHeight() const;
 
         /// @brief получает размер окна
-        /// @return объект структуры core::size2i
-        [[nodiscard]] size2i getSize() const;
+        /// @return объект структуры core::Size2i
+        [[nodiscard]] struct Size2i getSize() const;
 
         /// @brief получает коэффициент соотношение сторон
         /// @return коэффициент
@@ -172,7 +174,7 @@ namespace core
 
         /// @brief устанавливает позиция окна
         /// @param pos объект структуры core::size2i
-        void setPos(const pos2i &pos);
+        void setPos(const struct Pos2i &pos);
 
         /// @brief устанавливает позиция окна
         /// @param pos POSITION::DOWN_CENTER_SIDE(внизу посередине), POSITION::CENTER(по центру), и т.д.
@@ -184,8 +186,8 @@ namespace core
         void setSize(int width, int height);
 
         /// @brief устанавливает размер окна
-        /// @param size объект структуры core::size2i
-        void setSize(const size2i &size);
+        /// @param size объект структуры core::Size2i
+        void setSize(const struct Size2i &size);
 
         /// @brief устанавливает или выключает полноэкранный режим
         /// @param flag флаг

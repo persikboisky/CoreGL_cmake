@@ -7,10 +7,10 @@
 
 namespace core
 {
-	enum PRIMITIVE : int;
-	enum FRONT_FACE : int;
-	enum POLYGON_MODE : int;
-	enum POLYGONS : int;
+	enum class PRIMITIVE : int;
+	enum class FRONT_FACE : int;
+	enum class POLYGON_MODE : int;
+	enum class POLYGON : int;
 
 	namespace color
 	{
@@ -55,11 +55,11 @@ namespace core
 		/// @brief устанавливает тип полигонов
 		/// @param fp для каких полигонов применить (пример для лицевых и задних POLYGON_FRONT_AND_BACK)
 		/// @param mode тип отрисовки полигонов POLYGON_LINE (пример: отрисовка контура полигона)
-		void setPolygonMode(POLYGONS fp, POLYGON_MODE mode);
+		void setPolygonMode(POLYGON fp, POLYGON_MODE mode);
 
 		/// @brief устанавливает какие полигоны отсекать
 		/// @param fp вид полигона (пример: CULL_BACK - задний полигон будет осекаться)
-		void setCullFace(const POLYGONS& fp);
+		void setCullFace(const POLYGON& fp);
 
 		/// @brief устанавливает какие полигоны будут лицевыми
 		/// @param dfp определяет где перед (пример: FRONT_FACE_COUNTER_CLOCKWISE - 

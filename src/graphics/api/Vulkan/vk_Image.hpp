@@ -8,6 +8,7 @@
 #include "../../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
 #include "../../../util/types.hpp"
+#include "../../../types/size.hpp"
 #include <vulkan/vulkan.h>
 
 namespace core
@@ -23,7 +24,7 @@ namespace core
 
 		struct ImageCreateinfo
 		{
-			Extent3D extent = {};
+			Size3i extent = {};
 			IMAGE_TYPE imageType = IMAGE_TYPE::IMG_2D;
 			bool exclusiveMode = true;
 		};

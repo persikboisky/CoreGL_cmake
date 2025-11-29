@@ -9,7 +9,7 @@
 #if defined(CORE_INCLUDE_VULKAN)
 #include <vulkan/vulkan.h>
 #include <vector>
-#include "../../../util/types.hpp"
+#include "../../../types/apiTypes.hpp"
 
 namespace core
 {
@@ -29,9 +29,9 @@ namespace core
 			Viewport viewport = {};
 
 			vulkan::PRIMITIVE primitive = PRIMITIVE::TRIANGLE_LIST;
-			POLYGON_MODE polygonMode = POLYGON_FILL;
-			TYPE_CULL_FACE cullFace = CULL_NONE;
-			FRONT_FACE frontFace = FRONT_FACE_COUNTER_CLOCKWISE;
+			POLYGON_MODE polygonMode = POLYGON_MODE::FILL;
+			CULL_FACE cullFace = CULL_FACE::NONE;
+			FRONT_FACE frontFace = FRONT_FACE::COUNTER_CLOCKWISE;
 
 			bool flagDepthTest = false;
 		};

@@ -7,7 +7,7 @@
 
 namespace core
 {
-    struct pos3f;
+    struct Pos3f;
 
     namespace audio
     {
@@ -39,7 +39,7 @@ namespace core
             bool isPlaying() const;
 
             void setPos(float x, float y, float z) const;
-            void setPos(const pos3f& pos) const;
+            void setPos(const Pos3f& pos) const;
 
             void setVelocity(float x, float y, float z) const;
         };

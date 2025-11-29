@@ -7,7 +7,7 @@
 
 namespace core
 {
-	enum VALUE_TYPE : int;
+	enum class TYPE : int;
 
 	namespace opengl
 	{
@@ -16,7 +16,7 @@ namespace core
 			void *ptrArray = nullptr;
 			unsigned long long sizeOfByte = 0;
 			unsigned int countElementToVertex = 0;
-			VALUE_TYPE valueType;
+			TYPE valueType;
 		};
 
 		class VertexBuffer
@@ -27,7 +27,7 @@ namespace core
 			unsigned int countElementToVertex;
 			unsigned int byteToElement;
 			unsigned int sizeOfByte = 0;
-			VALUE_TYPE type;
+			TYPE type;
 
 			VertexBuffer(const VertexBufferInfo& info);
 

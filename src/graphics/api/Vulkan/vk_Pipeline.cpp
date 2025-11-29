@@ -205,16 +205,16 @@ namespace core
 			rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 			rasterizer.depthClampEnable = VK_FALSE;
 			rasterizer.rasterizerDiscardEnable = VK_FALSE;
-			rasterizer.polygonMode = (info.polygonMode == POLYGON_FILL) ?
-					VK_POLYGON_MODE_FILL : (info.polygonMode == POLYGON_LINE) ?
+			rasterizer.polygonMode = (info.polygonMode == POLYGON_MODE::FILL) ?
+					VK_POLYGON_MODE_FILL : (info.polygonMode == POLYGON_MODE::LINE) ?
 					VK_POLYGON_MODE_LINE : VK_POLYGON_MODE_POINT;
 
-			rasterizer.cullMode = (info.cullFace == CULL_NONE) ?
-					VK_CULL_MODE_NONE : (info.cullFace == CULL_BACK) ?
-					VK_CULL_MODE_BACK_BIT : (info.cullFace == CULL_FRONT) ?
+			rasterizer.cullMode = (info.cullFace == CULL_FACE::NONE) ?
+					VK_CULL_MODE_NONE : (info.cullFace == CULL_FACE::BACK) ?
+					VK_CULL_MODE_BACK_BIT : (info.cullFace == CULL_FACE::FRONT) ?
 					VK_CULL_MODE_FRONT_BIT : VK_CULL_MODE_FRONT_AND_BACK;
 
-			rasterizer.frontFace = (info.frontFace == FRONT_FACE_COUNTER_CLOCKWISE) ?
+			rasterizer.frontFace = (info.frontFace == FRONT_FACE::COUNTER_CLOCKWISE) ?
 					VK_FRONT_FACE_COUNTER_CLOCKWISE : VK_FRONT_FACE_CLOCKWISE;
 			rasterizer.depthBiasEnable = VK_FALSE;
 			rasterizer.lineWidth = 1.0f;

@@ -5,13 +5,14 @@
 #include "Camera.hpp"
 #include "../../math/math.hpp"
 #include "../../window/Window.hpp"
-#include "../../util/types.hpp"
+#include "../../types/size.hpp"
+#include "../../types/apiTypes.hpp"
 
 using namespace core::math;
 namespace core
 {
 
-    CameraInfo::CameraInfo() : mode(CAM_DYNAMIC) {}
+    CameraInfo::CameraInfo() : mode(CAM_MODE::DYNAMIC) {}
 
     static inline float convertNumberToUnit(float number)
     {
@@ -22,7 +23,7 @@ namespace core
 
     void Camera::update()
     {
-        if (this->mode == CAM_DYNAMIC)
+        if (this->mode == CAM_MODE::DYNAMIC)
         {
             this->up = Vector3(rot * Vector4(this->startUP, 1));
             this->target = Vector3(rot * Vector4(this->startTARGET, 1));
@@ -39,14 +40,14 @@ namespace core
     }
 
     Camera::Camera(float posX, float posY, float posZ, float fov, float distance) :
-        far(distance), mode(CAM_STATIC), startUP(Vector3(0, 1, 0)), startTARGET(Vector3(0, 0, -1)),
+        far(distance), mode(CAM_MODE::STATIC), startUP(Vector3(0, 1, 0)), startTARGET(Vector3(0, 0, -1)),
         pos(Vector3(posX, posY, posZ)), fov(radians(fov)), near(0.1f)
     {
         this->update();
     }
 
     Camera::Camera(Vector3 pos, float fov, float distance) :
-        far(distance), mode(CAM_STATIC), startUP(Vector3(0, 1, 0)), startTARGET(Vector3(0, 0, -1)),
+        far(distance), mode(CAM_MODE::STATIC), startUP(Vector3(0, 1, 0)), startTARGET(Vector3(0, 0, -1)),
         pos(pos), fov(radians(fov)), near(0.1f)
     {
         this->update();
@@ -106,7 +107,7 @@ namespace core
 
     void Camera::rotate(float x, float y, float z)
     {
-        if (this->mode == CAM_STATIC)
+        if (this->mode == CAM_MODE::STATIC)
         {
             this->rot = Matrix4::getRotate(radians(x), Vector3(1, 0, 0), this->rot);
             this->rot = Matrix4::getRotate(radians(y), Vector3(0, 1, 0), this->rot);
@@ -209,14 +210,14 @@ namespace core
         return Matrix4::getPerspective(this->fov, aspect, this->near, this->far);
     }
 
-    math::Matrix4 Camera::getProj(const struct size2i& windowSize) const
+    math::Matrix4 Camera::getProj(const Size2i& windowSize) const
     {
         return this->getProj(windowSize.width, windowSize.height);
     }
 
     Matrix4 Camera::getView()
     {
-        if (this->mode == CAM_DYNAMIC)
+        if (this->mode != CAM_MODE::STATIC)
         {
             return Matrix4::getLookAt(this->pos, this->target, this->up);
         }

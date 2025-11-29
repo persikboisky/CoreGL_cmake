@@ -7,7 +7,7 @@
 
 namespace core
 {
-    struct pos2i;
+    struct Pos2i;
 
     namespace math
     {
@@ -25,13 +25,13 @@ namespace core
         void clear();
 
         void setPosCursor(int x, int y);
-        void setPosCursor(const pos2i& pos);
+        void setPosCursor(const Pos2i& pos);
 
         void print(math::Matrix4& matrix);
         void print(color::RGB color);
 
         void getPosCursor(int &x, int &y);
-        pos2i getPosCursor();
+        Pos2i getPosCursor();
 
         void printProgressBar(unsigned int length, unsigned int percent);
     };

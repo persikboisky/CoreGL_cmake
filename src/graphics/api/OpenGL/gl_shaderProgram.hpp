@@ -9,7 +9,7 @@ typedef unsigned int uint32_t;
 
 namespace core
 {
-	enum TYPE_SHADER : int;
+	enum class TYPE_SHADER : int;
 
 	namespace math
 	{

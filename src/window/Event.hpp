@@ -12,8 +12,9 @@ struct GLFWwindow;
 
 namespace core
 {
-    enum KEY_CODE : int;
-    enum class MOUSE_KEY_CODE : int;
+    enum class KEY : int;
+    enum class MOUSE_KEY : int;
+
     class Window;
     class Event
     {
@@ -42,22 +43,22 @@ namespace core
         [[nodiscard]] bool GetMouseRightButton();
 
         [[nodiscard]] bool stateKey(int key);
-        [[nodiscard]] bool stateKey(const core::KEY_CODE& key);
+        [[nodiscard]] bool stateKey(const core::KEY& key);
 
         [[nodiscard]] bool downKey(int key);
-        [[nodiscard]] bool downKey(const core::KEY_CODE& key);
+        [[nodiscard]] bool downKey(const core::KEY& key);
 
         [[nodiscard]] bool upKey(int key);
-        [[nodiscard]] bool upKey(const core::KEY_CODE& key);
+        [[nodiscard]] bool upKey(const core::KEY& key);
 
         [[nodiscard]] bool stateMouseKey(int key);
-        [[nodiscard]] bool stateMouseKey(const core::MOUSE_KEY_CODE& key);
+        [[nodiscard]] bool stateMouseKey(const core::MOUSE_KEY& key);
 
         [[nodiscard]] bool downMouseKey(int key);
-        [[nodiscard]] bool downMouseKey(const core::MOUSE_KEY_CODE& key);
+        [[nodiscard]] bool downMouseKey(const core::MOUSE_KEY& key);
 
         [[nodiscard]] bool upMouseKey(int key);
-        [[nodiscard]] bool upMouseKey(const core::MOUSE_KEY_CODE& key);
+        [[nodiscard]] bool upMouseKey(const core::MOUSE_KEY& key);
     };
 }
 

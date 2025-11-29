@@ -10,8 +10,11 @@
 
 namespace core
 {
-    enum KEY_CODE : int;
-    enum CAM_MODE : int;
+    enum class CAM_MODE : int
+    {
+        DYNAMIC,
+        STATIC
+    };
 
     struct CameraInfo
     {
@@ -190,7 +193,7 @@ namespace core
         /// @brief возвращает матрицу проекции
         /// @param windowSize размер окна (объект структуры size2i)
         /// @return матрица
-        math::Matrix4 getProj(const struct size2i &windowSize) const;
+        math::Matrix4 getProj(const struct Size2i &windowSize) const;
 
         /// @brief возвращает матрицу вида
         /// @return матрица

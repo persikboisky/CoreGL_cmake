@@ -7,7 +7,7 @@
 
 #include "../../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
-#include "../../../util/types.hpp"
+#include "../../../types/apiTypes.hpp"
 #include <vulkan/vulkan.h>
 
 namespace core::vulkan
@@ -15,8 +15,8 @@ namespace core::vulkan
 	struct InstanceInfo
 	{
 		const char* appName = "CoreGL";
-		version3 appVersion = { 1, 0, 0 };
-		version3 vulkanVersion = { 1, 0, 0 };
+		Version3 appVersion = { 1, 0, 0 };
+		Version3 vulkanVersion = { 1, 0, 0 };
 	};
 
 	class Instance

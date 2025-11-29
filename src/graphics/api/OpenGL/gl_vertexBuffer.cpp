@@ -4,7 +4,7 @@
 
 #include "gl_vertexBuffer.hpp"
 #include "../../../util/coders.hpp"
-#include "../../../util/types.hpp"
+#include "../../../types/apiTypes.hpp"
 #include "../../../package/glew-2.1.0/include/GL/glew.h"
 
 namespace core
@@ -40,16 +40,16 @@ namespace core
 
 			switch (info.valueType)
 			{
-			case INT:
+			case TYPE::INT:
 				this->byteToElement = sizeof(GLint);
 				break;
-			case UNSIGNED_INT:
+			case TYPE::UNSIGNED_INT:
 				this->byteToElement = sizeof(GLuint);
 				break;
-			case FLOAT:
+			case TYPE::FLOAT:
 				this->byteToElement = sizeof(GLfloat);
 				break;
-			case DOUBLE:
+			case TYPE::DOUBLE:
 				this->byteToElement = sizeof(GLdouble);
 				break;
 			}
@@ -93,16 +93,16 @@ namespace core
 			int type = 0;
 			switch (this->type)
 			{
-			case INT:
+			case TYPE::INT:
 				type = GL_INT;
 				break;
-			case UNSIGNED_INT:
+			case TYPE::UNSIGNED_INT:
 				type = GL_UNSIGNED_INT;
 				break;
-			case FLOAT:
+			case TYPE::FLOAT:
 				type = GL_FLOAT;
 				break;
-			case DOUBLE:
+			case TYPE::DOUBLE:
 				type = GL_DOUBLE;
 				break;
 			}

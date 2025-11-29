@@ -6,7 +6,8 @@
 #include "../util/coders.hpp"
 #include "../config.hpp"
 #include "../util/console.hpp"
-#include "../util/types.hpp"
+#include "../types/size.hpp"
+#include "../types/color.hpp"
 #include <GLFW/glfw3.h>
 #include <iostream>
 
@@ -42,19 +43,19 @@ Monitor::~Monitor()
 {
 }
 
-size2i Monitor::getPhysicalSize()
+Size2i Monitor::getPhysicalSize()
 {
     int width;
     int height;
 
     glfwGetMonitorPhysicalSize(this->monitor, &width, &height);
 
-    return size2i(width, height);
+    return Size2i(width, height);
 }
 
-size2i Monitor::getSize()
+Size2i Monitor::getSize()
 {
-    return size2i(
+    return Size2i(
             this->vidMode->width,
             this->vidMode->height
     );

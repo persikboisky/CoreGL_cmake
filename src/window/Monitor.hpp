@@ -10,7 +10,7 @@ struct GLFWvidmode;
 
 namespace core
 {
-    struct size2i;
+    struct Size2i;
     namespace color
     {
         struct RGB;
@@ -26,9 +26,9 @@ namespace core
         Monitor();
         ~Monitor();
 
-        [[nodiscard]] size2i getPhysicalSize();
-        [[nodiscard]] size2i getSize();
-        [[nodiscard]]  color::RGB getBITS();
+        [[nodiscard]] Size2i getPhysicalSize();
+        [[nodiscard]] Size2i getSize();
+        [[nodiscard]] color::RGB getBITS();
 
         [[nodiscard]] GLFWmonitor* getGLFWObj();
     };

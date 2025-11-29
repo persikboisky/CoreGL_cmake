@@ -232,12 +232,12 @@ namespace core
 				nullptr);
 		}
 
-		void CommandBuffer::setCullMode(const TYPE_CULL_FACE &cullFace)
+		void CommandBuffer::setCullMode(const CULL_FACE &cullFace)
 		{
 			vkCmdSetCullMode(this->commandBuffer,
-							 (cullFace == CULL_NONE) ? VK_CULL_MODE_NONE : 
-							 (cullFace == CULL_BACK) ? VK_CULL_MODE_BACK_BIT : 
-							 (cullFace == CULL_FRONT) ? VK_CULL_MODE_FRONT_BIT : 
+							 (cullFace == CULL_FACE::NONE) ? VK_CULL_MODE_NONE :
+							 (cullFace == CULL_FACE::BACK) ? VK_CULL_MODE_BACK_BIT :
+							 (cullFace == CULL_FACE::FRONT) ? VK_CULL_MODE_FRONT_BIT :
 							 VK_CULL_MODE_FRONT_AND_BACK);
 		}
 

@@ -9,7 +9,7 @@
 #if defined(CORE_INCLUDE_VULKAN)
 #include <vulkan/vulkan.h>
 #include <string>
-#include "../../../util/types.hpp"
+#include "../../../types/apiTypes.hpp"
 
 namespace core
 {

@@ -42,10 +42,7 @@
 #include "../src/graphics/api/Vulkan/vk_Image.hpp"
 #include "../src/file/image.hpp"
 #include "../src/file/code.hpp"
-#include "../src/file/mtl.hpp"
-#include "../src/file/obj.hpp"
 #include "../src/file/wav.hpp"
-#include "../src/file/ttf.hpp"
 #include "../src/file/models/m_OBJ.hpp"
 #include "../src/file/animation/a_FBX.hpp"
 #include "../src/math/math.hpp"
@@ -55,21 +52,23 @@
 #include "../src/audio/aDevice.hpp"
 #include "../src/audio/aBuffer.hpp"
 #include "../src/audio/aSource.hpp"
+#include "../src/types/size.hpp"
+#include "../src/types/color.hpp"
+#include "../src/types/pos.hpp"
+#include "../src/types/apiTypes.hpp"
+#include "../src/types/key.hpp"
 
-namespace core
+namespace core::Core
 {
-    namespace Core
-    {
-        /// @brief функция для инициализации библиотеки
-        void Init();
+    /// @brief функция для инициализации библиотеки
+    void Init();
 
-        /// @brief функция для уничтожения данных библиотеки
-        void Terminate();
+    /// @brief функция для уничтожения данных библиотеки
+    void Terminate();
 
-        /// @brief возвращает время с момента инициализации библиотеки
-        /// @return милисекунды
-        [[nodiscard]] double getTime();
-    }
+    /// @brief возвращает время с момента инициализации библиотеки
+    /// @return милисекунды
+    [[nodiscard]] double getTime();
 }
 
 #endif // CORE_HPP_

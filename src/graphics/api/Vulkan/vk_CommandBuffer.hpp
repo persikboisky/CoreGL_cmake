@@ -8,7 +8,10 @@
 #include "../../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
 #include <vulkan/vulkan.h>
-#include "../../../util/types.hpp"
+#include "../../../types/size.hpp"
+#include "../../../types/pos.hpp"
+#include "../../../types/color.hpp"
+#include "../../../types/apiTypes.hpp"
 
 namespace core
 {
@@ -19,10 +22,10 @@ namespace core
 			class RenderPass* ptrRenderPass = nullptr;
 			class FrameBuffer* ptrFrameBuffer = nullptr;
 			uint32_t indexFrameBuffer = 0;
-			size2ui renderAreaExtent = {0, 0};
-			pos2i renderAreaPos = {0, 0};
+			Size2ui renderAreaExtent = {0, 0};
+			Pos2i renderAreaPos = {0, 0};
 
-			color::RGBA clearColor = color::COLOR::BLACK;
+			color::RGBA clearColor = color::RGB();
 			float clearDepth = 1.0f;
 			uint32_t clearStencil = 0;
 		};
@@ -91,7 +94,7 @@ namespace core
 
 			void bindDescriptorSet(class DescriptorSet& set, class PipelineLayout& layout);
 
-			void setCullMode(const TYPE_CULL_FACE& cullMode);
+			void setCullMode(const CULL_FACE& cullMode);
 			void setScissor(const Rect2D& rect2d);
 			void setPrimitiveTopology(const vulkan::PRIMITIVE& primitive);
 		};

@@ -7,7 +7,7 @@
 
 #include "../../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
-#include "../../../util/types.hpp"
+#include "../../../types/apiTypes.hpp"
 #include <vulkan/vulkan.h>
 
 namespace core
