@@ -91,6 +91,7 @@ namespace core
 					uint32_t instanceCount = 1);
 
 			void copyBuffer(class Buffer* ptrSrcBuffer, class Buffer* ptrDstBuffer, uint64_t size);
+			void copyImage(class Image* ptrSrcBuffer, class Image* ptrDstBuffer, uint64_t size);
 
 			void bindDescriptorSet(class DescriptorSet& set, class PipelineLayout& layout);
 

@@ -13,6 +13,7 @@
 #include "vk_ElementBuffer.hpp"
 #include "vk_Buffer.hpp"
 #include "vk_Descriptor.hpp"
+#include "vk_Image.hpp"
 #include "../../../util/coders.hpp"
 
 namespace core
@@ -219,6 +220,20 @@ namespace core
 				&copyRegion);
 		}
 
+		void CommandBuffer::copyImage(Image* ptrSrcBuffer, Image* ptrDstBuffer, uint64_t size)
+		{
+//			VkImageCopy copyRegion{};
+//			copyRegion.srcOffset = 0;
+//			copyRegion.dstOffset = 0;
+//			copyRegion.size = size;
+//			vkCmdCopyImage(
+//					this->commandBuffer,
+//					ptrSrcBuffer->buffer,
+//					ptrDstBuffer->buffer,
+//					1,
+//					&copyRegion);
+		}
+
 		void CommandBuffer::bindDescriptorSet(DescriptorSet &set, PipelineLayout &layout)
 		{
 			vkCmdBindDescriptorSets(
@@ -278,6 +293,7 @@ namespace core
 
 			vkCmdSetPrimitiveTopology(this->commandBuffer, topology);
 		}
+
 
 	} // vulkan
 } // core

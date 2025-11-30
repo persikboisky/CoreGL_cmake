@@ -47,6 +47,7 @@ namespace core
 		class Device
 		{
 		protected:
+			friend class Image;
 			friend class Queue;
 			friend class Buffer;
 			friend class SwapChain;

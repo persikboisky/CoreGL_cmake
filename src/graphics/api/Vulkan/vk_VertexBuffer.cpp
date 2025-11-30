@@ -20,14 +20,14 @@ namespace core
 		{
 			BufferCreateInfo bufferCreateInfo = {};
 			bufferCreateInfo.ptrDevice = info.ptrDevice;
-			bufferCreateInfo.typeBuffer = TYPE_BUFFER::TRANSFER_SRC;
+			bufferCreateInfo.typeBuffer = TYPE_USAGE_BUFFER::TRANSFER_SRC;
 			bufferCreateInfo.exclusiveMode = true;
 			bufferCreateInfo.typeMemory = TYPE_MEMORY::HOST;
 			bufferCreateInfo.data = info.data;
 			bufferCreateInfo.size = info.size;
 			Buffer* ptrStagingBuffer = Buffer::ptrCreate(bufferCreateInfo);
 
-			bufferCreateInfo.typeBuffer = TYPE_BUFFER::VERTEX_TRANSFER_DST;
+			bufferCreateInfo.typeBuffer = TYPE_USAGE_BUFFER::VERTEX_TRANSFER_DST;
 			bufferCreateInfo.typeMemory = TYPE_MEMORY::DEVICE_LOCAL;
 			this->buffer = Buffer::ptrCreate(bufferCreateInfo);
 

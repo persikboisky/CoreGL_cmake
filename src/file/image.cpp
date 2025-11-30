@@ -37,7 +37,7 @@ unsigned char *core::Image::load(
         core::console::printTime();
         std::cout << "Height: " << height << std::endl;
         core::console::printTime();
-        std::cout << "Channels: " << height << std::endl;
+        std::cout << "Channels: " << channels << std::endl;
     }
 
     return image;
@@ -101,4 +101,9 @@ unsigned char *core::Image::getImageCode()
 std::vector<unsigned char> core::Image::getVectorImageCode()
 {
     return vector::arrayToVector_uchar(this->getImageCode(), this->height * this->channels * this->width);
+}
+
+size_t core::Image::getSize() const
+{
+    return sizeof(unsigned char) * this->channels;
 }

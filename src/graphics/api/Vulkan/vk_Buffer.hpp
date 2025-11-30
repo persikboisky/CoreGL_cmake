@@ -14,7 +14,7 @@ namespace core
 {
 	namespace vulkan
 	{
-		enum class TYPE_BUFFER : int
+		enum class TYPE_USAGE_BUFFER : int
 		{
 			VERTEX,
 			INDEX,
@@ -31,7 +31,7 @@ namespace core
 			class Device* ptrDevice = nullptr;
 
 			TYPE_MEMORY typeMemory = TYPE_MEMORY::HOST;
-			TYPE_BUFFER typeBuffer = TYPE_BUFFER::VERTEX;
+			TYPE_USAGE_BUFFER typeBuffer = TYPE_USAGE_BUFFER::VERTEX;
 			bool exclusiveMode = true;
 
 			uint64_t size = 0;

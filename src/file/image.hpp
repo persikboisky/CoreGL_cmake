@@ -88,6 +88,8 @@ namespace core
         /// @brief получает вектор, содержащий цвета пикселей
         /// @return вектор
         [[nodiscard]] std::vector<unsigned char> getVectorImageCode();
+
+        size_t getSize() const;
     };
 }
 

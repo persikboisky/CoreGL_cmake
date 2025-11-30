@@ -7,7 +7,7 @@
 
 #include "../../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
-#include "../../../util/types.hpp"
+#include "../../../types/apiTypes.hpp"
 #include "../../../types/size.hpp"
 #include <vulkan/vulkan.h>
 
@@ -22,19 +22,62 @@ namespace core
 			IMG_3D
 		};
 
-		struct ImageCreateinfo
+		enum class IMAGE_FORMAT : int
 		{
+			B8G8R8_SRGB,
+			B8G8R8_UINT,
+			B8G8R8A8_SRGB,
+			B8G8R8A8_UINT,
+			D24_UNORM_S8_UINT,
+			D32_SFLOAT
+		};
+
+		enum class TYPE_USAGE_IMAGE : int
+		{
+			TRANSFER_SRC,
+			TRANSFER_DST,
+			SAMPLED,
+			STORAGE,
+			COLOR_ATTACHMENT,
+			DEPTH_STENCIL_ATTACHMENT
+		};
+
+		struct ImageCreateInfo
+		{
+			class Device* ptrDevice = nullptr;
+
 			Size3i extent = {};
-			IMAGE_TYPE imageType = IMAGE_TYPE::IMG_2D;
+			IMAGE_TYPE image = IMAGE_TYPE::IMG_2D;
+			IMAGE_FORMAT format = IMAGE_FORMAT::B8G8R8A8_SRGB;
+			TYPE_USAGE_IMAGE usage = TYPE_USAGE_IMAGE::SAMPLED;
+			TYPE_MEMORY typeMemory = TYPE_MEMORY::HOST;
+
 			bool exclusiveMode = true;
+			uint32_t mipLevels = 1;
+
+			size_t size = 0;
+			void* data = nullptr;
 		};
 
 		class Image
 		{
-		private:
-			VkImage image = nullptr;
+		protected:
+			friend class CommandBuffer;
 
-			Image(const ImageCreateinfo& info);
+		private:
+			VkDevice* ptrDevice = nullptr;
+			VkImage image = nullptr;
+			VkDeviceMemory memory = nullptr;
+
+			Image(const ImageCreateInfo& info);
+
+		public:
+			~Image();
+
+			static Image create(const ImageCreateInfo& info);
+			static Image *ptrCreate(const ImageCreateInfo& info);
+
+			void copy(void* data, uint64_t size);
 		};
 
 		class ImageView
