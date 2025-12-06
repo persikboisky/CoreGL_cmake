@@ -18,9 +18,9 @@ namespace core
 
     struct CameraInfo
     {
-        math::Vector3 up = math::Vector3(0, 1, 0);
-        math::Vector3 position = math::Vector3(0, 0, 4);
-        math::Vector3 target = math::Vector3(0, 0, -1);
+        math::Vec3 up = math::Vec3(0, 1, 0);
+        math::Vec3 position = math::Vec3(0, 0, 4);
+        math::Vec3 target = math::Vec3(0, 0, -1);
         float fov = 70.0f;
         float far = 100.0f;
         float near = 0.1f;
@@ -33,14 +33,14 @@ namespace core
     class Camera
     {
     private:
-        math::Vector3 startUP;
-        math::Vector3 startTARGET;
+        math::Vec3 startUP;
+        math::Vec3 startTARGET;
 
-        math::Vector3 up;
-        math::Vector3 target;
-        math::Vector3 pos;
+        math::Vec3 up;
+        math::Vec3 target;
+        math::Vec3 pos;
 
-        math::Matrix4 rot = math::Matrix4(1.0f);
+        math::Mat4 rot = math::Mat4(1.0f);
 
         float fov;
         float far;
@@ -51,7 +51,7 @@ namespace core
         void update();
 
         Camera(float posX, float posY, float posZ, float fov = 70, float distance = 100);
-        Camera(math::Vector3 pos, float fov = 70, float distance = 100);
+        Camera(math::Vec3 pos, float fov = 70, float distance = 100);
         Camera(const CameraInfo &info);
 
     public:
@@ -69,7 +69,7 @@ namespace core
         /// @param fov угол обзора(в градусах)
         /// @param distance дистанция на которую будет видеть камера
         /// @return объект класса Camera
-        static Camera create(math::Vector3 pos, float fov = 70, float distance = 100);
+        static Camera create(math::Vec3 pos, float fov = 70, float distance = 100);
 
         /// @brief создаёт камеру
         /// @param info объект структуры CameraInfo
@@ -90,7 +90,7 @@ namespace core
         /// @param fov угол обзора(в градусах)
         /// @param distance дистанция на которую будет видеть камера
         /// @return указатель на объект класса Camera
-        static Camera *ptrCreate(math::Vector3 pos, float fov = 70, float distance = 100);
+        static Camera *ptrCreate(math::Vec3 pos, float fov = 70, float distance = 100);
 
         /// @brief создаёт камеру
         /// @param info объект структуры CameraInfo
@@ -116,8 +116,8 @@ namespace core
         void rotate(float x, float y, float z);
 
         /// @brief поворачивает направление камеры(работает только при CAM_STATIC)
-        /// @param axis углы поворота в градусах, записанные в объект класса math::Vector3
-        void rotate(const math::Vector3 &axis);
+        /// @param axis углы поворота в градусах, записанные в объект класса math::Vec3
+        void rotate(const math::Vec3 &axis);
 
         /// @brief сбрасывает направление камеры в начальное
         void resetRotate();
@@ -129,8 +129,8 @@ namespace core
         void move(float x, float y, float z);
 
         /// @brief перемещает камеру на указанные значения по трём осям
-        /// @param vec3 значения, записанные в объект класса math::Vector3
-        void move(const math::Vector3 vec3);
+        /// @param vec3 значения, записанные в объект класса math::Vec3
+        void move(const math::Vec3 vec3);
 
         /// @brief устанавливает положение камеры
         /// @param x позиция
@@ -139,8 +139,8 @@ namespace core
         void setPos(float x, float y, float z);
 
         /// @brief устанавливает положение камеры
-        /// @param pos объект класса math::Vector3 
-        void setPos(const math::Vector3 &pos);
+        /// @param pos объект класса math::Vec3
+        void setPos(const math::Vec3 &pos);
 
         /// @brief устанавливает цель камеры(для CAM_STATIC - это направление, 
         /// @brief для CAM_DYNAMIC - это точка куда смотрит камера)
@@ -152,7 +152,7 @@ namespace core
         /// @brief устанавливает цель камеры(для CAM_STATIC - это направление, 
         /// @brief для CAM_DYNAMIC - это точка куда смотрит камера)
         /// @param target вектор направления(координаты точки)
-        void setTarget(const math::Vector3 &target);
+        void setTarget(const math::Vec3 &target);
 
         /// @brief получает позиция камеры
         /// @param x переменная для записи координаты по x
@@ -161,8 +161,8 @@ namespace core
         void getPos(float &x, float &y, float &z) const;
 
         /// @brief получает позиция камеры
-        /// @param pos ссылка на объект math::Vector3
-        void getPos(math::Vector3 &pos) const;
+        /// @param pos ссылка на объект math::Vec3
+        void getPos(math::Vec3 &pos) const;
 
         /// @brief возвращает начальную цель(- точка для CAM_DYNAMIC, - направление для CAM_STATIC) камеры
         /// @param x переменная для записи координаты по x
@@ -171,8 +171,8 @@ namespace core
         void getSTarget(float &x, float &y, float &z) const;
 
         /// @brief возвращает начальную цель(- точка для CAM_DYNAMIC, - направление для CAM_STATIC) камеры
-        /// @param target ссылка на объект math::Vector3
-        void getSTarget(math::Vector3 &target) const;
+        /// @param target ссылка на объект math::Vec3
+        void getSTarget(math::Vec3 &target) const;
 
         /// @brief возвращает текущую цель(- точка для CAM_DYNAMIC, - направление для CAM_STATIC) камеры
         /// @param x переменная для записи координаты по x
@@ -181,23 +181,23 @@ namespace core
         void getTarget(float &x, float &y, float &z) const;
 
         /// @brief  возвращает текущую цель(- точка для CAM_DYNAMIC, - направление для CAM_STATIC) камеры
-        /// @param target ссылка на объект math::Vector3
-        void getTarget(math::Vector3 &target) const;
+        /// @param target ссылка на объект math::Vec3
+        void getTarget(math::Vec3 &target) const;
 
         /// @brief возвращает матрицу проекции
         /// @param windowWidth ширина окна
         /// @param windowHeight высота окна
         /// @return матрица
-        math::Matrix4 getProj(int windowWidth, int windowHeight) const;
+        math::Mat4 getProj(int windowWidth, int windowHeight) const;
 
         /// @brief возвращает матрицу проекции
         /// @param windowSize размер окна (объект структуры size2i)
         /// @return матрица
-        math::Matrix4 getProj(const struct Size2i &windowSize) const;
+        math::Mat4 getProj(const struct Size2i &windowSize) const;
 
         /// @brief возвращает матрицу вида
         /// @return матрица
-        math::Matrix4 getView();
+        math::Mat4 getView();
     };
 }
 

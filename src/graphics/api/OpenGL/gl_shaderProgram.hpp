@@ -13,10 +13,10 @@ namespace core
 
 	namespace math
 	{
-		class Matrix4;
-		class Vector2;
-		class Vector3;
-		class Vector4;
+		class Mat4;
+		class Vec2;
+		class Vec3;
+		class Vec4;
 	}
 
 	namespace color
@@ -89,22 +89,22 @@ namespace core
 			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна бать включена)
 			/// @param vec2 значение
 			/// @param name имя uniform переменной в шейдере
-			void setUniform2f(const math::Vector2 &vec2, const char *name) const;
+			void setUniform2f(const math::Vec2 &vec2, const char *name) const;
 
 			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна бать включена)
 			/// @param vec3 значение
 			/// @param name имя uniform переменной в шейдере
-			void setUniform3f(const math::Vector3 &vec3, const char *name) const;
+			void setUniform3f(const math::Vec3 &vec3, const char *name) const;
 
 			// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна бать включена)
 			/// @param vec4 значение
 			/// @param name имя uniform переменной в шейдере
-			void setUniform4f(const math::Vector4 &vec4, const char *name) const;
+			void setUniform4f(const math::Vec4 &vec4, const char *name) const;
 
 			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна бать включена)
 			/// @param matrix значение
 			/// @param name имя uniform переменной в шейдере
-			void setUniformMat4(math::Matrix4 matrix, const char *name) const;
+			void setUniformMat4(math::Mat4 matrix, const char *name) const;
 
 			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна бать включена)
 			/// @param sampler значение

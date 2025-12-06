@@ -13,8 +13,7 @@
 #include "../types/size.hpp"
 #include "../types/pos.hpp"
 #include "../file/image.hpp"
-#include "../graphics/api/OpenGL/gl_commands.hpp"
-#include "../../package/glew-2.1.0/include/GL/glew.h"
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 #if defined(CORE_INCLUDE_VULKAN)
@@ -23,7 +22,7 @@
 
 #define HEIGHT_HEAD_WINDOW 30
 
-bool core::Window::flagGladInit = false;
+bool core::Window::flagGladInit = true;
 
 void core::Window::createWindow(int width, int height, const char *title, bool resizable, bool vkAPI, GLFWmonitor *ptrMon)
 {
@@ -69,10 +68,11 @@ void core::Window::Init()
     this->cursor = new Cursor(*this->window);
 }
 
-core::Window::Window(const core::WindowInfo &winInfo) : window(nullptr), event(nullptr), width(winInfo.width), height(winInfo.height),
-                                                        posX(winInfo.posX), posY(winInfo.posY), saveWidth(winInfo.width), saveHeight(winInfo.height),
-                                                        cursor(nullptr), monitor(new Monitor()), flagFullScreen(winInfo.fullScreen),
-                                                        time(glfwGetTime()), deltaTime(glfwGetTime())
+core::Window::Window(const core::WindowInfo &winInfo) : 
+    window(nullptr), event(nullptr), width(winInfo.width), height(winInfo.height),
+    posX(winInfo.posX), posY(winInfo.posY), saveWidth(winInfo.width), saveHeight(winInfo.height),
+    cursor(nullptr), monitor(new Monitor()), flagFullScreen(winInfo.fullScreen),
+    time(glfwGetTime()), deltaTime(glfwGetTime())
 {
 #if defined(CORE_INCLUDE_VULKAN)
     this->VulknanAPI = winInfo.VulkanAPI;
@@ -81,7 +81,6 @@ core::Window::Window(const core::WindowInfo &winInfo) : window(nullptr), event(n
     GLFWmonitor *ptrMon = nullptr;
     if (winInfo.fullScreen)
         ptrMon = this->monitor->getGLFWObj();
-
     if (!this->VulknanAPI)
     {
         if (winInfo.ptrApiGlInfo != nullptr)
@@ -116,9 +115,10 @@ core::Window::Window(const core::WindowInfo &winInfo) : window(nullptr), event(n
     }
 }
 
-core::Window::Window(int width, int height, const char *title, bool resizable, bool vkAPI) : window(nullptr), cursor(nullptr), VSfps(true), monitor(nullptr),
-                                                                                             event(nullptr), width(width), height(height), posX(0), posY(0), saveWidth(width), saveHeight(height),
-                                                                                             time(glfwGetTime()), deltaTime(glfwGetTime())
+core::Window::Window(int width, int height, const char *title, bool resizable, bool vkAPI) :
+    window(nullptr), cursor(nullptr), VSfps(true), monitor(nullptr),
+    event(nullptr), width(width), height(height), posX(0), posY(0), saveWidth(width), saveHeight(height),
+    time(glfwGetTime()), deltaTime(glfwGetTime())
 {
     GLFWmonitor *ptrMon = nullptr;
     if (!this->VulknanAPI)

@@ -25,13 +25,13 @@ namespace core
     {
         if (this->mode == CAM_MODE::DYNAMIC)
         {
-            this->up = Vector3(rot * Vector4(this->startUP, 1));
-            this->target = Vector3(rot * Vector4(this->startTARGET, 1));
+            this->up = Vec3(rot * Vec4(this->startUP, 1));
+            this->target = Vec3(rot * Vec4(this->startTARGET, 1));
         }
         else
         {
-            this->up = Vector3(rot * Vector4(this->startUP, 1));
-            this->target = Vector3(rot * Vector4(math::Vector3(
+            this->up = Vec3(rot * Vec4(this->startUP, 1));
+            this->target = Vec3(rot * Vec4(math::Vec3(
                 convertNumberToUnit(this->startTARGET.x),
                 convertNumberToUnit(this->startTARGET.y),
                 convertNumberToUnit(this->startTARGET.z)
@@ -40,15 +40,15 @@ namespace core
     }
 
     Camera::Camera(float posX, float posY, float posZ, float fov, float distance) :
-        far(distance), mode(CAM_MODE::STATIC), startUP(Vector3(0, 1, 0)), startTARGET(Vector3(0, 0, -1)),
-        pos(Vector3(posX, posY, posZ)), fov(radians(fov)), near(0.1f)
+			far(distance), mode(CAM_MODE::STATIC), startUP(Vec3(0, 1, 0)), startTARGET(Vec3(0, 0, -1)),
+			pos(Vec3(posX, posY, posZ)), fov(radians(fov)), near(0.1f)
     {
         this->update();
     }
 
-    Camera::Camera(Vector3 pos, float fov, float distance) :
-        far(distance), mode(CAM_MODE::STATIC), startUP(Vector3(0, 1, 0)), startTARGET(Vector3(0, 0, -1)),
-        pos(pos), fov(radians(fov)), near(0.1f)
+    Camera::Camera(Vec3 pos, float fov, float distance) :
+			far(distance), mode(CAM_MODE::STATIC), startUP(Vec3(0, 1, 0)), startTARGET(Vec3(0, 0, -1)),
+			pos(pos), fov(radians(fov)), near(0.1f)
     {
         this->update();
     }
@@ -65,7 +65,7 @@ namespace core
         return Camera(posX, posY, posZ, fov, distance);
     }
 
-    Camera Camera::create(math::Vector3 pos, float fov, float distance)
+    Camera Camera::create(math::Vec3 pos, float fov, float distance)
     {
         return Camera(pos, fov, distance);
     }
@@ -80,7 +80,7 @@ namespace core
         return new Camera(posX, posY, posZ, fov, distance);
     }
 
-    Camera* Camera::ptrCreate(math::Vector3 pos, float fov, float distance)
+    Camera* Camera::ptrCreate(math::Vec3 pos, float fov, float distance)
     {
         return new Camera(pos, fov, distance);
     }
@@ -109,21 +109,21 @@ namespace core
     {
         if (this->mode == CAM_MODE::STATIC)
         {
-            this->rot = Matrix4::getRotate(radians(x), Vector3(1, 0, 0), this->rot);
-            this->rot = Matrix4::getRotate(radians(y), Vector3(0, 1, 0), this->rot);
-            this->rot = Matrix4::getRotate(radians(z), Vector3(0, 0, 1), this->rot);
+            this->rot = Mat4::getRotate(radians(x), Vec3(1, 0, 0), this->rot);
+            this->rot = Mat4::getRotate(radians(y), Vec3(0, 1, 0), this->rot);
+            this->rot = Mat4::getRotate(radians(z), Vec3(0, 0, 1), this->rot);
             this->update();
         }
     }
 
-    void Camera::rotate(const math::Vector3& axis)
+    void Camera::rotate(const math::Vec3& axis)
     {
         this->rotate(axis.x, axis.y, axis.z);
     }
 
     void Camera::resetRotate()
     {
-        this->rot = Matrix4(1.0f);
+        this->rot = Mat4(1.0f);
     }
 
     void Camera::move(float x, float y, float z)
@@ -133,7 +133,7 @@ namespace core
         this->pos.z += z;
     }
 
-    void Camera::move(const math::Vector3 vec3)
+    void Camera::move(const math::Vec3 vec3)
     {
         this->pos += vec3;
     }
@@ -145,7 +145,7 @@ namespace core
         this->pos.z = z;
     }
 
-    void Camera::setPos(const Vector3& pos)
+    void Camera::setPos(const Vec3& pos)
     {
         this->setPos(pos.x, pos.y, pos.z);
     }
@@ -157,7 +157,7 @@ namespace core
         this->target.z = z;
     }
 
-    void Camera::setTarget(const Vector3& target)
+    void Camera::setTarget(const Vec3& target)
     {
         this->setTarget(target.x, target.y, target.z);
     }
@@ -169,7 +169,7 @@ namespace core
         z = this->pos.z;
     }
 
-    void Camera::getPos(Vector3& pos) const
+    void Camera::getPos(Vec3& pos) const
     {
         pos.x = this->pos.x;
         pos.y = this->pos.y;
@@ -183,7 +183,7 @@ namespace core
         z = this->startTARGET.z;
     }
 
-    void Camera::getSTarget(math::Vector3& target) const
+    void Camera::getSTarget(math::Vec3& target) const
     {
         target.x = this->startTARGET.x;
         target.y = this->startTARGET.y;
@@ -197,31 +197,31 @@ namespace core
         z = this->target.z;
     }
 
-    void core::Camera::getTarget(math::Vector3& target) const
+    void core::Camera::getTarget(math::Vec3& target) const
     {
         target.x = this->target.x;
         target.y = this->target.y;
         target.z = this->target.z;
     }
 
-    Matrix4 Camera::getProj(int windowWidth, int windowHeight) const
+    Mat4 Camera::getProj(int windowWidth, int windowHeight) const
     {
         float aspect = (float)windowWidth / (float)windowHeight;
-        return Matrix4::getPerspective(this->fov, aspect, this->near, this->far);
+        return Mat4::getPerspective(this->fov, aspect, this->near, this->far);
     }
 
-    math::Matrix4 Camera::getProj(const Size2i& windowSize) const
+    math::Mat4 Camera::getProj(const Size2i& windowSize) const
     {
         return this->getProj(windowSize.width, windowSize.height);
     }
 
-    Matrix4 Camera::getView()
+    Mat4 Camera::getView()
     {
         if (this->mode != CAM_MODE::STATIC)
         {
-            return Matrix4::getLookAt(this->pos, this->target, this->up);
+            return Mat4::getLookAt(this->pos, this->target, this->up);
         }
 
-        return Matrix4::getLookAt(this->pos, this->pos + this->target, this->up);
+        return Mat4::getLookAt(this->pos, this->pos + this->target, this->up);
     }
 }

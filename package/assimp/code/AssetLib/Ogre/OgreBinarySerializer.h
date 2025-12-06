@@ -357,9 +357,9 @@ enum SkeletonChunkId {
     // starting with 0.
     // char* name                      : name of the bone
     // unsigned short handle            : handle of the bone, should be contiguous & start at 0
-    // Vector3 position              : position of this bone relative to parent
+    // Vec3 position              : position of this bone relative to parent
     // Quaternion orientation          : orientation of this bone relative to parent
-    // Vector3 scale                    : scale of this bone relative to parent
+    // Vec3 scale                    : scale of this bone relative to parent
     SKELETON_BONE_PARENT = 0x3000,
     // Record of the parent of a single bone, used to build the node tree
     // Repeating section, listed in Bone Index order, one per Bone
@@ -382,8 +382,8 @@ enum SkeletonChunkId {
     // Repeating section
     // float time                   : The time position (seconds)
     // Quaternion rotate            : Rotation to apply at this keyframe
-    // Vector3 translate            : Translation to apply at this keyframe
-    // Vector3 scale                : Scale to apply at this keyframe
+    // Vec3 translate            : Translation to apply at this keyframe
+    // Vec3 scale                : Scale to apply at this keyframe
     SKELETON_ANIMATION_LINK = 0x5000
     // Link to another skeleton, to re-use its animations
     // char* skeletonName                   : name of skeleton to get animations from

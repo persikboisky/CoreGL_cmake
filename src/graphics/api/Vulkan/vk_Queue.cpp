@@ -6,10 +6,8 @@
 #if defined(CORE_INCLUDE_VULKAN)
 #include "vk_Device.hpp"
 #include "vk_CommandBuffer.hpp"
-#include "vk_Queue.hpp"
 #include "vk_Semaphore.hpp"
 #include "vk_SwapChain.hpp"
-#include "../../../util/types.hpp"
 #include "../../../util/coders.hpp"
 
 namespace core

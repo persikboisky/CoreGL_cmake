@@ -42,14 +42,27 @@ namespace core
 			DEPTH_STENCIL_ATTACHMENT
 		};
 
+		struct ImageTypeInfo
+		{
+			IMAGE_TYPE image = IMAGE_TYPE::IMG_2D;
+			IMAGE_FORMAT format = IMAGE_FORMAT::B8G8R8A8_SRGB;
+			TYPE_USAGE_IMAGE usage = TYPE_USAGE_IMAGE::SAMPLED;
+		};
+
+		struct ImageSubresourceInfo
+		{
+			uint32_t baseMipLevel = 0;
+			uint32_t levelCount = 1;
+			uint32_t baseArrayLayer = 0;
+			uint32_t layerCount = 1;
+		};
+
 		struct ImageCreateInfo
 		{
 			class Device* ptrDevice = nullptr;
 
 			Size3i extent = {};
-			IMAGE_TYPE image = IMAGE_TYPE::IMG_2D;
-			IMAGE_FORMAT format = IMAGE_FORMAT::B8G8R8A8_SRGB;
-			TYPE_USAGE_IMAGE usage = TYPE_USAGE_IMAGE::SAMPLED;
+			ImageTypeInfo* ptrImageType = nullptr;
 			TYPE_MEMORY typeMemory = TYPE_MEMORY::HOST;
 
 			bool exclusiveMode = true;
@@ -59,9 +72,32 @@ namespace core
 			void* data = nullptr;
 		};
 
+		struct ImageViewCreateInfo
+		{
+			class Device* ptrDevice = nullptr;
+			class Image* ptrImage = nullptr;
+			ImageTypeInfo* ptrImageType = nullptr;
+			ImageSubresourceInfo* ptrSubresourceInfo = nullptr;
+		};
+
+		struct SamplerCreateInfo
+		{
+			class Device* ptrDevice = nullptr;
+			FILTER magFilter = FILTER::NEAREST;
+			FILTER minFilter = FILTER::NEAREST;
+			MIPMAP_MODE mipmapMode = MIPMAP_MODE::NEAREST;
+			ADDRESS_MODE addressModeU = ADDRESS_MODE::REPEAT;
+			ADDRESS_MODE addressModeV = ADDRESS_MODE::REPEAT;
+			ADDRESS_MODE addressModeW = ADDRESS_MODE::REPEAT;
+			BORDER_COLOR borderColor = BORDER_COLOR::FLOAT_OPAQUE_WHITE;
+			bool anisotropyEnable = false;
+			uint32_t maxAnisotropy = 4.0f;
+		};
+
 		class Image
 		{
 		protected:
+			friend class ImageView;
 			friend class CommandBuffer;
 
 		private:
@@ -82,7 +118,38 @@ namespace core
 
 		class ImageView
 		{
+		protected:
+			friend class DescriptorSet;
 
+		private:
+			VkDevice* ptrDevice = nullptr;
+			VkImageView imageView = nullptr;
+
+			ImageView(const ImageViewCreateInfo& info);
+
+		public:
+			static ImageView create(const ImageViewCreateInfo& info);
+			static ImageView *ptrCreate(const ImageViewCreateInfo& info);
+
+			~ImageView();
+		};
+
+		class Sampler
+		{
+		protected:
+			friend class DescriptorSet;
+
+		private:
+			VkDevice* ptrDevice = nullptr;
+			VkSampler sampler = nullptr;
+
+			Sampler(const SamplerCreateInfo& info);
+
+		public:
+			static Sampler create(const SamplerCreateInfo& info);
+			static Sampler* ptrCreate(const SamplerCreateInfo& info);
+
+			~Sampler();
 		};
 
 		class Texture

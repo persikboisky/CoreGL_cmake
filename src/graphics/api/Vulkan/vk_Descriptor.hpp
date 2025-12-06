@@ -30,7 +30,7 @@ namespace core
 		struct DescriptorPoolCreateInfo
 		{
 			class Device* ptrDevice = nullptr;
-			std::vector<DescriptorPoolSize> descriptorPoolSize = {};
+			std::vector<DescriptorPoolSize*> vecPtrDescriptorPoolSize = {};
 			uint32_t maxSets = 0;
 		};
 
@@ -91,7 +91,7 @@ namespace core
 		{
 			class Device* ptrDevice = nullptr;
 			DescriptorPool* ptrDescriptorPool = nullptr;
-			DescriptorSetLayout *ptrLayout = nullptr;
+			std::vector<DescriptorSetLayout*> vecPtrLayouts = {};
 		};
 
 		struct DescriptorSetUpdateInfo
@@ -99,7 +99,8 @@ namespace core
 			uint32_t binding = 0;
 			uint64_t offset = 0;
 			class Buffer *ptrBuffer = nullptr;
-//			class Image *ptrImage = nullptr;
+			class ImageView *ptrImageView = nullptr;
+			class Sampler *ptrSampler = nullptr;
 		};
 
 		class DescriptorSet

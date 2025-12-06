@@ -7,7 +7,6 @@
 
 #include "../src/util/coders.hpp"
 #include "../src/util/console.hpp"
-#include "../src/util/types.hpp"
 #include "../src/util/vector.hpp"
 #include "../src/util/time.hpp"
 #include "../src/window/Window.hpp"
@@ -43,6 +42,7 @@
 #include "../src/file/image.hpp"
 #include "../src/file/code.hpp"
 #include "../src/file/wav.hpp"
+#include "../src/file/models/m_types.hpp"
 #include "../src/file/models/m_OBJ.hpp"
 #include "../src/file/animation/a_FBX.hpp"
 #include "../src/math/math.hpp"
@@ -57,6 +57,10 @@
 #include "../src/types/pos.hpp"
 #include "../src/types/apiTypes.hpp"
 #include "../src/types/key.hpp"
+#include "../src/file/script/lua_Runner.hpp"
+#include "../src/file/script/lua_Stack.hpp"
+#include "../src/file/script/lua_Table.hpp"
+#include "../src/file/script/lua_Function.hpp"
 
 namespace core::Core
 {

@@ -5,7 +5,7 @@
 #include "gl_commands.hpp"
 #include "../../../types/color.hpp"
 #include "../../../types/apiTypes.hpp"
-#include "../../../package/glew-2.1.0/include/GL/glew.h"
+#include <GL/glew.h>
 
 static inline int convertPrimitive(const core::PRIMITIVE& primitive)
 {

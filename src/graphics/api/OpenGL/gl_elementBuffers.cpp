@@ -4,7 +4,7 @@
 
 #include "gl_elementBuffers.hpp"
 #include "../../../util/coders.hpp"
-#include "../../../package/glew-2.1.0/include/GL/glew.h"
+#include <GL/glew.h>
 
 namespace core
 {

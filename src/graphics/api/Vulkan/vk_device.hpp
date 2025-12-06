@@ -50,7 +50,9 @@ namespace core
 			friend class Image;
 			friend class Queue;
 			friend class Buffer;
+			friend class Sampler;
 			friend class SwapChain;
+			friend class ImageView;
 			friend class Semaphore;
 			friend class RenderPass;
 			friend class FrameBuffer;

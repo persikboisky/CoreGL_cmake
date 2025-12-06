@@ -44,11 +44,11 @@ set(CoreGL_source
         src/file/models/m_OBJ.cpp
         src/file/animation/a_FBX.cpp
         src/math/math.cpp
+        src/math/Matrix4.cpp
+        src/math/Quaternion.cpp
         src/math/Vector2.cpp
         src/math/Vector3.cpp
         src/math/Vector4.cpp
-        src/math/Matrix4.cpp
-        src/math/Quaternion.cpp
         src/audio/aDevice.cpp
         src/audio/aBuffer.cpp
         src/audio/aSource.cpp
@@ -57,11 +57,13 @@ set(CoreGL_source
         src/types/apiTypes.hpp
         src/types/key.hpp
         src/types/apiTypes.cpp
+        src/file/script/lua_Runner.cpp
+        src/file/script/lua_Stack.cpp
+        src/file/script/lua_Table.cpp
+        src/file/script/lua_Function.cpp
 )
 
 add_library(CoreGL STATIC ${CoreGL_source})
-
-target_link_directories(CoreGL PRIVATE include)
 
 # link GLFW
 set(BUILD_SHARED_LIBS OFF)
@@ -79,7 +81,7 @@ set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build shared libraries")
 set(BUILD_UTILS OFF CACHE INTERNAL "Build utilities")
 add_subdirectory(package/glew-2.1.0/build/cmake)
 target_link_libraries(${PROJECT_NAME} glew_s)
-target_link_directories(${PROJECT_NAME} PRIVATE "package/glew-2.1.0/include")
+target_include_directories(${PROJECT_NAME} PRIVATE package/glew-2.1.0/include)
 
 # link stb_image
 target_include_directories(${PROJECT_NAME} PRIVATE package/stb)
@@ -97,11 +99,19 @@ find_package(Vulkan REQUIRED)
 target_link_libraries(${PROJECT_NAME} Vulkan::Vulkan)
 target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
 
-#link assimp
+# link assimp
 set(BUILD_SHARED_LIBS OFF)
 set(ASSIMP_BUILD_ZLIB ON)
 set(DASSIMP_BUILD_ZLIB ON)
 add_subdirectory(package/assimp)
 target_link_libraries(${PROJECT_NAME} assimp)
 target_include_directories(${PROJECT_NAME} PRIVATE package/assimp/include)
+
+# link nlohmann-json
+target_include_directories(${PROJECT_NAME} PRIVATE package/nlohmann)
+
+# link lua-5.4.8
+add_subdirectory(package/lua-5.4.8)
+target_link_libraries(${PROJECT_NAME} lua)
+target_include_directories(${PROJECT_NAME} PRIVATE package/lua-5.4.8/src)
 

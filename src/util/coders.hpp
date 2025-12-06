@@ -13,6 +13,8 @@
 
 #include <string>
 
+#define NONE_CODERS 35
+
 namespace core
 {
     /// @brief класс для обработки исключений

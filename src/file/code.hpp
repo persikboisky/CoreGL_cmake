@@ -21,8 +21,9 @@ namespace core
     public:
         /// @brief читает файл
         /// @param path путь к файлу
+        /// @param flagDebuInfo разрешить выводить информацию в консоль
         /// @return строку текста прочитанную из файла
-        static std::string loadStr(const char* path);
+        static std::string loadStr(const char* path, bool flagDebuInfo = true);
 
         /// @brief читает файл
         /// @param path путь к файлу

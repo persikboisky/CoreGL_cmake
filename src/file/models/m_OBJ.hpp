@@ -5,9 +5,9 @@
 #ifndef M_OBJ_HPP
 #define M_OBJ_HPP
 
-#include "../../util/types.hpp"
 #include <string>
 #include <vector>
+#include "m_types.hpp"
 
 struct aiMesh;
 struct aiScene;
@@ -21,7 +21,7 @@ namespace core
 		class OBJ
 		{
 		private:
-			std::vector<model::Mesh> meshes = {};
+			std::vector<Mesh> meshes = {};
 
 			OBJ(const std::string& filepath);
 

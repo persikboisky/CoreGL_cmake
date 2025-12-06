@@ -7,6 +7,7 @@
 #include "vk_Device.hpp"
 #include "vk_ShaderStage.hpp"
 #include "vk_Buffer.hpp"
+#include "vk_Image.hpp"
 #include "../../../util/coders.hpp"
 
 namespace core
@@ -17,21 +18,21 @@ namespace core
 		{
 			return (type == DESCRIPTOR_TYPE::UNIFORM_BUFFER) ?
 				   VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER :
-				   VK_DESCRIPTOR_TYPE_SAMPLER;
+				   VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		}
 
 		DescriptorPool::DescriptorPool(const DescriptorPoolCreateInfo& info) : prtDevice(&info.ptrDevice->device)
 		{
-			auto pPoolSizes = new VkDescriptorPoolSize[info.descriptorPoolSize.size()];
-			for (size_t index = 0; index < info.descriptorPoolSize.size(); index++)
+			auto pPoolSizes = new VkDescriptorPoolSize[info.vecPtrDescriptorPoolSize.size()];
+			for (size_t index = 0; index < info.vecPtrDescriptorPoolSize.size(); index++)
 			{
-				pPoolSizes[index].descriptorCount = info.descriptorPoolSize[index].count * info.maxSets;
-				pPoolSizes[index].type = convertDescriptorType(info.descriptorPoolSize[index].type);
+				pPoolSizes[index].descriptorCount = info.vecPtrDescriptorPoolSize[index]->count;
+				pPoolSizes[index].type = convertDescriptorType(info.vecPtrDescriptorPoolSize[index]->type);
 			}
 
 			VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = {};
 			descriptorPoolCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-			descriptorPoolCreateInfo.poolSizeCount = static_cast<uint32_t>(info.descriptorPoolSize.size());
+			descriptorPoolCreateInfo.poolSizeCount = static_cast<uint32_t>(info.vecPtrDescriptorPoolSize.size());
 			descriptorPoolCreateInfo.pPoolSizes = pPoolSizes;
 			descriptorPoolCreateInfo.maxSets = info.maxSets;
 			descriptorPoolCreateInfo.pNext = nullptr;
@@ -109,17 +110,24 @@ namespace core
 			ptrDevice(&info.ptrDevice->device),
 			ptrDescriptorPool(&info.ptrDescriptorPool->descriptorPool)
 		{
+			auto l = new VkDescriptorSetLayout[info.vecPtrLayouts.size()];
+			for (size_t i = 0; i < info.vecPtrLayouts.size(); i++)
+			{
+				l[i] = info.vecPtrLayouts[i]->layout;
+			}
+
 			VkDescriptorSetAllocateInfo allocInfo = {};
 			allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 			allocInfo.descriptorPool = info.ptrDescriptorPool->descriptorPool;
-			allocInfo.descriptorSetCount = 1;
-			allocInfo.pSetLayouts = &info.ptrLayout->layout;
+			allocInfo.descriptorSetCount = static_cast<uint32_t>(info.vecPtrLayouts.size());
+			allocInfo.pSetLayouts = l;
 
 			VkResult result = vkAllocateDescriptorSets(
 					info.ptrDevice->device,
 					&allocInfo,
 					&this->descriptorSet);
 			coders::vulkanProcessingError(result);
+			delete[] l;
 		}
 
 		DescriptorSet::~DescriptorSet()
@@ -153,7 +161,7 @@ namespace core
 				VkWriteDescriptorSet descriptorWrite = {};
 				descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 				descriptorWrite.dstSet = this->descriptorSet;
-				descriptorWrite.dstBinding = 0;
+				descriptorWrite.dstBinding = info.binding;
 				descriptorWrite.dstArrayElement = 0;
 				descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 				descriptorWrite.descriptorCount = 1;
@@ -168,7 +176,29 @@ namespace core
 			}
 			else
 			{
+				VkDescriptorImageInfo imageInfo{};
+				imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+				imageInfo.imageView = info.ptrImageView->imageView;
+				imageInfo.sampler = info.ptrSampler->sampler;
 
+				VkWriteDescriptorSet descriptorWrite = {};
+				descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+				descriptorWrite.dstSet = this->descriptorSet;
+				descriptorWrite.dstBinding = info.binding;
+				descriptorWrite.dstArrayElement = 0;
+				descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+				descriptorWrite.descriptorCount = 1;
+				descriptorWrite.pBufferInfo = nullptr;
+				descriptorWrite.pTexelBufferView = nullptr;
+				descriptorWrite.pImageInfo = &imageInfo;
+
+				vkUpdateDescriptorSets(
+						*this->ptrDevice,
+						1,
+						&descriptorWrite,
+						0,
+						nullptr
+				);
 			}
 		}
 	} // vulkan

@@ -11,7 +11,7 @@ namespace core
 
     namespace math
     {
-        class Matrix4;
+        class Mat4;
     }
 
     namespace color
@@ -27,7 +27,7 @@ namespace core
         void setPosCursor(int x, int y);
         void setPosCursor(const Pos2i& pos);
 
-        void print(math::Matrix4& matrix);
+        void print(math::Mat4& matrix);
         void print(color::RGB color);
 
         void getPosCursor(int &x, int &y);

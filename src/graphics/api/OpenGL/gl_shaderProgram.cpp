@@ -12,7 +12,7 @@
 #include "../../../math/Matrix4.hpp"
 #include "../../../math/Vectors.hpp"
 #include "gl_texture.hpp"
-#include "../../../package/glew-2.1.0/include/GL/glew.h"
+#include <GL/glew.h>
 #include <string>
 #include <iostream>
 
@@ -182,22 +182,22 @@ namespace core
 			glUniform1f(getLocateUniform(this->id, name), value);
 		}
 
-		void ShaderProgram::setUniform2f(const math::Vector2& vec2, const char* name) const
+		void ShaderProgram::setUniform2f(const math::Vec2& vec2, const char* name) const
 		{
 			glUniform2f(getLocateUniform(this->id, name), vec2.x, vec2.y);
 		}
 
-		void ShaderProgram::setUniform3f(const math::Vector3& vec3, const char* name) const
+		void ShaderProgram::setUniform3f(const math::Vec3& vec3, const char* name) const
 		{
 			glUniform3f(getLocateUniform(this->id, name), vec3.x, vec3.y, vec3.z);
 		}
 
-		void ShaderProgram::setUniform4f(const math::Vector4& vec4, const char* name) const
+		void ShaderProgram::setUniform4f(const math::Vec4& vec4, const char* name) const
 		{
 			glUniform4f(getLocateUniform(this->id, name), vec4.x, vec4.y, vec4.z, vec4.w);
 		}
 
-		void ShaderProgram::setUniformMat4(math::Matrix4 matrix, const char* name) const
+		void ShaderProgram::setUniformMat4(math::Mat4 matrix, const char* name) const
 		{
 			glUniformMatrix4fv(
 					getLocateUniform(this->id, name),

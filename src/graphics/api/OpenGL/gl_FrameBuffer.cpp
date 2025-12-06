@@ -3,10 +3,8 @@
 //
 
 #include "gl_FrameBuffer.hpp"
-#include "gl_texture.hpp"
 #include "../../../util/coders.hpp"
-#include "../../../util/types.hpp"
-#include "../../../package/glew-2.1.0/include/GL/glew.h"
+#include <GL/glew.h>
 
 namespace core
 {

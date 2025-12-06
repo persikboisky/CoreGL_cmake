@@ -130,12 +130,12 @@ static void WriteNode(const aiNode *node, IOStream *io, unsigned int depth) {
     aiString name;
     ConvertName(name, node->mName);
     ioprintf(io, "%s<Node name=\"%s\"> \n"
-                 "%s\t<Matrix4> \n"
+                 "%s\t<Mat4> \n"
                  "%s\t\t%0 6f %0 6f %0 6f %0 6f\n"
                  "%s\t\t%0 6f %0 6f %0 6f %0 6f\n"
                  "%s\t\t%0 6f %0 6f %0 6f %0 6f\n"
                  "%s\t\t%0 6f %0 6f %0 6f %0 6f\n"
-                 "%s\t</Matrix4> \n",
+                 "%s\t</Mat4> \n",
             prefix, name.data, prefix,
             prefix, m.a1, m.a2, m.a3, m.a4,
             prefix, m.b1, m.b2, m.b3, m.b4,
@@ -495,12 +495,12 @@ static void WriteDump(const char *pFile, const char *cmd, const aiScene *scene, 
                     ConvertName(name, bone->mName);
                     // bone header
                     ioprintf(io, "\t\t\t<Bone name=\"%s\">\n"
-                                 "\t\t\t\t<Matrix4> \n"
+                                 "\t\t\t\t<Mat4> \n"
                                  "\t\t\t\t\t%0 6f %0 6f %0 6f %0 6f\n"
                                  "\t\t\t\t\t%0 6f %0 6f %0 6f %0 6f\n"
                                  "\t\t\t\t\t%0 6f %0 6f %0 6f %0 6f\n"
                                  "\t\t\t\t\t%0 6f %0 6f %0 6f %0 6f\n"
-                                 "\t\t\t\t</Matrix4> \n",
+                                 "\t\t\t\t</Mat4> \n",
                             name.data,
                             bone->mOffsetMatrix.a1, bone->mOffsetMatrix.a2, bone->mOffsetMatrix.a3, bone->mOffsetMatrix.a4,
                             bone->mOffsetMatrix.b1, bone->mOffsetMatrix.b2, bone->mOffsetMatrix.b3, bone->mOffsetMatrix.b4,

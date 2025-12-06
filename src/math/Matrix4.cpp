@@ -16,7 +16,7 @@
 using namespace core;
 using namespace core::math;
 
-Matrix4::Matrix4(float diagonal)
+Mat4::Mat4(float diagonal)
 {
     for (unsigned int element = 0; element < 16; element++)
     {
@@ -29,7 +29,7 @@ Matrix4::Matrix4(float diagonal)
     this->mat[15] = 1.0f;
 }
 
-Matrix4::Matrix4(float mat4[16])
+Mat4::Mat4(float mat4[16])
 {
     for (unsigned int element = 0; element < 16; element++)
     {
@@ -37,12 +37,12 @@ Matrix4::Matrix4(float mat4[16])
     }
 }
 
-float* Matrix4::getArray()
+float* Mat4::getArray()
 {
     return *&this->mat;
 }
 
-std::array<float, 16> Matrix4::multiply(float mat1[16], float mat2[16])
+std::array<float, 16> Mat4::multiply(float mat1[16], float mat2[16])
 {
     std::array<float, 16> newMat = {
             mat1[0] * mat2[0] + mat1[1] * mat2[4] + mat1[2] * mat2[8] + mat1[3] * mat2[12],
@@ -69,9 +69,9 @@ std::array<float, 16> Matrix4::multiply(float mat1[16], float mat2[16])
     return newMat;
 }
 
-Vector4 Matrix4::multiply(Vector4 vec, float mat[16])
+Vec4 Mat4::multiply(Vec4 vec, float mat[16])
 {
-    return Vector4(
+    return Vec4(
             vec.x * mat[0] + vec.y * mat[1] + vec.z * mat[2] + vec.w * mat[3],
             vec.x * mat[4] + vec.y * mat[5] + vec.z * mat[6] + vec.w * mat[7],
             vec.x * mat[8] + vec.y * mat[9] + vec.z * mat[10] + vec.w * mat[11],
@@ -79,26 +79,26 @@ Vector4 Matrix4::multiply(Vector4 vec, float mat[16])
     );
 }
 
-auto Matrix4::operator*(Matrix4 mat4) -> Matrix4
+auto Mat4::operator*(Mat4 mat4) -> Mat4
 {
-    return Matrix4(Matrix4::multiply(this->mat, mat4.getArray()).data());
+    return Mat4(Mat4::multiply(this->mat, mat4.getArray()).data());
 }
 
-auto Matrix4::operator*(Vector4 vec4) -> Vector4
+auto Mat4::operator*(Vec4 vec4) -> Vec4
 {
-    return Matrix4::multiply(vec4, this->mat);
+    return Mat4::multiply(vec4, this->mat);
 }
 
-void Matrix4::operator*=(Matrix4 mat4)
+void Mat4::operator*=(Mat4 mat4)
 {
-    Matrix4 mat = mat4 * Matrix4(this->mat);
+    Mat4 mat = mat4 * Mat4(this->mat);
     for (unsigned int index = 0; index < 16; index++)
     {
         this->mat[index] = mat.getArray()[index];
     }
 }
 
-void Matrix4::operator=(Matrix4 mat4)
+void Mat4::operator=(Mat4 mat4)
 {
     for (unsigned int element = 0; element < 16; element++)
     {
@@ -106,7 +106,7 @@ void Matrix4::operator=(Matrix4 mat4)
     }
 }
 
-void Matrix4::operator=(float mat4[16])
+void Mat4::operator=(float mat4[16])
 {
     for (unsigned int element = 0; element < 16; element++)
     {
@@ -114,7 +114,7 @@ void Matrix4::operator=(float mat4[16])
     }
 }
 
-Matrix4 Matrix4::getScale(const Vector3& vecScale, const Matrix4& mat4)
+Mat4 Mat4::getScale(const Vec3& vecScale, const Mat4& mat4)
 {
     float ScaleMat[16] = {
             vecScale.x, 0, 0, 0,
@@ -123,10 +123,10 @@ Matrix4 Matrix4::getScale(const Vector3& vecScale, const Matrix4& mat4)
             0, 0, 0, 1
     };
 
-    return Matrix4(ScaleMat) * mat4;
+    return Mat4(ScaleMat) * mat4;
 }
 
-Matrix4 Matrix4::getTranslate(const Vector3& vecTranslate, const Matrix4& mat4)
+Mat4 Mat4::getTranslate(const Vec3& vecTranslate, const Mat4& mat4)
 {
     float TranslateMat[16] = {
             1, 0, 0, 0,
@@ -135,10 +135,10 @@ Matrix4 Matrix4::getTranslate(const Vector3& vecTranslate, const Matrix4& mat4)
             vecTranslate.x, vecTranslate.y, vecTranslate.z, 1
     };
 
-    return Matrix4(TranslateMat) * mat4;
+    return Mat4(TranslateMat) * mat4;
 }
 
-Matrix4 Matrix4::getRotate(float angle, const Vector3& axises, const Matrix4& mat4)
+Mat4 Mat4::getRotate(float angle, const Vec3& axises, const Mat4& mat4)
 {
     float s = sin(angle);
     float c = cos(angle);
@@ -158,10 +158,10 @@ Matrix4 Matrix4::getRotate(float angle, const Vector3& axises, const Matrix4& ma
             0.0f, 0.0f, 0.0f, 1.0f
     };
 
-    return Matrix4(rot) * mat4;
+    return Mat4(rot) * mat4;
 }
 
-Matrix4 Matrix4::getPerspective(float fovToRadians, float aspect, float near, float far)
+Mat4 Mat4::getPerspective(float fovToRadians, float aspect, float near, float far)
 {
     const float TAN = tan(fovToRadians / 2.0f);
 
@@ -172,29 +172,29 @@ Matrix4 Matrix4::getPerspective(float fovToRadians, float aspect, float near, fl
             0, 0, -((2.0f * far * near) / (far - near)), 0
     };
 
-    return Matrix4(perspective);
+    return Mat4(perspective);
 }
 
-Matrix4 Matrix4::getLookAt(Vector3 pos, Vector3 target, Vector3 up)
+Mat4 Mat4::getLookAt(Vec3 pos, Vec3 target, Vec3 up)
 {
-    Vector3 zaxis = Vector3::normalize(pos - target);
-    Vector3 xaxis = Vector3::normalize(Vector3::cross(up, zaxis));
-    Vector3 yaxis = Vector3::cross(zaxis, xaxis);
+    Vec3 zaxis = Vec3::normalize(pos - target);
+    Vec3 xaxis = Vec3::normalize(Vec3::cross(up, zaxis));
+    Vec3 yaxis = Vec3::cross(zaxis, xaxis);
 
     float lookAT[16] = {
             xaxis.x, yaxis.x, zaxis.x, 0,
             xaxis.y, yaxis.y, zaxis.y, 0,
             xaxis.z, yaxis.z, zaxis.z, 0,
-            -Vector3::dot(xaxis, pos),
-            -Vector3::dot(yaxis, pos),
-            -Vector3::dot(zaxis, pos),
+            -Vec3::dot(xaxis, pos),
+            -Vec3::dot(yaxis, pos),
+            -Vec3::dot(zaxis, pos),
             1
     };
 
-    return Matrix4(lookAT);
+    return Mat4(lookAT);
 }
 
-Matrix4 Matrix4::getRotateX(float angle, const Matrix4& mat4)
+Mat4 Mat4::getRotateX(float angle, const Mat4& mat4)
 {
 	const float SIN = static_cast<float>(sin(angle));
 	const float COS = static_cast<float>(cos(angle));
@@ -206,10 +206,10 @@ Matrix4 Matrix4::getRotateX(float angle, const Matrix4& mat4)
 		0, 0, 0, 1
 	};
 
-	return Matrix4(rotate) * mat4;
+	return Mat4(rotate) * mat4;
 }
 
-Matrix4 Matrix4::getRotateY(float angle, const Matrix4& mat4)
+Mat4 Mat4::getRotateY(float angle, const Mat4& mat4)
 {
 	const float SIN = static_cast<float>(sin(angle));
 	const float COS = static_cast<float>(cos(angle));
@@ -221,10 +221,10 @@ Matrix4 Matrix4::getRotateY(float angle, const Matrix4& mat4)
 		0, 0, 0, 1
 	};
 
-	return Matrix4(rotate) * mat4;
+	return Mat4(rotate) * mat4;
 }
 
-Matrix4 Matrix4::getRotateZ(float angle, const Matrix4& mat4)
+Mat4 Mat4::getRotateZ(float angle, const Mat4& mat4)
 {
 	const float SIN = static_cast<float>(sin(angle));
 	const float COS = static_cast<float>(cos(angle));
@@ -236,45 +236,45 @@ Matrix4 Matrix4::getRotateZ(float angle, const Matrix4& mat4)
 		0, 0, 0, 1
 	};
 
-	return Matrix4(rotate) * mat4;
+	return Mat4(rotate) * mat4;
 }
 
-void core::math::Matrix4::scale(const Vector3& vecScale)
+void core::math::Mat4::scale(const Vec3& vecScale)
 {
-    *this = Matrix4::getScale(vecScale, *this);
+    *this = Mat4::getScale(vecScale, *this);
 }
 
-void core::math::Matrix4::translate(const Vector3& vecTranslate)
+void core::math::Mat4::translate(const Vec3& vecTranslate)
 {
-    *this = Matrix4::getTranslate(vecTranslate, *this);
+    *this = Mat4::getTranslate(vecTranslate, *this);
 }
 
-void core::math::Matrix4::rotateX(float angle)
+void core::math::Mat4::rotateX(float angle)
 {
-    *this = Matrix4::getRotateX(angle, *this);
+    *this = Mat4::getRotateX(angle, *this);
 }
 
-void core::math::Matrix4::rotateY(float angle)
+void core::math::Mat4::rotateY(float angle)
 {
-    *this = Matrix4::getRotateY(angle, *this);
+    *this = Mat4::getRotateY(angle, *this);
 }
 
-void core::math::Matrix4::rotateZ(float angle)
+void core::math::Mat4::rotateZ(float angle)
 {
-    *this = Matrix4::getRotateZ(angle, *this);
+    *this = Mat4::getRotateZ(angle, *this);
 }
 
-void core::math::Matrix4::perspective(float fovToRadians, float aspect, float near, float far)
+void core::math::Mat4::perspective(float fovToRadians, float aspect, float near, float far)
 {
-    *this = Matrix4::getPerspective(fovToRadians, aspect, near, far) * *this;
+    *this = Mat4::getPerspective(fovToRadians, aspect, near, far) * *this;
 }
 
-void core::math::Matrix4::lookAt(Vector3 pos, Vector3 target, Vector3 up)
+void core::math::Mat4::lookAt(Vec3 pos, Vec3 target, Vec3 up)
 {
-    *this = Matrix4::getLookAt(pos, target, up) * *this;
+    *this = Mat4::getLookAt(pos, target, up) * *this;
 }
 
-void core::math::Matrix4::reset()
+void core::math::Mat4::reset()
 {
-    *this = Matrix4(1.0);
+    *this = Mat4(1.0);
 }

@@ -5,7 +5,7 @@
 #include "gl_vertexBuffer.hpp"
 #include "../../../util/coders.hpp"
 #include "../../../types/apiTypes.hpp"
-#include "../../../package/glew-2.1.0/include/GL/glew.h"
+#include <GL/glew.h>
 
 namespace core
 {

@@ -53,7 +53,7 @@ static void drawlineForTable(int len, int nNode, int nAir)
     std::cout << std::endl;
 }
 
-void core::console::print(core::math::Matrix4 &matrix)
+void core::console::print(core::math::Mat4 &matrix)
 {
     drawlineForTable(9, 6, 5);
 

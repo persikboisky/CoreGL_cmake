@@ -16,7 +16,7 @@ core::code::code(const char *path) : path(path)
     this->text = core::code::loadStr(path);
 }
 
-std::string core::code::loadStr(const char *path)
+std::string core::code::loadStr(const char *path, bool flagDebuInfo)
 {
     std::string text = "";
     std::ifstream file(path, std::ios::in);
@@ -32,7 +32,7 @@ std::string core::code::loadStr(const char *path)
         throw core::coders(6, path);
     }
 
-    if (CORE_INFO)
+    if (CORE_INFO && flagDebuInfo)
     {
         console::printTime();
         std::cout << "Ok: read file: " << path << std::endl;

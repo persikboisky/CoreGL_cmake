@@ -128,6 +128,33 @@ namespace core
 		FLOAT,
 		DOUBLE
 	};
+	enum class FILTER : int
+	{
+		NEAREST,
+		LINEAR,
+		CUBIC_EXT
+	};
+	enum class MIPMAP_MODE : int {
+		NEAREST,
+		LINEAR
+	};
+	enum class ADDRESS_MODE : int
+	{
+		REPEAT,
+		MIRRORED_REPEAT,
+		CLAMP_TO_EDGE,
+		CLAMP_TO_BORDER,
+		MIRROR_CLAMP_TO_EDGE
+	};
+	enum class BORDER_COLOR : int
+	{
+		FLOAT_TRANSPARENT_BLACK,
+		INT_TRANSPARENT_BLACK,
+		FLOAT_OPAQUE_BLACK,
+		INT_OPAQUE_BLACK,
+		FLOAT_OPAQUE_WHITE,
+		INT_OPAQUE_WHITE
+	};
 
 #if defined(CORE_INCLUDE_VULKAN)
 	namespace vulkan
