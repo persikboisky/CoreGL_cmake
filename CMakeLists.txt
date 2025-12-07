@@ -61,6 +61,7 @@ set(CoreGL_source
         src/file/script/lua_Stack.cpp
         src/file/script/lua_Table.cpp
         src/file/script/lua_Function.cpp
+        src/file/script/lua_Array.cpp
 )
 
 add_library(CoreGL STATIC ${CoreGL_source})

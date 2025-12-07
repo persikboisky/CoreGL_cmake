@@ -10,18 +10,33 @@ struct lua_State;
 
 namespace core
 {
+	using State = lua_State;
+
 	namespace lua
 	{
 		class Stack;
-
 		class FunctionStack
 		{
-		protected:
-			friend class Stack;
-
 		private:
-			lua_State* stack = nullptr;
+			using num = double;
+			using str = std::string;
 
+			State* state;
+
+			FunctionStack(lua_State* state);
+
+		public:
+			static FunctionStack create(State* state);
+
+			int getInteger(int idx);
+			num getNumber(int idx);
+			str getString(int idx);
+			bool getBoolean(int idx);
+
+			void pushNumber(num number);
+			void pushInteger(int number);
+			void pushString(std::string str);
+			void pushBoolean(bool flag);
 		};
 
 		class Function
@@ -41,6 +56,7 @@ namespace core
 			bool flagGetFunction = true;
 
 			Function(Stack* stack, std::string name);
+			Function(Stack* stack);
 
 		public:
 			~Function() = default;

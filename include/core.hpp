@@ -61,6 +61,7 @@
 #include "../src/file/script/lua_Stack.hpp"
 #include "../src/file/script/lua_Table.hpp"
 #include "../src/file/script/lua_Function.hpp"
+#include "../src/file/script/lua_Array.hpp"
 
 namespace core::Core
 {

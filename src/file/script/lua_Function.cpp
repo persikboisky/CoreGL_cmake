@@ -3,15 +3,66 @@
 //
 
 #include "lua_Function.hpp"
-
-#include <utility>
 #include "lua_Stack.hpp"
+#include <utility>
+#include <lua.hpp>
 
 namespace core
 {
 	namespace lua
 	{
+		FunctionStack::FunctionStack(lua_State* state) : state(state)
+		{}
+
+		FunctionStack FunctionStack::create(lua_State* state)
+		{
+			return FunctionStack(state);
+		}
+
+		int FunctionStack::getInteger(int idx)
+		{
+			return lua_tonumber(state, idx);
+		}
+
+		FunctionStack::num FunctionStack::getNumber(int idx)
+		{
+			return lua_tonumber(state, idx);
+		}
+
+		FunctionStack::str FunctionStack::getString(int idx)
+		{
+			return lua_tostring(state, idx);
+		}
+
+		bool FunctionStack::getBoolean(int idx)
+		{
+			return lua_toboolean(state, idx);
+		}
+
+		void FunctionStack::pushNumber(FunctionStack::num number)
+		{
+			lua_pushnumber(state, number);
+		}
+
+		void FunctionStack::pushInteger(int number)
+		{
+			lua_pushinteger(state, number);
+		}
+
+		void FunctionStack::pushString(std::string str)
+		{
+			lua_pushstring(state, str.c_str());
+		}
+
+		void FunctionStack::pushBoolean(bool flag)
+		{
+			lua_pushboolean(state, flag);
+		}
+
 		Function::Function(lua::Stack* stack, std::string name) : stack(stack), name(std::move(name))
+		{}
+
+		Function::Function(Stack* stack) : stack(stack)
 		{}
 
 		void Function::set(Function::num number)
@@ -103,5 +154,6 @@ namespace core
 				stack->free(1);
 			return flag;
 		}
+
 	}
 } // core

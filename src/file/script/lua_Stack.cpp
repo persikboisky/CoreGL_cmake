@@ -6,9 +6,11 @@
 #include "lua_Runner.hpp"
 #include "lua_Table.hpp"
 #include "lua_Function.hpp"
+#include "lua_Array.hpp"
 #include "../../util/coders.hpp"
 #include <lua.hpp>
 #include <format>
+#include <vector>
 
 namespace core::lua
 {
@@ -134,6 +136,11 @@ namespace core::lua
 		lua_pop(state, count);
 	}
 
+	void Stack::free()
+	{
+		lua_pop(state, lua_gettop(state));
+	}
+
 	int Stack::getTopElementIndex()
 	{
 		return lua_gettop(state);
@@ -142,6 +149,11 @@ namespace core::lua
 	void Stack::pushFromGlobalTable(std::string name, int idx)
 	{
 		lua_getfield(state, idx, name.c_str());
+	}
+
+	void Stack::pushFromGlobalTable(int index, int idx)
+	{
+		lua_rawgeti(state, idx, index);
 	}
 
 	Table Stack::getTable(const std::string& name)
@@ -154,10 +166,18 @@ namespace core::lua
 		return Function(this, name);
 	}
 
-//	void Stack::pushFunction(const std::string& name, int (*)(FunctionStack*) func)
-//	{
-//
-//	}
+	Array Stack::getArray(const std::string& name)
+	{
+		return Array(this, name);
+	}
+
+	void Stack::pushFunction(int(func)(State*), const std::string& name)
+	{
+		lua_pushcfunction(state, func);
+		lua_setglobal(state, name.c_str());
+	}
+
+
 
 } // core::lua
 
