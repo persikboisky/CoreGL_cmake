@@ -212,7 +212,16 @@ float Vec4::distance(const Vec4& vec4) const
             powf(this->w - vec4.w, 2));
 }
 
-auto Vec4::operator*(Mat4 mat4) -> Vec4
+auto Vec4::operator*(Mat4 mat4) const -> Vec4
 {
     return Mat4::multiply(Vec4(this->x, this->y, this->z, this->w), mat4.getArray());
+}
+
+void Vec4::operator*=(Mat4 &mat4)
+{
+    math::Vec4 v = Mat4::multiply(Vec4(this->x, this->y, this->z, this->w), mat4.getArray());
+    this->x = v.x;
+    this->y = v.y;
+    this->z = v.z;
+    this->w = v.w;
 }

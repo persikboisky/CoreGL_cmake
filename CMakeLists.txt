@@ -62,6 +62,7 @@ set(CoreGL_source
         src/file/script/lua_Table.cpp
         src/file/script/lua_Function.cpp
         src/file/script/lua_Array.cpp
+        src/audio/aListener.cpp
 )
 
 add_library(CoreGL STATIC ${CoreGL_source})

@@ -6,8 +6,8 @@
 #include "Abuffer.hpp"
 #include "../types/pos.hpp"
 #include "../util/coders.hpp"
+#include "../math/Vectors.hpp"
 #include <AL/al.h>
-#include <iostream>
 
 namespace core
 {
@@ -46,6 +46,16 @@ namespace core
         alSourcef(this->id, AL_GAIN, value);
     }
 
+    void audio::Source::setMaxVolume(float value) const
+    {
+        alSourcef(this->id, AL_MAX_GAIN, value);
+    }
+
+    void audio::Source::setMinVolume(float value) const
+    {
+        alSourcef(this->id, AL_MIN_GAIN, value);
+    }
+
     void audio::Source::setSpeed(float value) const
     {
         alSourcef(this->id, AL_PITCH, value);
@@ -79,10 +89,9 @@ namespace core
 
     bool audio::Source::isPlaying() const
     {
-
         ALint state;
         alGetSourcei(this->id, AL_SOURCE_STATE, &state);
-        return (state == AL_PLAYING);
+        return state == AL_PLAYING;
     }
 
     void audio::Source::setPos(float x, float y, float z) const
@@ -95,9 +104,40 @@ namespace core
         alSource3f(this->id, AL_POSITION, pos.x, pos.y, pos.z);
     }
 
-    void audio::Source::setVelocity(float x, float y, float z) const
+
+    void audio::Source::setPos(const math::Vec3& pos) const
+    {
+        alSource3f(this->id, AL_POSITION, pos.x, pos.y, pos.z);
+    }
+
+    void audio::Source::setVel(float x, float y, float z) const
     {
         alSource3f(this->id, AL_VELOCITY, x, y, z);
+    }
+
+    void audio::Source::setVel(const math::Vec3& vel) const
+    {
+        alSource3f(this->id, AL_VELOCITY, vel.x, vel.y, vel.z);
+    }
+
+    void audio::Source::setDirect(float x, float y, float z) const
+    {
+        alSource3f(this->id, AL_DIRECTION, x, y, z);
+    }
+
+    void audio::Source::setDirect(const math::Vec3& direct) const
+    {
+        alSource3f(this->id, AL_DIRECTION, direct.x, direct.y, direct.z);
+    }
+
+	void audio::Source::setFov(float agree) const
+	{
+        alSourcef(this->id, AL_CONE_INNER_ANGLE, agree);
+	}
+
+    void audio::Source::setReferenceDistance(float distance)
+    {
+        alSourcef(this->id, AL_REFERENCE_DISTANCE, distance);
     }
 }
 

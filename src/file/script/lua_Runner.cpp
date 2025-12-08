@@ -114,4 +114,11 @@ namespace core::lua
 		else
 			throw coders(NONE_CODERS, "Runtime error: " + std::string(lua_tostring(this->state, -1)));
 	}
+
+	void Runner::operator=(const Runner& runner)
+	{
+		lua_close(state);
+		this->state = runner.state;
+		this->stack = runner.stack;
+	}
 }

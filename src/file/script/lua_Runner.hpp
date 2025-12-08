@@ -37,6 +37,8 @@ namespace core::lua
 		int iRun();
 		std::string strRun();
 		bool bRun();
+
+		void operator= (const Runner& runner);
 	};
 }
 

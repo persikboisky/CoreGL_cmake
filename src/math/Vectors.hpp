@@ -158,7 +158,8 @@ namespace core
             float dot(const Vec4 &vec4) const;
             float distance(const Vec4 &vec4) const;
 
-            auto operator*(Mat4 mat4) -> Vec4;
+            auto operator*(Mat4 mat4) const -> Vec4;
+            void operator*=(Mat4 &mat4);
         };
     }
 }

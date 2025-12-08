@@ -213,7 +213,7 @@ static inline void glInit()
         core::console::printTime();
         std::cout << "Version: " << glGetString(GL_VERSION) << std::endl;
         core::console::printTime();
-        std::cout << "GLSL Version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+        std::cout << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
         core::console::printTime();
         int major, minor;
         glGetIntegerv(GL_MAJOR_VERSION, &major);

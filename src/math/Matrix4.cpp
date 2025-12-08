@@ -72,10 +72,10 @@ std::array<float, 16> Mat4::multiply(float mat1[16], float mat2[16])
 Vec4 Mat4::multiply(Vec4 vec, float mat[16])
 {
     return Vec4(
-            vec.x * mat[0] + vec.y * mat[1] + vec.z * mat[2] + vec.w * mat[3],
-            vec.x * mat[4] + vec.y * mat[5] + vec.z * mat[6] + vec.w * mat[7],
-            vec.x * mat[8] + vec.y * mat[9] + vec.z * mat[10] + vec.w * mat[11],
-            vec.x * mat[12] + vec.y * mat[13] + vec.z * mat[14] + vec.w * mat[15]
+            vec.x * mat[0] + vec.y * mat[4] + vec.z * mat[8] + vec.w * mat[12],
+            vec.x * mat[1] + vec.y * mat[5] + vec.z * mat[9] + vec.w * mat[13],
+            vec.x * mat[2] + vec.y * mat[6] + vec.z * mat[10] + vec.w * mat[14],
+            vec.x * mat[3] + vec.y * mat[7] + vec.z * mat[11] + vec.w * mat[15]
     );
 }
 
@@ -140,25 +140,25 @@ Mat4 Mat4::getTranslate(const Vec3& vecTranslate, const Mat4& mat4)
 
 Mat4 Mat4::getRotate(float angle, const Vec3& axises, const Mat4& mat4)
 {
-    float s = sin(angle);
-    float c = cos(angle);
-    float t = 1.0f - c;
+	float s = sin(angle);
+	float c = cos(angle);
+	float t = 1.0f - c;
 
-    float tx = t * axises.x;
-    float ty = t * axises.y;
-    float tz = t * axises.z;
-    float sx = s * axises.x;
-    float sy = s * axises.y;
-    float sz = s * axises.z;
+	float tx = t * axises.x;
+	float ty = t * axises.y;
+	float tz = t * axises.z;
+	float sx = s * axises.x;
+	float sy = s * axises.y;
+	float sz = s * axises.z;
 
-    float rot[16] = {
-            tx * axises.x + c, tx * axises.y - sz, tx * axises.z + sy, 0.0f,
-            tx * axises.y + sz, ty * axises.y + c, ty * axises.z - sx, 0.0f,
-            tx * axises.z - sy, ty * axises.z + sx, tz * axises.z + c, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f
-    };
+	float rot[16] = {
+			tx * axises.x + c, tx * axises.y - sz, tx * axises.z + sy, 0.0f,
+			tx * axises.y + sz, ty * axises.y + c, ty * axises.z - sx, 0.0f,
+			tx * axises.z - sy, ty * axises.z + sx, tz * axises.z + c, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
+	};
 
-    return Mat4(rot) * mat4;
+	return Mat4(rot) * mat4;
 }
 
 Mat4 Mat4::getPerspective(float fovToRadians, float aspect, float near, float far)

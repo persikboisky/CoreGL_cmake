@@ -52,6 +52,7 @@
 #include "../src/audio/aDevice.hpp"
 #include "../src/audio/aBuffer.hpp"
 #include "../src/audio/aSource.hpp"
+#include "../src/audio/aListener.hpp"
 #include "../src/types/size.hpp"
 #include "../src/types/color.hpp"
 #include "../src/types/pos.hpp"
