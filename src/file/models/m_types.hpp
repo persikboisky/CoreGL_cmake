@@ -10,6 +10,22 @@
 
 namespace core::model
 {
+	enum class TEXTURE_TYPE : int
+	{
+		DIFFUSE,
+		SPECULAR,
+		AMBIENT,
+		EMISSIVE,
+		NORMALS,
+		SHININESS,
+		OPACITY,
+		DISPLACEMENT,
+		LIGHTMAP,
+		REFLECTION,
+		METALNESS,
+		DIFFUSE_ROUGHNESS
+	};
+
 	struct Vertex
 	{
 		float x = 0;
@@ -24,8 +40,8 @@ namespace core::model
 
 	struct Texture
 	{
-		std::string type = "";
-		std::string path = "";
+		TEXTURE_TYPE type;
+		std::string path;
 	};
 
 	struct Mesh

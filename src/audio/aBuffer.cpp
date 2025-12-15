@@ -4,7 +4,7 @@
 
 #include "aBuffer.hpp"
 #include "../file/wav.hpp"
-#include "../util/coders.hpp"
+#include "../util/Coders.hpp"
 #include <al.h>
 #include <iostream>
 
@@ -19,7 +19,7 @@ static unsigned int createBuffer(
     alGenBuffers(1, &id);
     if (id <= 0)
     {
-        throw core::coders(32);
+        throw core::Coders(32);
     }
 
     ALenum format = AL_FORMAT_MONO8;

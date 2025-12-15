@@ -4,12 +4,12 @@
 
 #include "code.hpp"
 #include "../config.hpp"
-#include "../util/coders.hpp"
+#include "../util/Coders.hpp"
 #include "../util/console.hpp"
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <string>
-#include <iostream>
 
 core::code::code(const char *path) : path(path)
 {
@@ -29,7 +29,7 @@ std::string core::code::loadStr(const char *path, bool flagDebuInfo)
     }
     else
     {
-        throw core::coders(6, path);
+        throw core::Coders(6, path);
     }
 
     if (CORE_INFO && flagDebuInfo)

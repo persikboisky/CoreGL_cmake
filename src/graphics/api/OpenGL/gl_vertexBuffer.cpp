@@ -3,8 +3,8 @@
 //
 
 #include "gl_vertexBuffer.hpp"
-#include "../../../util/coders.hpp"
 #include "../../../types/apiTypes.hpp"
+#include "../../../util/Coders.hpp"
 #include <GL/glew.h>
 
 namespace core
@@ -21,12 +21,12 @@ namespace core
 
 			if (this->VAO == -1)
 			{
-				throw coders(13);
+				throw Coders(13);
 			}
 
 			if (VBO == -1)
 			{
-				throw coders(14);
+				throw Coders(14);
 			}
 
 			this->bind();
@@ -79,7 +79,7 @@ namespace core
 			}
 			catch (...)
 			{
-				throw coders(12, "id = " + std::to_string(this->VAO));
+				throw Coders(12, "id = " + std::to_string(this->VAO));
 			}
 		}
 
@@ -122,7 +122,7 @@ namespace core
 			}
 			catch (...)
 			{
-				throw coders(15);
+				throw Coders(15);
 			}
 			this->unBind();
 		}

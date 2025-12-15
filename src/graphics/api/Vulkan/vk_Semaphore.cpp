@@ -4,8 +4,8 @@
 
 #include "vk_Semaphore.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
+#include "../../../util/Coders.hpp"
 #include "vk_Device.hpp"
-#include "../../../util/coders.hpp"
 
 namespace core::vulkan
 {
@@ -21,7 +21,7 @@ namespace core::vulkan
 					&semaphoreCreateInfo,
 					nullptr,
 					&this->semaphore);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 	}
 
 	Semaphore::~Semaphore()

@@ -4,10 +4,10 @@
 
 #include "vk_FrameBuffer.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
+#include "../../../util/Coders.hpp"
+#include "vk_Device.hpp"
 #include "vk_RenderPass.hpp"
 #include "vk_SwapChain.hpp"
-#include "vk_Device.hpp"
-#include "../../../util/coders.hpp"
 
 namespace core
 {
@@ -78,7 +78,7 @@ namespace core
 						&framebufferCreateInfo,
 						nullptr,
 						&this->frameBuffers[index]);
-				coders::vulkanProcessingError(result);
+				Coders::vulkanProcessingError(result);
 				delete[] imagesView;
 			}
 		}

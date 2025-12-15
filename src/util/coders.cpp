@@ -2,10 +2,10 @@
 // Created by kisly on 13.07.2025.
 //
 
-#include "coders.hpp"
+#include "Coders.hpp"
 #include "console.hpp"
-#include <string>
 #include <iostream>
+#include <string>
 #if defined(CORE_INCLUDE_VULKAN)
 #include <vulkan/vulkan.h>
 #endif //defined(CORE_INCLUDE_VULKAN)
@@ -64,21 +64,22 @@ const std::string INFO_CODERS[] = {
         "VK_FAILED_FIND_DEPTH_FORMAT",              // 49
         "VK_FAILED_TO_CREATE_DEPTH_IMAGE",             // 50
         "VK_FAILED_TO_ALLOCATE_DEPTH_IMAGE_MEMORY",    // 51
+        "ASSIMP_FAILED_LOAD_FBX_MODEL(s)",             // 52
         ""
 };
 
-core::coders::coders(int codeError, std::string addInfo)
+core::Coders::Coders(int codeError, std::string addInfo)
 {
     this->code = codeError;
     this->info = addInfo;
 }
 
-int core::coders::getCode() const
+int core::Coders::getCode() const
 {
     return this->code;
 }
 
-std::string core::coders::getInfo()
+std::string core::Coders::getInfo()
 {
     return {
         INFO_CODERS[this->code] +
@@ -87,7 +88,7 @@ std::string core::coders::getInfo()
     };
 }
 
-void core::coders::print()
+void core::Coders::print()
 {
     console::printTime();
     std::cout << "code: " << this->getCode() << std::endl;
@@ -96,26 +97,26 @@ void core::coders::print()
 }
 
 #if defined(CORE_INCLUDE_VULKAN)
-    void core::coders::vulkanProcessingError(const VkResult& result)
+    void core::Coders::vulkanProcessingError(const VkResult& result)
     {
         switch (result)
         {
             case VK_ERROR_EXTENSION_NOT_PRESENT:
-                throw core::coders(35, "VK_ERROR_EXTENSION_NOT_PRESENT");
+                throw core::Coders(35, "VK_ERROR_EXTENSION_NOT_PRESENT");
             case VK_ERROR_INCOMPATIBLE_DRIVER:
-                throw core::coders(35, "VK_ERROR_INCOMPATIBLE_DRIVER");
+                throw core::Coders(35, "VK_ERROR_INCOMPATIBLE_DRIVER");
             case VK_ERROR_INITIALIZATION_FAILED:
-                throw core::coders(35, "VK_ERROR_INITIALIZATION_FAILED");
+                throw core::Coders(35, "VK_ERROR_INITIALIZATION_FAILED");
             case VK_ERROR_LAYER_NOT_PRESENT:
-                throw core::coders(35, "VK_ERROR_LAYER_NOT_PRESENT");
+                throw core::Coders(35, "VK_ERROR_LAYER_NOT_PRESENT");
             case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                throw core::coders(35, "VK_ERROR_OUT_OF_DEVICE_MEMORY");
+                throw core::Coders(35, "VK_ERROR_OUT_OF_DEVICE_MEMORY");
             case VK_ERROR_OUT_OF_HOST_MEMORY:
-                throw core::coders(35, "VK_ERROR_OUT_OF_HOST_MEMORY");
+                throw core::Coders(35, "VK_ERROR_OUT_OF_HOST_MEMORY");
             case VK_ERROR_UNKNOWN:
-                throw core::coders(35, "VK_ERROR_UNKNOWN");
+                throw core::Coders(35, "VK_ERROR_UNKNOWN");
             case VK_ERROR_VALIDATION_FAILED_EXT:
-                throw core::coders(35, "VK_ERROR_VALIDATION_FAILED_EXT");
+                throw core::Coders(35, "VK_ERROR_VALIDATION_FAILED_EXT");
             default:
                 break;
         }

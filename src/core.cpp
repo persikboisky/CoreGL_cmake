@@ -14,7 +14,7 @@ namespace core::Core
         int code = glfwInit();
         if (code == GLFW_FALSE)
         {
-            throw core::coders(0);
+            throw core::Coders(0);
         }
 
         if (CORE_INFO)

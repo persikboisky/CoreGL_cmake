@@ -16,6 +16,8 @@ namespace core
 			unsigned int channels = 0;
 			const void* data = nullptr;
 			bool debugInfo = false;
+		    bool useMipmap = false;
+		    bool useUserSampler = false;
 		};
 
 		/// @brief класс для создание openGL текстуры
@@ -23,7 +25,6 @@ namespace core
 		{
 		private:
 			unsigned int id;
-			unsigned int sampler;
 
 			explicit Texture(const TextureInfo& info);
 
@@ -33,7 +34,7 @@ namespace core
 			static Texture create(const TextureInfo& info);
 			static Texture *ptrCreate(const TextureInfo& info);
 
-			void bind(unsigned int sampler);
+			void bind(unsigned int unit = 0) const;
 			void unBind() const;
 
 			unsigned int getId() const;

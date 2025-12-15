@@ -4,11 +4,11 @@
 
 #include "vk_Descriptor.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
-#include "vk_Device.hpp"
-#include "vk_ShaderStage.hpp"
+#include "../../../util/Coders.hpp"
 #include "vk_Buffer.hpp"
+#include "vk_Device.hpp"
 #include "vk_Image.hpp"
-#include "../../../util/coders.hpp"
+#include "vk_ShaderStage.hpp"
 
 namespace core
 {
@@ -43,7 +43,7 @@ namespace core
 					&descriptorPoolCreateInfo,
 					nullptr,
 					&this->descriptorPool);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 
 			delete[] pPoolSizes;
 		}
@@ -86,7 +86,7 @@ namespace core
 					&layoutInfo,
 					nullptr,
 					&this->layout);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 
 			delete[] bindings;
 		}
@@ -126,7 +126,7 @@ namespace core
 					info.ptrDevice->device,
 					&allocInfo,
 					&this->descriptorSet);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 			delete[] l;
 		}
 

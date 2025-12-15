@@ -12,13 +12,20 @@
 
 namespace core::vulkan
 {
-	struct InstanceInfo
+	/// @brief структура для передачи параметров создания экземпляра vulkan
+	struct InstanceCreateInfo
 	{
+		/// @brief название вашего приложения(необязательно, по умолчанию nullptr)
 		const char* appName = "CoreGL";
+
+		/// @brief версия вашего приложения(необязательно)
 		Version3 appVersion = { 1, 0, 0 };
-		Version3 vulkanVersion = { 1, 0, 0 };
+
+		/// @brief версия vulkan(необязательно)
+		Version3 vulkanVersion = { 1, 2, 0 };
 	};
 
+	/// @brief класс экземпляра vulkan
 	class Instance
 	{
 	protected:
@@ -28,11 +35,18 @@ namespace core::vulkan
 	private:
 		VkInstance instance = {};
 
-		explicit Instance(const InstanceInfo& info);
+		explicit Instance(const InstanceCreateInfo& info);
 
 	public:
-		static Instance create(const InstanceInfo& info);
-		static Instance *ptrCreate(const InstanceInfo& info);
+		/// @brief создаёт экземпляр vulkan 
+		/// @param info объект структуры core::vulkan::InstanceCreateInfo
+		/// @return объект класса core::vulkan::Instance
+		static Instance create(const InstanceCreateInfo& info);
+
+		/// @brief создаёт экземпляр vulkan 
+		/// @param info объект структуры core::vulkan::InstanceCreateInfo
+		/// @return указаетль на объект класса core::vulkan::Instance
+		static Instance *ptrCreate(const InstanceCreateInfo& info);
 
 		~Instance();
 	};

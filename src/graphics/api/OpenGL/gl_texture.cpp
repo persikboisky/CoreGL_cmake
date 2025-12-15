@@ -3,45 +3,49 @@
 //
 
 #include "gl_texture.hpp"
-#include "../../../util/coders.hpp"
+#include "../../../util/Coders.hpp"
 #include "../../../util/console.hpp"
 #include <GL/glew.h>
+#include <format>
 #include <iostream>
 
 namespace core
 {
 	namespace opengl
 	{
-		Texture::Texture(const TextureInfo& info) : sampler(0)
+		Texture::Texture(const TextureInfo& info)
 		{
+		    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 			glGenTextures(1, &this->id);
 
 			if (this->id < 0)
 			{
-				throw coders(16);
-			}
-
-			if (info.debugInfo)
-			{
-				console::printTime();
-				std::cout << "OK: create texture id = " << this->id << std::endl;
+				throw Coders(16);
 			}
 
 			this->bind(0);
 
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		    if (!info.useUserSampler)
+		    {
+		        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		    }
 
 			GLint format;
 			if (info.channels == 1)
-				format = GL_RED;
+			{
+			    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+			    format = GL_RED;
+			}
 			else if (info.channels == 3)
-				format = GL_RGB;
+			{
+			    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+			    format = GL_RGB;
+			}
 			else
-				format = GL_RGBA;
+			    format = GL_RGBA;
 
 			glTexImage2D(
 					GL_TEXTURE_2D,
@@ -54,7 +58,20 @@ namespace core
 					GL_UNSIGNED_BYTE,
 					info.data);
 
+		    if (info.useMipmap)
+		        glGenerateMipmap(GL_TEXTURE_2D);
+
 			this->unBind();
+
+		    if (info.debugInfo)
+		    {
+		        console::printTime();
+		        std::cout << std::format(
+		            "OK: create texture id = {}, width = {}, height = {}, channels = {}",
+		            this->id, info.width, info.height, info.channels) << std::endl;
+		    }
+
+		    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 		}
 
 		Texture::~Texture()
@@ -72,15 +89,15 @@ namespace core
 			return new Texture(info);
 		}
 
-		void Texture::bind(unsigned int sampler)
+		void Texture::bind(unsigned int unit) const
 		{
 			try
 			{
-				glActiveTexture(GL_TEXTURE0 + sampler);
+				glActiveTexture(GL_TEXTURE0 + unit);
 			}
 			catch (...)
 			{
-				throw coders(18);
+				throw Coders(18);
 			}
 
 			try
@@ -89,10 +106,8 @@ namespace core
 			}
 			catch (...)
 			{
-				throw coders(17);
+				throw Coders(17);
 			}
-
-			this->sampler = sampler;
 		}
 
 		void Texture::unBind() const

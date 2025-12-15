@@ -70,6 +70,9 @@ namespace core
     class Monitor;
     class Window
     {
+    protected:
+        friend class CustomCursor;
+
     private:
         GLFWwindow *window;
         static bool flagGladInit;

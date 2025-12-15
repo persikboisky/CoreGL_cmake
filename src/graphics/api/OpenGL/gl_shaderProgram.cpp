@@ -3,18 +3,18 @@
 //
 
 #include "gl_shaderProgram.hpp"
-#include "../../../types/apiTypes.hpp"
-#include "../../../types/color.hpp"
-#include "../../../util/coders.hpp"
-#include "../../../util/console.hpp"
-#include "../../../file/code.hpp"
 #include "../../../config.hpp"
+#include "../../../file/code.hpp"
 #include "../../../math/Matrix4.hpp"
 #include "../../../math/Vectors.hpp"
+#include "../../../types/apiTypes.hpp"
+#include "../../../types/color.hpp"
+#include "../../../util/Coders.hpp"
+#include "../../../util/console.hpp"
 #include "gl_texture.hpp"
 #include <GL/glew.h>
-#include <string>
 #include <iostream>
+#include <string>
 
 namespace core
 {
@@ -42,7 +42,7 @@ namespace core
 		}
 		else
 		{
-			throw coders(11, name);
+			throw Coders(11, name);
 		}
 	}
 
@@ -85,11 +85,11 @@ namespace core
 				switch (type)
 				{
 				case core::TYPE_SHADER::FRAGMENT:
-					throw coders(8, err);
+					throw Coders(8, err);
 				case core::TYPE_SHADER::GEOMETRY:
-					throw coders(10, err);
+					throw Coders(10, err);
 				case core::TYPE_SHADER::VERTEX:
-					throw coders(7, err);
+					throw Coders(7, err);
 				}
 			}
 
@@ -142,7 +142,7 @@ namespace core
 				glGetProgramInfoLog(this->id, infoLogLength, NULL, errorMessage);
 				std::string err = errorMessage;
 				delete[] errorMessage;
-				throw coders(9, err);
+				throw Coders(9, err);
 			}
 
 			if (CORE_INFO)

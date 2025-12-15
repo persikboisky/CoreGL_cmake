@@ -4,11 +4,11 @@
 
 #include "vk_Queue.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
-#include "vk_Device.hpp"
+#include "../../../util/Coders.hpp"
 #include "vk_CommandBuffer.hpp"
+#include "vk_Device.hpp"
 #include "vk_Semaphore.hpp"
 #include "vk_SwapChain.hpp"
-#include "../../../util/coders.hpp"
 
 namespace core
 {
@@ -62,7 +62,7 @@ namespace core
 			presentInfoKhr.pSwapchains = &info.ptrSwapChain->swapChain;
 			presentInfoKhr.pImageIndices = &info.imageIndex;
 			VkResult result = vkQueuePresentKHR(this->queue, &presentInfoKhr);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 		}
 
 		void Queue::wait()

@@ -4,9 +4,9 @@
 
 #include "vk_RenderPass.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
-#include "vk_Device.hpp"
+#include "../../../util/Coders.hpp"
 #include "vk_Attachments.hpp"
-#include "../../../util/coders.hpp"
+#include "vk_Device.hpp"
 
 namespace core
 {
@@ -128,7 +128,7 @@ namespace core
 					&renderPassCreateInfo,
 					nullptr,
 					&this->renderPass);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 		}
 
 		RenderPass RenderPass::create(const RenderPassInfo& info)

@@ -4,13 +4,13 @@
 
 #include "vk_ShaderStage.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
-#include "vk_Device.hpp"
-#include "../../../util/coders.hpp"
-#include "../../../util/console.hpp"
 #include "../../../config.hpp"
+#include "../../../util/Coders.hpp"
+#include "../../../util/console.hpp"
+#include "vk_Device.hpp"
 #include <fstream>
-#include <vector>
 #include <iostream>
+#include <vector>
 
 namespace core
 {
@@ -37,7 +37,7 @@ namespace core
 		{
 			std::ifstream file(info.filename, std::ios::ate | std::ios::binary);
 			if (!file.is_open())
-				throw coders(6, info.filename);
+				throw Coders(6, info.filename);
 
 			size_t fileSize = (size_t)file.tellg();
 			std::vector<char> buffer(fileSize);
@@ -64,7 +64,7 @@ namespace core
 					&createInfo,
 					nullptr,
 					&shaderModule);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 
 			if (CORE_INFO)
 			{

@@ -126,7 +126,7 @@ namespace core
 		INT,
 		UNSIGNED_INT,
 		FLOAT,
-		DOUBLE
+		DOUBLE,
 	};
 	enum class FILTER : int
 	{
@@ -155,6 +155,23 @@ namespace core
 		FLOAT_OPAQUE_WHITE,
 		INT_OPAQUE_WHITE
 	};
+    enum class TEXTURE_WRAP : int
+    {
+        REPEAT,
+        CLAMP_TO_EDGE,
+        CLAMP_TO_BORDER,
+        MIRRORED_REPEAT,
+        MIRROR_CLAMP_TO_BORDER
+    };
+    enum class TEXTURE_FILTER : int
+    {
+        NEAREST,
+        LINEAR,
+        NEAREST_MIPMAP_NEAREST,
+        LINEAR_MIPMAP_NEAREST,
+        NEAREST_MIPMAP_LINEAR,
+        LINEAR_MIPMAP_LINEAR
+    };
 
 #if defined(CORE_INCLUDE_VULKAN)
 	namespace vulkan

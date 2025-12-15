@@ -15,16 +15,6 @@ namespace core::lua
 	class Function;
 	class Array;
 
-	enum class TYPE : int
-	{
-		BOOLEAN,
-		INTEGER,
-		NUMBER,
-		STRING,
-		NIL,
-		FUNCTION
-	};
-
 	class Stack
 	{
 	protected:

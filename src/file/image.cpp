@@ -3,8 +3,8 @@
 //
 
 #include "image.hpp"
-#include "../util/coders.hpp"
 #include "../config.hpp"
+#include "../util/Coders.hpp"
 #include "../util/console.hpp"
 #include "../util/vector.hpp"
 #define STB_IMAGE_IMPLEMENTATION
@@ -25,7 +25,7 @@ unsigned char *core::Image::load(
     stbi_uc *image = stbi_load(path, &width, &height, &channels, STBI_default);
     if (image == nullptr)
     {
-        throw core::coders(3, "Path: " + std::string(path));
+        throw core::Coders(3, "Path: " + std::string(path));
     }
 
     if (CORE_INFO && info)
@@ -105,5 +105,5 @@ std::vector<unsigned char> core::Image::getVectorImageCode()
 
 size_t core::Image::getSize() const
 {
-    return sizeof(unsigned char) * this->channels;
+    return getHeight() * getChannels() * getWidth() * sizeof(unsigned char);
 }

@@ -23,7 +23,8 @@ namespace core
 			TRANSFER_SRC,
 			TRANSFER_DST,
 			INDIRECT,
-			VERTEX_TRANSFER_DST
+			VERTEX_TRANSFER_DST,
+			INDEX_TRANSFER_DST
 		};
 
 		struct BufferCreateInfo

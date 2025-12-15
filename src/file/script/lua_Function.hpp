@@ -14,6 +14,17 @@ namespace core
 
 	namespace lua
 	{
+		enum class TYPE : int
+		{
+			BOOLEAN,
+			INTEGER,
+			NUMBER,
+			STRING,
+			NIL,
+			FUNCTION,
+			USER_DATA
+		};
+
 		class Stack;
 		class FunctionStack
 		{
@@ -37,6 +48,11 @@ namespace core
 			void pushInteger(int number);
 			void pushString(std::string str);
 			void pushBoolean(bool flag);
+
+			void* newUserData(size_t size);
+			void* getUserData(int idx);
+
+			bool isType(const TYPE& type, int idx);
 		};
 
 		class Function

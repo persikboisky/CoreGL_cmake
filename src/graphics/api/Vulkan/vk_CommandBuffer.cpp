@@ -4,17 +4,17 @@
 
 #include "vk_CommandBuffer.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
-#include "vk_Device.hpp"
-#include "vk_CommandPool.hpp"
-#include "vk_RenderPass.hpp"
-#include "vk_FrameBuffer.hpp"
-#include "vk_Pipeline.hpp"
-#include "vk_VertexBuffer.hpp"
-#include "vk_ElementBuffer.hpp"
+#include "../../../util/Coders.hpp"
 #include "vk_Buffer.hpp"
+#include "vk_CommandPool.hpp"
 #include "vk_Descriptor.hpp"
+#include "vk_Device.hpp"
+#include "vk_ElementBuffer.hpp"
+#include "vk_FrameBuffer.hpp"
 #include "vk_Image.hpp"
-#include "../../../util/coders.hpp"
+#include "vk_Pipeline.hpp"
+#include "vk_RenderPass.hpp"
+#include "vk_VertexBuffer.hpp"
 
 namespace core
 {
@@ -51,7 +51,7 @@ namespace core
 				device.device,
 				&commandBufferAllocateInfo,
 				&this->commandBuffer);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 		}
 
 		CommandBuffer::~CommandBuffer()
@@ -81,13 +81,13 @@ namespace core
 			beginInfo.pInheritanceInfo = nullptr; // Только для вторичных буферов
 
 			VkResult result = vkBeginCommandBuffer(commandBuffer, &beginInfo);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 		}
 
 		void CommandBuffer::end()
 		{
 			VkResult result = vkEndCommandBuffer(commandBuffer);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 		}
 
 		void CommandBuffer::beginRenderPass(const BeginRenderPassInfo &info)
@@ -181,7 +181,26 @@ namespace core
 			delete[] buffer;
 		}
 
-		void CommandBuffer::bindElementBuffer(struct ElementBuffer &buffer)
+		void
+		CommandBuffer::bindVertexBuffers(
+				uint32_t firstBinding,
+				uint32_t bindingCount,
+				Buffer* ptrBuffers,
+				uint64_t* ptrOffset)
+		{
+			auto buffer = new VkBuffer[bindingCount];
+			for (uint32_t index = 0; index < bindingCount; index++)
+				buffer[index] = ptrBuffers[index].buffer;
+			vkCmdBindVertexBuffers(
+					this->commandBuffer,
+					firstBinding,
+					bindingCount,
+					buffer,
+					ptrOffset);
+			delete[] buffer;
+		}
+
+		void CommandBuffer::bindElementBuffer(ElementBuffer &buffer)
 		{
 			vkCmdBindIndexBuffer(
 				this->commandBuffer,

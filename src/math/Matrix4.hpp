@@ -13,6 +13,7 @@ namespace core
     {
         class Vec4;
         class Vec3;
+		class Quat;
 
         class Mat4 final
         {
@@ -22,6 +23,7 @@ namespace core
         public:
             explicit Mat4(float diagonal = 1.0f);
             explicit Mat4(float mat4[16]);
+			Mat4(Quat& quat);
 
             [[nodiscard]] float* getArray();
             [[nodiscard]] static std::array<float, 16> multiply(float mat1[16], float mat2[16]);

@@ -6,16 +6,16 @@
 
 #include "vk_Instance.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
-#include "../../../util/coders.hpp"
-#include "../../../util/console.hpp"
 #include "../../../config.hpp"
+#include "../../../util/Coders.hpp"
+#include "../../../util/console.hpp"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <vector>
 
 namespace core::vulkan
 {
-	Instance::Instance(const InstanceInfo& info)
+	Instance::Instance(const InstanceCreateInfo& info)
 	{
 		VkApplicationInfo appInfo = {};
 		appInfo.apiVersion = VK_MAKE_API_VERSION(
@@ -55,7 +55,7 @@ namespace core::vulkan
 			&instanceCreateInfo,
 			nullptr,
 			&this->instance);
-		coders::vulkanProcessingError(result);
+		Coders::vulkanProcessingError(result);
 
 		if (CORE_INFO)
 		{
@@ -64,12 +64,12 @@ namespace core::vulkan
 		}
 	}
 
-	Instance Instance::create(const InstanceInfo& info)
+	Instance Instance::create(const InstanceCreateInfo& info)
 	{
 		return Instance(info);
 	}
 
-	Instance *Instance::ptrCreate(const InstanceInfo& info)
+	Instance *Instance::ptrCreate(const InstanceCreateInfo& info)
 	{
 		return new Instance(info);
 	}

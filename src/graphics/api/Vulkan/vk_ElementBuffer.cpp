@@ -4,11 +4,11 @@
 
 #include "vk_ElementBuffer.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
+#include "../../../util/Coders.hpp"
+#include "vk_CommandBuffer.hpp"
+#include "vk_CommandPool.hpp"
 #include "vk_Device.hpp"
 #include "vk_Queue.hpp"
-#include "vk_CommandPool.hpp"
-#include "vk_CommandBuffer.hpp"
-#include "../../../util/coders.hpp"
 #include <cstring>
 
 namespace core
@@ -30,7 +30,7 @@ namespace core
 					&bufferInfo,
 					nullptr,
 					&stagingBuffer);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 
 			VkMemoryRequirements memRequirements;
 			vkGetBufferMemoryRequirements(
@@ -49,7 +49,7 @@ namespace core
 					&allocInfo,
 					nullptr,
 					&stagingBufferMemory);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 			vkBindBufferMemory(info.ptrDevice->device, stagingBuffer, stagingBufferMemory, 0);
 
 			void *data;
@@ -63,7 +63,7 @@ namespace core
 					&bufferInfo,
 					nullptr,
 					&this->buffer);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 
 			vkGetBufferMemoryRequirements(
 					info.ptrDevice->device,
@@ -78,7 +78,7 @@ namespace core
 					&allocInfo,
 					nullptr,
 					&this->memory);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 			vkBindBufferMemory(info.ptrDevice->device, this->buffer, this->memory, 0);
 
 			Queue *queue = Queue::ptrCreate(*info.ptrDevice, TypeFamilyQueue::GRAPHICS);

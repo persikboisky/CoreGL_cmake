@@ -59,6 +59,52 @@ namespace core
 			lua_pushboolean(state, flag);
 		}
 
+		void* FunctionStack::newUserData(size_t size)
+		{
+			return lua_newuserdata(state, size);
+		}
+
+		void* FunctionStack::getUserData(int idx)
+		{
+			return lua_touserdata(state, idx);
+		}
+
+		bool FunctionStack::isType(const TYPE& type, int idx)
+		{
+			{
+				int state = 0;
+				switch(type)
+				{
+				case TYPE::INTEGER:
+					state = lua_isinteger(this->state, idx);
+					break;
+				case TYPE::NIL:
+					state = lua_isnil(this->state, idx);
+					break;
+				case TYPE::NUMBER:
+					state = lua_isnumber(this->state, idx);
+					break;
+				case TYPE::STRING:
+					state = lua_isstring(this->state, idx);
+					break;
+				case TYPE::FUNCTION:
+					state = lua_isfunction(this->state, idx);
+					break;
+				case TYPE::USER_DATA:
+					state = lua_isuserdata(this->state, idx);
+					break;
+				case TYPE::BOOLEAN:
+				default:
+					state = lua_isboolean(this->state, idx);
+					break;
+				}
+
+				if (state == 0)
+					return false;
+				return true;
+			}
+		}
+
 		Function::Function(lua::Stack* stack, std::string name) : stack(stack), name(std::move(name))
 		{}
 

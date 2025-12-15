@@ -18,6 +18,9 @@ namespace core
     class Window;
     class Event
     {
+    protected:
+        friend class Window;
+
     private:
         GLFWwindow* window = nullptr;
 
@@ -26,38 +29,50 @@ namespace core
         bool* mouseKey = nullptr;
         bool* mouseSaveKey = nullptr;
 
-    public:
+        bool stateKey(int key);
+        bool downKey(int key);
+        bool upKey(int key);
+        bool stateMouseKey(int key);
+        bool downMouseKey(int key);
+        bool upMouseKey(int key);
+
         explicit Event(GLFWwindow& addrWindow);
         explicit Event(Window& window);
 
+    public:
         ~Event();
 
         /// @brief обновляет список событий
         void update();
 
         /// @brief событие закрытия окна
-        /// @return 
+        /// @return true, если нажат крестик, завершена задача или вызвана команда Window::close()
         [[nodiscard]] bool close();
 
+        /// @brief проверяет нажата ли левая кнопка мыши
+        /// @return true если нажата
         [[nodiscard]] bool GetMouseLeftButton();
+
+        /// @brief проверяет нажата ли правая кнопка мыши
+        /// @return true если нажата
         [[nodiscard]] bool GetMouseRightButton();
 
-        [[nodiscard]] bool stateKey(int key);
+        /// @brief получает состояние клавиши
+        /// @param key имя клавиши(пример: core::KEY::LEFT_SHIFT, core::KEY::W)
+        /// @return true - зажата, false - отпущена
         [[nodiscard]] bool stateKey(const core::KEY& key);
 
-        [[nodiscard]] bool downKey(int key);
+        /// @brief отлавливает момент нажатия клавиши
+        /// @param key имя клавиши(пример: core::KEY::LEFT_SHIFT, core::KEY::W)
+        /// @return true - в момент нажатия, false - в остальных случаях
         [[nodiscard]] bool downKey(const core::KEY& key);
 
-        [[nodiscard]] bool upKey(int key);
+        /// @brief
+        /// @param key 
+        /// @return 
         [[nodiscard]] bool upKey(const core::KEY& key);
-
-        [[nodiscard]] bool stateMouseKey(int key);
         [[nodiscard]] bool stateMouseKey(const core::MOUSE_KEY& key);
-
-        [[nodiscard]] bool downMouseKey(int key);
         [[nodiscard]] bool downMouseKey(const core::MOUSE_KEY& key);
-
-        [[nodiscard]] bool upMouseKey(int key);
         [[nodiscard]] bool upMouseKey(const core::MOUSE_KEY& key);
     };
 }

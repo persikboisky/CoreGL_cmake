@@ -4,10 +4,10 @@
 
 #include "vk_swapChain.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
+#include "../../../util/Coders.hpp"
 #include "vk_Device.hpp"
-#include "vk_Surface.hpp"
 #include "vk_Semaphore.hpp"
-#include "../../../util/coders.hpp"
+#include "vk_Surface.hpp"
 #include <vector>
 
 namespace core
@@ -48,7 +48,7 @@ namespace core
 					&swapchainCreateInfo,
 					nullptr,
 					&this->swapChain);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 
 			uint32_t count = 0;
 			std::vector<VkImage> swapChainImages = {};
@@ -57,7 +57,7 @@ namespace core
 					this->swapChain,
 					&count,
 					nullptr);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 
 			swapChainImages.resize(count);
 			result = vkGetSwapchainImagesKHR(
@@ -65,7 +65,7 @@ namespace core
 					this->swapChain,
 					&count,
 					swapChainImages.data());
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 
 			this->imagesView.resize(swapChainImages.size());
 			uint32_t index = 0;
@@ -92,7 +92,7 @@ namespace core
 						&viewInfo,
 						nullptr,
 						&this->imagesView[index]);
-				coders::vulkanProcessingError(result);
+				Coders::vulkanProcessingError(result);
 				index++;
 			}
 		}
@@ -126,7 +126,7 @@ namespace core
 					semaphore.semaphore,
 					VK_NULL_HANDLE,
 					&index);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 			return index;
 		}
 	} // vulkan

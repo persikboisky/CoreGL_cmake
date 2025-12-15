@@ -79,6 +79,8 @@ namespace core
 		void setClearColor(const color::RGBA& color, bool normalize = false);
 
 		void setStateBlend(bool flag);
+
+		void setViewport(float x, float y, float width, float height);
 	} // opengl
 } // core
 

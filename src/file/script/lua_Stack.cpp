@@ -3,13 +3,13 @@
 //
 
 #include "lua_Stack.hpp"
+#include "../../util/Coders.hpp"
+#include "lua_Array.hpp"
+#include "lua_Function.hpp"
 #include "lua_Runner.hpp"
 #include "lua_Table.hpp"
-#include "lua_Function.hpp"
-#include "lua_Array.hpp"
-#include "../../util/coders.hpp"
-#include <lua.hpp>
 #include <format>
+#include <lua.hpp>
 #include <vector>
 
 namespace core::lua
@@ -66,6 +66,9 @@ namespace core::lua
 		case TYPE::FUNCTION:
 			state = lua_isfunction(this->state, idx);
 			break;
+		case TYPE::USER_DATA:
+			state = lua_isuserdata(this->state, idx);
+			break;
 		case TYPE::BOOLEAN:
 		default:
 			state = lua_isboolean(this->state, idx);
@@ -82,7 +85,7 @@ namespace core::lua
 		lua_getglobal(state, name.c_str());
 		if (isType(TYPE::NIL, -1))
 		{
-			throw coders(NONE_CODERS, "Lua Error: (" + name + ") isn't variable");
+			throw Coders(NONE_CODERS, "Lua Error: (" + name + ") isn't variable");
 		}
 	}
 
@@ -91,7 +94,7 @@ namespace core::lua
 		if (lua_pcall(state, nArguments, nReturns, 0) != LUA_OK)
 		{
 			std::string error = lua_tostring(state, -1);
-			throw coders(NONE_CODERS, std::format("Lua Error: call({}, {}): ", nArguments, nReturns) + error);
+			throw Coders(NONE_CODERS, std::format("Lua Error: call({}, {}): ", nArguments, nReturns) + error);
 		}
 	}
 
@@ -99,7 +102,7 @@ namespace core::lua
 	{
 		if (!isType(TYPE::BOOLEAN, idx))
 		{
-			throw coders(NONE_CODERS, std::format("Lua Error: getBoolean({}) isn't boolean", idx));
+			throw Coders(NONE_CODERS, std::format("Lua Error: getBoolean({}) isn't boolean", idx));
 		}
 		return lua_toboolean(state, idx);
 	}
@@ -108,7 +111,7 @@ namespace core::lua
 	{
 		if (!isType(TYPE::INTEGER, idx))
 		{
-			throw coders(NONE_CODERS, std::format("Lua Error: getInteger({}) isn't integer", idx));
+			throw Coders(NONE_CODERS, std::format("Lua Error: getInteger({}) isn't integer", idx));
 		}
 		return lua_tointeger(state, idx);
 	}
@@ -117,7 +120,7 @@ namespace core::lua
 	{
 		if (!isType(TYPE::NUMBER, idx))
 		{
-			throw coders(NONE_CODERS, std::format("Lua Error: getNumber({}) isn't number", idx));
+			throw Coders(NONE_CODERS, std::format("Lua Error: getNumber({}) isn't number", idx));
 		}
 		return lua_tonumber(state, idx);
 	}
@@ -126,7 +129,7 @@ namespace core::lua
 	{
 		if (!isType(TYPE::STRING, idx))
 		{
-			throw coders(NONE_CODERS, std::format("Lua Error: getString({}) isn't string", idx));
+			throw Coders(NONE_CODERS, std::format("Lua Error: getString({}) isn't string", idx));
 		}
 		return lua_tostring(state, idx);
 	}

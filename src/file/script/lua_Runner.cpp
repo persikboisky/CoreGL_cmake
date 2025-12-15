@@ -3,13 +3,13 @@
 //
 
 #include "lua_Runner.hpp"
-#include "../code.hpp"
 #include "../../config.hpp"
-#include "../../util/coders.hpp"
+#include "../../util/Coders.hpp"
 #include "../../util/console.hpp"
+#include "../code.hpp"
 #include "lua_Stack.hpp"
-#include <lua.hpp>
 #include <iostream>
+#include <lua.hpp>
 
 namespace core::lua
 {
@@ -17,11 +17,11 @@ namespace core::lua
 	{
 		this->state = luaL_newstate();
 		if (this->state == nullptr)
-			throw coders(NONE_CODERS, "Failed create lua state");
+			throw Coders(NONE_CODERS, "Failed create lua state");
 		luaL_openlibs(this->state);
 
 		if (luaL_loadstring(this->state, code) != LUA_OK)
-			throw coders(NONE_CODERS, "Syntax error: " + std::string(lua_tostring(this->state, -1)));
+			throw Coders(NONE_CODERS, "Syntax error: " + std::string(lua_tostring(this->state, -1)));
 
 		else
 		{
@@ -64,7 +64,7 @@ namespace core::lua
 	void Runner::run()
 	{
 		if (lua_pcall(this->state, 0, 0, 0) != LUA_OK)
-			throw coders(NONE_CODERS, "Runtime error: " + std::string(lua_tostring(this->state, -1)));
+			throw Coders(NONE_CODERS, "Runtime error: " + std::string(lua_tostring(this->state, -1)));
 	}
 
 	double Runner::nRun()
@@ -76,7 +76,7 @@ namespace core::lua
 			return lua_result;
 		}
 		else
-			throw coders(NONE_CODERS, "Runtime error: " + std::string(lua_tostring(this->state, -1)));
+			throw Coders(NONE_CODERS, "Runtime error: " + std::string(lua_tostring(this->state, -1)));
 	}
 
 	int Runner::iRun()
@@ -88,7 +88,7 @@ namespace core::lua
 			return lua_result;
 		}
 		else
-			throw coders(NONE_CODERS, "Runtime error: " + std::string(lua_tostring(this->state, -1)));
+			throw Coders(NONE_CODERS, "Runtime error: " + std::string(lua_tostring(this->state, -1)));
 	}
 
 	std::string Runner::strRun()
@@ -100,7 +100,7 @@ namespace core::lua
 			return lua_result;
 		}
 		else
-			throw coders(NONE_CODERS, "Runtime error: " + std::string(lua_tostring(this->state, -1)));
+			throw Coders(NONE_CODERS, "Runtime error: " + std::string(lua_tostring(this->state, -1)));
 	}
 
 	bool Runner::bRun()
@@ -112,7 +112,7 @@ namespace core::lua
 			return lua_result;
 		}
 		else
-			throw coders(NONE_CODERS, "Runtime error: " + std::string(lua_tostring(this->state, -1)));
+			throw Coders(NONE_CODERS, "Runtime error: " + std::string(lua_tostring(this->state, -1)));
 	}
 
 	void Runner::operator=(const Runner& runner)

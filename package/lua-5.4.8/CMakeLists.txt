@@ -17,11 +17,11 @@ set(LUA_SOURCES
 add_library(lua STATIC ${LUA_SOURCES})
 target_include_directories(lua PUBLIC src)
 
-add_executable(lua_exe src/lua.c)
-target_link_libraries(lua_exe lua)
-set_target_properties(lua_exe PROPERTIES OUTPUT_NAME lua)
+#add_executable(lua_exe src/lua.c)
+#target_link_libraries(lua_exe lua)
+#set_target_properties(lua_exe PROPERTIES OUTPUT_NAME lua)
 
 # Для luac
-add_executable(luac_exe src/luac.c)
-target_link_libraries(luac_exe lua)
-set_target_properties(luac_exe PROPERTIES OUTPUT_NAME luac)
+#add_executable(luac_exe src/luac.c)
+#target_link_libraries(luac_exe lua)
+#set_target_properties(luac_exe PROPERTIES OUTPUT_NAME luac)

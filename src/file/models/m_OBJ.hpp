@@ -26,7 +26,7 @@ namespace core
 			OBJ(const std::string& filepath);
 
 			model::Mesh processMesh(aiMesh* aiMesh, const aiScene* scene);
-			std::vector<Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+			static std::vector<Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, TEXTURE_TYPE typeName);
 
 		public:
 			static OBJ load(const std::string& filepath);

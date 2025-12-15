@@ -3,9 +3,9 @@
 //
 
 #include "Event.hpp"
-#include "Window.hpp"
-#include "../util/coders.hpp"
 #include "../types/key.hpp"
+#include "../util/Coders.hpp"
+#include "Window.hpp"
 #include <GLFW/glfw3.h>
 #include <cstring>
 
@@ -105,7 +105,7 @@ bool core::Event::stateKey(int key)
 {
     if (key >= MAX_KEY_CODE || key < 0)
     {
-        throw core::coders(4, "Function: core::Event::stateKey(int key)");
+        throw core::Coders(4, "Function: core::Event::stateKey(int key)");
     }
 
     else
@@ -149,7 +149,7 @@ bool core::Event::stateMouseKey(int key)
 {
     if (key >= MAX_MOUSE_KEY_CODE || key < 0)
     {
-        throw core::coders(4, "Function: core::Event::stateMouseKey(int key)");
+        throw core::Coders(4, "Function: core::Event::stateMouseKey(int key)");
     }
 
     else
@@ -335,6 +335,7 @@ static int convertMouseKeyCode(const core::MOUSE_KEY& keyCode)
     case core::MOUSE_KEY::BUTTON_RIGHT:
         return GLFW_MOUSE_BUTTON_RIGHT;
     case core::MOUSE_KEY::BUTTON_MIDDLE:
+    default:
         return GLFW_MOUSE_BUTTON_MIDDLE;
     }
 }

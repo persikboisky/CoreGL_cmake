@@ -3,7 +3,7 @@
 //
 
 #include "gl_FrameBuffer.hpp"
-#include "../../../util/coders.hpp"
+#include "../../../util/Coders.hpp"
 #include <GL/glew.h>
 
 namespace core
@@ -19,7 +19,7 @@ namespace core
 			}
 			catch (...)
 			{
-				throw coders(21, "ID = " + std::to_string(this->fbo));
+				throw Coders(21, "ID = " + std::to_string(this->fbo));
 			}
 		}
 
@@ -85,7 +85,7 @@ namespace core
 
 			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			{
-				throw coders(35, "Frame buffer don't ready");
+				throw Coders(35, "Frame buffer don't ready");
 			}
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);

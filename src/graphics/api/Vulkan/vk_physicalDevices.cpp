@@ -4,10 +4,10 @@
 
 #include "vk_physicalDevices.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
-#include "vk_Instance.hpp"
-#include "../../../util/console.hpp"
-#include "../../../util/coders.hpp"
 #include "../../../config.hpp"
+#include "../../../util/Coders.hpp"
+#include "../../../util/console.hpp"
+#include "vk_Instance.hpp"
 #include <iostream>
 
 namespace core
@@ -21,7 +21,7 @@ namespace core
                     instance.instance,
                     &count,
                     nullptr);
-            coders::vulkanProcessingError(result);
+            Coders::vulkanProcessingError(result);
 
             this->devices.resize(count);
 
@@ -29,7 +29,7 @@ namespace core
                     instance.instance,
                     &count,
                     this->devices.data());
-            coders::vulkanProcessingError(result);
+            Coders::vulkanProcessingError(result);
 
             if (CORE_INFO)
             {

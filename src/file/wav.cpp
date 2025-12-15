@@ -4,19 +4,19 @@
 
 #include "wav.hpp"
 #include "../config.hpp"
+#include "../util/Coders.hpp"
 #include "../util/console.hpp"
-#include "../util/coders.hpp"
 #include "../util/vector.hpp"
-#include <vector>
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 static std::vector<char> readWav(const char* path, core::wavInfo& info)
 {
     std::ifstream file = std::ifstream(path, std::ios::binary);
     if (!file.is_open())
     {
-        throw core::coders(27, path);
+        throw core::Coders(27, path);
     }
 
     char *containerFor4byte = new char[4];
@@ -29,7 +29,7 @@ static std::vector<char> readWav(const char* path, core::wavInfo& info)
         containerFor4byte[1] != 'I' ||
         containerFor4byte[2] != 'F' ||
         containerFor4byte[3] != 'F'
-    ) throw core::coders(28, path);
+    ) throw core::Coders(28, path);
 
     // ChunkSize
     file.read(containerFor4byte, 4);
@@ -41,7 +41,7 @@ static std::vector<char> readWav(const char* path, core::wavInfo& info)
         containerFor4byte[1] != 'A' ||
         containerFor4byte[2] != 'V' ||
         containerFor4byte[3] != 'E'
-    ) throw core::coders(29, path);
+    ) throw core::Coders(29, path);
 
     // subChunkId
     file.read(containerFor4byte, 4);
@@ -49,7 +49,7 @@ static std::vector<char> readWav(const char* path, core::wavInfo& info)
         containerFor4byte[0] != 'f' ||
         containerFor4byte[1] != 'm' ||
         containerFor4byte[2] != 't'
-    ) throw core::coders(30, path);
+    ) throw core::Coders(30, path);
 
     // subChunkSize
     file.read(containerFor4byte, 4);
@@ -94,7 +94,7 @@ static std::vector<char> readWav(const char* path, core::wavInfo& info)
         }
         catch (...)
         {
-            throw core::coders(31);
+            throw core::Coders(31);
         }
     }
 

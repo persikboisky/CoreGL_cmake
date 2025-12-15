@@ -4,14 +4,14 @@
 
 #include "aDevice.hpp"
 #include "../config.hpp"
-#include "../util/coders.hpp"
+#include "../util/Coders.hpp"
 #include "../util/console.hpp"
-#include <AL\al.h>
 #include <AL/alc.h>
-#include <vector>
-#include <string>
-#include <iostream>
+#include <AL\al.h>
 #include <fcntl.h>
+#include <iostream>
+#include <string>
+#include <vector>
 
 namespace core
 {
@@ -21,7 +21,7 @@ namespace core
 
         if (!this->device)
         {
-            throw coders(24);
+            throw Coders(24);
         }
 
         this->DeviceName = alcGetString(NULL, ALC_DEVICE_SPECIFIER);
@@ -36,7 +36,7 @@ namespace core
 
         if (!this->context)
         {
-            throw coders(25);
+            throw Coders(25);
         }
 
         if (CORE_INFO)
@@ -74,7 +74,7 @@ namespace core
     {
         if (!alcMakeContextCurrent(this->context))
         {
-            throw coders(26);
+            throw Coders(26);
         }
     }
 }

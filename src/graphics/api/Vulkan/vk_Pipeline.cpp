@@ -29,11 +29,11 @@
 
 #include "vk_Pipeline.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
-#include "vk_ShaderStage.hpp"
-#include "vk_RenderPass.hpp"
-#include "vk_Device.hpp"
+#include "../../../util/Coders.hpp"
 #include "vk_Descriptor.hpp"
-#include "../../../util/coders.hpp"
+#include "vk_Device.hpp"
+#include "vk_RenderPass.hpp"
+#include "vk_ShaderStage.hpp"
 #include <vector>
 
 namespace core
@@ -70,7 +70,7 @@ namespace core
 					&pipelineLayoutCreateInfo,
 					nullptr,
 					&this->layout);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 
 			delete[] pushConstantRanges;
 			delete[] setLayouts;
@@ -274,7 +274,7 @@ namespace core
 					&pipelineCreateInfo,
 					VK_NULL_HANDLE,
 					&this->pipeline);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 
 			delete[] ptrDynamicStates;
 			delete[] ptrBindingDescription;

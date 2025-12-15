@@ -4,8 +4,8 @@
 
 #include "vk_Image.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
+#include "../../../util/Coders.hpp"
 #include "vk_Device.hpp"
-#include "../../../util/coders.hpp"
 
 namespace core
 {
@@ -76,7 +76,7 @@ namespace core
 					&imageCreateInfo,
 					nullptr,
 					&this->image);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 
 			VkMemoryRequirements memRequirements;
 			vkGetImageMemoryRequirements(
@@ -95,7 +95,7 @@ namespace core
 					&allocInfo,
 					nullptr,
 					&this->memory);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 			vkBindImageMemory(info.ptrDevice->device, this->image, this->memory, 0);
 
 			if (info.typeMemory != TYPE_MEMORY::DEVICE_LOCAL && info.data != nullptr)
@@ -144,7 +144,7 @@ namespace core
 			createInfo.subresourceRange.aspectMask = info.ptrImageType->usage == TYPE_USAGE_IMAGE::COLOR_ATTACHMENT ?
 					VK_IMAGE_ASPECT_COLOR_BIT : info.ptrImageType->usage == TYPE_USAGE_IMAGE::DEPTH_STENCIL_ATTACHMENT ?
 					VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT :
-					throw coders(35, "Failed: The image usage is not intended to create a image view");
+					throw Coders(35, "Failed: The image usage is not intended to create a image view");
 
 			createInfo.subresourceRange.baseMipLevel = 0;
 			createInfo.subresourceRange.levelCount = 1;
@@ -163,7 +163,7 @@ namespace core
 					&createInfo,
 					nullptr,
 					&this->imageView);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 		}
 
 		ImageView ImageView::create(const ImageViewCreateInfo& info)
@@ -214,6 +214,7 @@ namespace core
 			case BORDER_COLOR::INT_OPAQUE_BLACK:
 				return VK_BORDER_COLOR_INT_OPAQUE_WHITE;
 			case BORDER_COLOR::FLOAT_OPAQUE_BLACK:
+			default:
 				return VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK;
 			}
 		}
@@ -246,7 +247,7 @@ namespace core
 					&samplerCreateInfo,
 					nullptr,
 					&this->sampler);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 		}
 
 		Sampler Sampler::create(const SamplerCreateInfo& info)

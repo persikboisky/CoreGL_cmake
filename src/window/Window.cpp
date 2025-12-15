@@ -2,17 +2,17 @@
 // Created by kisly on 13.07.2025.
 //
 
-#include "../modules.hpp"
 #include "Window.hpp"
-#include "Event.hpp"
-#include "Cursor.hpp"
-#include "Monitor.hpp"
-#include "../util/console.hpp"
-#include "../util/coders.hpp"
 #include "../config.hpp"
-#include "../types/size.hpp"
-#include "../types/pos.hpp"
 #include "../file/image.hpp"
+#include "../modules.hpp"
+#include "../types/pos.hpp"
+#include "../types/size.hpp"
+#include "../util/Coders.hpp"
+#include "../util/console.hpp"
+#include "Cursor.hpp"
+#include "Event.hpp"
+#include "Monitor.hpp"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -47,7 +47,7 @@ void core::Window::createWindow(int width, int height, const char *title, bool r
 
     if (this->window == nullptr)
     {
-        throw core::coders(1);
+        throw core::Coders(1);
     }
 
     if (CORE_INFO)
@@ -199,7 +199,7 @@ static inline void glInit()
     GLenum err = glewInit();
     if (err != GLEW_OK)
     {
-        throw core::coders(2);
+        throw core::Coders(2);
     }
 
     if (CORE_INFO)
@@ -262,6 +262,7 @@ void core::Window::swapBuffers()
     {
 #endif // defined(CORE_INCLUDE_VULKAN)
         (this->VSfps) ? glfwSwapInterval(1) : glfwSwapInterval(0);
+        glfwSwapBuffers(window);
 #if defined(CORE_INCLUDE_VULKAN)
     }
 #endif // defined(CORE_INCLUDE_VULKAN)
@@ -424,7 +425,6 @@ void core::Window::close()
 
 void core::Window::update()
 {
-    glfwSwapBuffers(this->window);
     this->getSizeWindow();
 
     if (!this->flagFullScreen)

@@ -3,10 +3,10 @@
 //
 
 #include "aSource.hpp"
-#include "Abuffer.hpp"
-#include "../types/pos.hpp"
-#include "../util/coders.hpp"
 #include "../math/Vectors.hpp"
+#include "../types/pos.hpp"
+#include "../util/Coders.hpp"
+#include "Abuffer.hpp"
 #include <AL/al.h>
 
 namespace core
@@ -16,7 +16,7 @@ namespace core
         alGenSources(1, &this->id);
         if (this->id <= 0)
         {
-            throw core::coders(33);
+            throw core::Coders(33);
         }
     }
 

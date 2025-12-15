@@ -18,7 +18,7 @@
 namespace core
 {
     /// @brief класс для обработки исключений
-    class coders
+    class Coders
     {
     private:
         std::string  info;
@@ -28,7 +28,7 @@ namespace core
         /// @brief конструктор для создания объекта ошибки
         /// @param codeError код ошибки
         /// @param addInfo доп. информайия, если требуется
-        coders(int codeError, std::string addInfo = "");
+        Coders(int codeError, std::string addInfo = "");
 
         /// @brief возвращает код ошибки (в файле CoreGL/src/util/coders.cpp есть массив INFO_CODERS - это список ошибок)
         /// @return код

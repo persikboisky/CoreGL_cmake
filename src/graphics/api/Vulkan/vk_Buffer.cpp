@@ -4,8 +4,8 @@
 
 #include "vk_Buffer.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
+#include "../../../util/Coders.hpp"
 #include "vk_Device.hpp"
-#include "../../../util/coders.hpp"
 
 namespace core
 {
@@ -27,6 +27,8 @@ namespace core
 				return VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
 			case TYPE_USAGE_BUFFER::INDIRECT:
 				return VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
+			case TYPE_USAGE_BUFFER::INDEX_TRANSFER_DST:
+				return VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 			case TYPE_USAGE_BUFFER::VERTEX_TRANSFER_DST:
 				return VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 			default:
@@ -50,7 +52,7 @@ namespace core
 					&bufferInfo,
 					nullptr,
 					&this->buffer);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 
 			VkMemoryRequirements memRequirements;
 			vkGetBufferMemoryRequirements(
@@ -71,7 +73,7 @@ namespace core
 					&allocInfo,
 					nullptr,
 					&this->memory);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 			vkBindBufferMemory(info.ptrDevice->device, this->buffer, this->memory, 0);
 
 			if (info.typeMemory != TYPE_MEMORY::DEVICE_LOCAL && info.data != nullptr)

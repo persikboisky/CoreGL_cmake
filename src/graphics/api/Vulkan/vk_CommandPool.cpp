@@ -4,8 +4,8 @@
 
 #include "vk_CommandPool.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
+#include "../../../util/Coders.hpp"
 #include "vk_Device.hpp"
-#include "../../../util/coders.hpp"
 
 namespace core
 {
@@ -25,7 +25,7 @@ namespace core
 					&commandPoolCreateInfo,
 					nullptr,
 					&this->commandPool);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 		}
 
 		CommandPool::~CommandPool()

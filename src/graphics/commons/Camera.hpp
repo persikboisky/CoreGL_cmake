@@ -16,7 +16,7 @@ namespace core
         STATIC
     };
 
-    struct CameraInfo
+    struct CameraCreateInfo
     {
         math::Vec3 up = math::Vec3(0, 1, 0);
         math::Vec3 position = math::Vec3(0, 0, 4);
@@ -26,7 +26,7 @@ namespace core
         float near = 0.1f;
         CAM_MODE mode;
 
-        CameraInfo();
+        CameraCreateInfo();
     };
 
     /// @brief класс камеры
@@ -52,7 +52,7 @@ namespace core
 
         Camera(float posX, float posY, float posZ, float fov = 70, float distance = 100);
         Camera(math::Vec3 pos, float fov = 70, float distance = 100);
-        Camera(const CameraInfo &info);
+        Camera(const CameraCreateInfo &info);
 
     public:
         /// @brief создаёт камеру
@@ -72,9 +72,9 @@ namespace core
         static Camera create(math::Vec3 pos, float fov = 70, float distance = 100);
 
         /// @brief создаёт камеру
-        /// @param info объект структуры CameraInfo
+        /// @param info объект структуры CameraCreateInfo
         /// @return объект класса Camera
-        static Camera create(const CameraInfo &info);
+        static Camera create(const CameraCreateInfo &info);
 
         /// @brief создаёт камеру
         /// @param posX позиция камеры
@@ -93,9 +93,9 @@ namespace core
         static Camera *ptrCreate(math::Vec3 pos, float fov = 70, float distance = 100);
 
         /// @brief создаёт камеру
-        /// @param info объект структуры CameraInfo
+        /// @param info объект структуры CameraCreateInfo
         /// @return указатель на объект класса Camera
-        static Camera *ptrCreate(const CameraInfo &info);
+        static Camera *ptrCreate(const CameraCreateInfo &info);
 
         /// @brief устанавливает режим камеры
         /// @param mode (CAM_DYNAMIC - смотрит в одну точку, CAM_STATIC - смотрит в одном направлении)

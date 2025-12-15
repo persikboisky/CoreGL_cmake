@@ -80,6 +80,11 @@ namespace core
 					uint32_t bindingCount,
 					class VertexBuffer* ptrBuffers,
 					uint64_t* ptrOffset);
+			void bindVertexBuffers(
+					uint32_t firstBinding,
+					uint32_t bindingCount,
+					class Buffer* ptrBuffers,
+					uint64_t* ptrOffset);
 
 			void bindElementBuffer(class ElementBuffer& buffer);
 

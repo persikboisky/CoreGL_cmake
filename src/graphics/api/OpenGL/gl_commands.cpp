@@ -182,6 +182,13 @@ namespace core
 				glEnable(GL_BLEND);
 			else
 				glDisable(GL_BLEND);
+
+		    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		}
+
+		void setViewport(float x, float y, float width, float height)
+		{
+			glViewport(x, y, width, height);
 		}
 	} // opengl
 } // core

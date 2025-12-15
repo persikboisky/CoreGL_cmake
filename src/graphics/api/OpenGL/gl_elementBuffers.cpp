@@ -3,7 +3,7 @@
 //
 
 #include "gl_elementBuffers.hpp"
-#include "../../../util/coders.hpp"
+#include "../../../util/Coders.hpp"
 #include <GL/glew.h>
 
 namespace core
@@ -15,7 +15,7 @@ namespace core
 			glGenBuffers(1, &this->id);
 			if (this->id <= 0)
 			{
-				throw coders(20);
+				throw Coders(20);
 			}
 
 			this->bind();
@@ -46,7 +46,7 @@ namespace core
 			}
 			catch (...)
 			{
-				throw coders(19);
+				throw Coders(19);
 			}
 		}
 

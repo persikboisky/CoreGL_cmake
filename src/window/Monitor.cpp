@@ -3,11 +3,11 @@
 //
 
 #include "Monitor.hpp"
-#include "../util/coders.hpp"
 #include "../config.hpp"
-#include "../util/console.hpp"
-#include "../types/size.hpp"
 #include "../types/color.hpp"
+#include "../types/size.hpp"
+#include "../util/Coders.hpp"
+#include "../util/console.hpp"
 #include <GLFW/glfw3.h>
 #include <iostream>
 
@@ -23,13 +23,13 @@ Monitor::Monitor()
     this->monitor = glfwGetPrimaryMonitor();
     if (this->monitor == nullptr)
     {
-        throw coders(0x11);
+        throw Coders(0x11);
     }
 
     this->vidMode = glfwGetVideoMode(this->monitor);
     if (this->vidMode == nullptr)
     {
-        throw coders(0x12);
+        throw Coders(0x12);
     }
 
     if (CORE_INFO)

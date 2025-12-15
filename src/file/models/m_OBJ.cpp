@@ -3,13 +3,13 @@
 //
 
 #include "m_OBJ.hpp"
-#include "../../util/coders.hpp"
-#include "../../util/console.hpp"
 #include "../../config.hpp"
+#include "../../util/Coders.hpp"
+#include "../../util/console.hpp"
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 #include <assimp/material.h>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
 #include <iostream>
 
 namespace core::model
@@ -31,7 +31,7 @@ namespace core::model
 
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
         {
-            throw coders(48, importer.GetErrorString());
+            throw Coders(48, importer.GetErrorString());
         }
 
         if (CORE_INFO)
@@ -113,25 +113,73 @@ namespace core::model
             aiMaterial* material = scene->mMaterials[aiMesh->mMaterialIndex];
 
             // Загружаем диффузные текстуры
-            std::vector<Texture> diffuseMaps = LoadMaterialTextures(
-                material, aiTextureType_DIFFUSE, "texture_diffuse");
-            mesh.textures.insert(mesh.textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+            std::vector<Texture> Maps = LoadMaterialTextures(
+                material, aiTextureType_DIFFUSE, TEXTURE_TYPE::DIFFUSE);
+            if (!Maps.empty())
+                mesh.textures.insert(mesh.textures.end(), Maps.begin(), Maps.end());
 
             // Загружаем specular текстуры
-            std::vector<Texture> specularMaps = LoadMaterialTextures(
-                material, aiTextureType_SPECULAR, "texture_specular");
-            mesh.textures.insert(mesh.textures.end(), specularMaps.begin(), specularMaps.end());
+            Maps = LoadMaterialTextures(
+                material, aiTextureType_SPECULAR, TEXTURE_TYPE::SPECULAR);
+            if (!Maps.empty())
+                mesh.textures.insert(mesh.textures.end(), Maps.begin(), Maps.end());
 
             // Загружаем normal maps
-            std::vector<Texture> normalMaps = LoadMaterialTextures(
-                material, aiTextureType_NORMALS, "texture_normal");
-            mesh.textures.insert(mesh.textures.end(), normalMaps.begin(), normalMaps.end());
+            Maps = LoadMaterialTextures(
+                material, aiTextureType_NORMALS, TEXTURE_TYPE::NORMALS);
+            if (!Maps.empty())
+            mesh.textures.insert(mesh.textures.end(), Maps.begin(), Maps.end());
+
+            Maps = LoadMaterialTextures(
+                    material, aiTextureType_AMBIENT, TEXTURE_TYPE::AMBIENT);
+            if (!Maps.empty())
+                mesh.textures.insert(mesh.textures.end(), Maps.begin(), Maps.end());
+
+            Maps = LoadMaterialTextures(
+                    material, aiTextureType_EMISSIVE, TEXTURE_TYPE::EMISSIVE);
+            if (!Maps.empty())
+                mesh.textures.insert(mesh.textures.end(), Maps.begin(), Maps.end());
+
+            Maps = LoadMaterialTextures(
+                    material, aiTextureType_DIFFUSE_ROUGHNESS, TEXTURE_TYPE::DIFFUSE_ROUGHNESS);
+            if (!Maps.empty())
+                mesh.textures.insert(mesh.textures.end(), Maps.begin(), Maps.end());
+
+            Maps = LoadMaterialTextures(
+                    material, aiTextureType_LIGHTMAP, TEXTURE_TYPE::LIGHTMAP);
+            if (!Maps.empty())
+                mesh.textures.insert(mesh.textures.end(), Maps.begin(), Maps.end());
+
+            Maps = LoadMaterialTextures(
+                    material, aiTextureType_DISPLACEMENT, TEXTURE_TYPE::DISPLACEMENT);
+            if (!Maps.empty())
+                mesh.textures.insert(mesh.textures.end(), Maps.begin(), Maps.end());
+
+            Maps = LoadMaterialTextures(
+                    material, aiTextureType_SHININESS, TEXTURE_TYPE::SHININESS);
+            if (!Maps.empty())
+                mesh.textures.insert(mesh.textures.end(), Maps.begin(), Maps.end());
+
+            Maps = LoadMaterialTextures(
+                    material, aiTextureType_REFLECTION, TEXTURE_TYPE::REFLECTION);
+            if (!Maps.empty())
+                mesh.textures.insert(mesh.textures.end(), Maps.begin(), Maps.end());
+
+            Maps = LoadMaterialTextures(
+                    material, aiTextureType_METALNESS, TEXTURE_TYPE::METALNESS);
+            if (!Maps.empty())
+                mesh.textures.insert(mesh.textures.end(), Maps.begin(), Maps.end());
+
+            Maps = LoadMaterialTextures(
+                    material, aiTextureType_OPACITY, TEXTURE_TYPE::OPACITY);
+            if (!Maps.empty())
+                mesh.textures.insert(mesh.textures.end(), Maps.begin(), Maps.end());
         }
 
         return mesh;
     }
 
-    std::vector<Texture> OBJ::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName) {
+    std::vector<Texture> OBJ::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, TEXTURE_TYPE typeName) {
         std::vector<Texture> textures = {};
         for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
             aiString str;

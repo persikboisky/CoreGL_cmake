@@ -4,11 +4,11 @@
 
 #include "vk_surface.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
+#include "../../../config.hpp"
+#include "../../../util/Coders.hpp"
+#include "../../../util/console.hpp"
 #include "../../../window/Window.hpp"
 #include "vk_Instance.hpp"
-#include "../../../util/coders.hpp"
-#include "../../../util/console.hpp"
-#include "../../../config.hpp"
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -24,7 +24,7 @@ namespace core
 				window.getWindowOBJ(),
 				nullptr,
 				&this->surface);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 
 			if (CORE_INFO)
 			{

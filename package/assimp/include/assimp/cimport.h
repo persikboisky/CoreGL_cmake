@@ -839,7 +839,7 @@ ASSIMP_API void aiVector3NormalizeSafe(
 // --------------------------------------------------------------------------------
 /** Rotate a 3D vector by a quaternion.
  *  @param v The vector to rotate by \p q
- *  @param q Quaternion to use to rotate \p v
+ *  @param q Quat to use to rotate \p v
  */
 ASSIMP_API void aiVector3RotateByQuaternion(
         C_STRUCT aiVector3D *v,
@@ -1145,7 +1145,7 @@ ASSIMP_API void aiMatrix4FromTo(
         const C_STRUCT aiVector3D *to);
 
 // --------------------------------------------------------------------------------
-/** Create a Quaternion from euler angles.
+/** Create a Quat from euler angles.
  *  @param q Receives the output quaternion
  *  @param x Rotation angle for the x-axis, in radians
  *  @param y Rotation angle for the y-axis, in radians
@@ -1156,7 +1156,7 @@ ASSIMP_API void aiQuaternionFromEulerAngles(
         float x, float y, float z);
 
 // --------------------------------------------------------------------------------
-/** Create a Quaternion from an axis angle pair.
+/** Create a Quat from an axis angle pair.
  *  @param q Receives the output quaternion
  *  @param axis The orientation axis
  *  @param angle The rotation angle, in radians
@@ -1167,7 +1167,7 @@ ASSIMP_API void aiQuaternionFromAxisAngle(
         const float angle);
 
 // --------------------------------------------------------------------------------
-/** Create a Quaternion from a normalized quaternion stored
+/** Create a Quat from a normalized quaternion stored
  *  in a 3D vector.
  *  @param q Receives the output quaternion
  *  @param normalized The vector that stores the quaternion
@@ -1202,14 +1202,14 @@ ASSIMP_API int aiQuaternionAreEqualEpsilon(
 
 // --------------------------------------------------------------------------------
 /** Normalize a quaternion.
- *  @param q Quaternion to normalize
+ *  @param q Quat to normalize
  */
 ASSIMP_API void aiQuaternionNormalize(
         C_STRUCT aiQuaternion *q);
 
 // --------------------------------------------------------------------------------
 /** Compute quaternion conjugate.
- *  @param q Quaternion to compute conjugate,
+ *  @param q Quat to compute conjugate,
  *           receives the output quaternion
  */
 ASSIMP_API void aiQuaternionConjugate(
@@ -1227,8 +1227,8 @@ ASSIMP_API void aiQuaternionMultiply(
 // --------------------------------------------------------------------------------
 /** Performs a spherical interpolation between two quaternions.
  * @param dst Receives the quaternion resulting from the interpolation.
- * @param start Quaternion when factor == 0
- * @param end Quaternion when factor == 1
+ * @param start Quat when factor == 0
+ * @param end Quat when factor == 1
  * @param factor Interpolation factor between 0 and 1
  */
 ASSIMP_API void aiQuaternionInterpolate(

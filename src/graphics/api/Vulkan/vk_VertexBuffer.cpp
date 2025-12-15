@@ -5,12 +5,12 @@
 #include <iostream>
 #include "vk_VertexBuffer.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
+#include "../../../util/Coders.hpp"
+#include "vk_Buffer.hpp"
+#include "vk_CommandBuffer.hpp"
+#include "vk_CommandPool.hpp"
 #include "vk_Device.hpp"
 #include "vk_Queue.hpp"
-#include "vk_CommandPool.hpp"
-#include "vk_CommandBuffer.hpp"
-#include "vk_Buffer.hpp"
-#include "../../../util/coders.hpp"
 
 namespace core
 {

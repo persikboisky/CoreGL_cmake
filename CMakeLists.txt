@@ -63,6 +63,10 @@ set(CoreGL_source
         src/file/script/lua_Function.cpp
         src/file/script/lua_Array.cpp
         src/audio/aListener.cpp
+        src/file/models/m_FBX.cpp
+        src/util/coders.hpp
+        src/graphics/api/OpenGL/gl_Sampler.cpp
+        src/file/ttf.cpp
 )
 
 add_library(CoreGL STATIC ${CoreGL_source})
@@ -105,6 +109,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
 set(BUILD_SHARED_LIBS OFF)
 set(ASSIMP_BUILD_ZLIB ON)
 set(DASSIMP_BUILD_ZLIB ON)
+set(ASSIMP_BUILD_TESTS OFF)
 add_subdirectory(package/assimp)
 target_link_libraries(${PROJECT_NAME} assimp)
 target_include_directories(${PROJECT_NAME} PRIVATE package/assimp/include)
@@ -116,4 +121,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE package/nlohmann)
 add_subdirectory(package/lua-5.4.8)
 target_link_libraries(${PROJECT_NAME} lua)
 target_include_directories(${PROJECT_NAME} PRIVATE package/lua-5.4.8/src)
+
+# link freetype
+add_subdirectory(package/freetype)
+target_link_libraries(${PROJECT_NAME} freetype)
+target_include_directories(${PROJECT_NAME} PRIVATE package/freetype/include)
+
 

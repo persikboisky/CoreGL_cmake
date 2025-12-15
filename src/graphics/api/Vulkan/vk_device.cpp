@@ -4,15 +4,15 @@
 
 #include "../../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
+#include "../../../config.hpp"
+#include "../../../util/Coders.hpp"
+#include "../../../util/console.hpp"
 #include "vk_Device.hpp"
 #include "vk_PhysicalDevices.hpp"
 #include "vk_Surface.hpp"
-#include "../../../util/coders.hpp"
-#include "../../../config.hpp"
-#include "../../../util/console.hpp"
-#include <vulkan/vulkan.h>
 #include <array>
 #include <iostream>
+#include <vulkan/vulkan.h>
 
 namespace core
 {
@@ -43,7 +43,7 @@ namespace core
 
 			if (vkCreateImage(this->device, &imageInfo, nullptr, &image) != VK_SUCCESS)
 			{
-				throw coders(50);
+				throw Coders(50);
 			}
 
 			VkMemoryRequirements memRequirements;
@@ -58,7 +58,7 @@ namespace core
 
 			if (vkAllocateMemory(this->device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS)
 			{
-				throw coders(51);
+				throw Coders(51);
 			}
 
 			vkBindImageMemory(this->device, image, imageMemory, 0);
@@ -79,7 +79,7 @@ namespace core
 
 			VkImageView imageView;
 			VkResult result = vkCreateImageView(this->device, &viewInfo, nullptr, &imageView);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 			return imageView;
 		}
 
@@ -103,7 +103,7 @@ namespace core
 					return format;
 				}
 			}
-			throw coders(49);
+			throw Coders(49);
 		}
 
 		static inline VkFormat findDepthFormat(VkPhysicalDevice* dev) {
@@ -158,7 +158,7 @@ namespace core
 							info.ptrSurface->surface,
 							&flag);
 
-					coders::vulkanProcessingError(result);
+					Coders::vulkanProcessingError(result);
 					if (flag == VK_TRUE)
 					{
 						this->presentQueueFamilyIndex = count;
@@ -223,7 +223,7 @@ namespace core
 					&deviceCreateInfo,
 					nullptr,
 					&this->device);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 
 			if (CORE_INFO)
 			{
@@ -238,7 +238,7 @@ namespace core
 					info.ptrSurface->surface,
 					&count,
 					nullptr);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 
 			surfaceFormats.resize(count);
 			result = vkGetPhysicalDeviceSurfaceFormatsKHR(
@@ -246,7 +246,7 @@ namespace core
 					info.ptrSurface->surface,
 					&count,
 					surfaceFormats.data());
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 
 			for (const VkSurfaceFormatKHR& format: surfaceFormats)
 			{
@@ -262,7 +262,7 @@ namespace core
 					this->physicalDevice,
 					info.ptrSurface->surface,
 					&this->surfaceCapabilitiesFormat);
-			coders::vulkanProcessingError(result);
+			Coders::vulkanProcessingError(result);
 		}
 
 		Device Device::create(const DeviceInfo& info)
@@ -312,7 +312,7 @@ namespace core
 				}
 			}
 
-			throw coders(46);
+			throw Coders(46);
 		}
 
 		uint32_t Device::getQueueFamilyIndex(const TypeFamilyQueue& type) const
