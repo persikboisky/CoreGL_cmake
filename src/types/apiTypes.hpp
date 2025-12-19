@@ -75,9 +75,10 @@ namespace core
 	{
 		FRAGMENT,
 		GEOMETRY,
-		VERTEX
+		VERTEX,
+	    COMPUTER
 	};
-	enum class CULL_FACE : int
+	enum class CULL_MODE : int
 	{
 		BACK,
 		FRONT,

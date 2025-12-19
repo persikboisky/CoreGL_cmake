@@ -28,9 +28,10 @@ namespace core
 
 		VkShaderStageFlagBits ShaderModule::convertType(const TYPE_SHADER& type)
 		{
-			return (type == TYPE_SHADER::VERTEX) ? VK_SHADER_STAGE_VERTEX_BIT :
-				   (type == TYPE_SHADER::FRAGMENT) ? VK_SHADER_STAGE_FRAGMENT_BIT :
-				   VK_SHADER_STAGE_GEOMETRY_BIT;
+			return  type == TYPE_SHADER::VERTEX ? VK_SHADER_STAGE_VERTEX_BIT :
+				    type == TYPE_SHADER::FRAGMENT ? VK_SHADER_STAGE_FRAGMENT_BIT :
+		            type == TYPE_SHADER::GEOMETRY ? VK_SHADER_STAGE_GEOMETRY_BIT :
+		            VK_SHADER_STAGE_COMPUTE_BIT;
 		}
 
 		ShaderModule::ShaderModule(const ShaderModuleInfo& info) : ptrDevice(&info.ptrDevice->device)

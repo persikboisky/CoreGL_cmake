@@ -64,9 +64,9 @@ namespace core
 			vkBindImageMemory(this->device, image, imageMemory, 0);
 		}
 
-		VkImageView Device::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)
-		{
-			VkImageViewCreateInfo viewInfo{};
+		VkImageView Device::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags) const
+        {
+			VkImageViewCreateInfo viewInfo = {};
 			viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 			viewInfo.image = image;
 			viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
@@ -78,7 +78,7 @@ namespace core
 			viewInfo.subresourceRange.layerCount = 1;
 
 			VkImageView imageView;
-			VkResult result = vkCreateImageView(this->device, &viewInfo, nullptr, &imageView);
+            const VkResult result = vkCreateImageView(this->device, &viewInfo, nullptr, &imageView);
 			Coders::vulkanProcessingError(result);
 			return imageView;
 		}
@@ -89,19 +89,17 @@ namespace core
 				VkFormatFeatureFlags features,
 				VkPhysicalDevice* dev)
 		{
-			for (VkFormat format: candidates)
+			for (const VkFormat& format : candidates)
 			{
 				VkFormatProperties props;
 				vkGetPhysicalDeviceFormatProperties(*dev, format, &props);
 
 				if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features)
-				{
 					return format;
-				}
+
 				else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features)
-				{
 					return format;
-				}
+
 			}
 			throw Coders(49);
 		}
@@ -115,96 +113,28 @@ namespace core
 			);
 		}
 
-		Device::Device(const DeviceInfo& info) :
+		Device::Device(const DeviceCreateInfo& info) :
 			physicalDevice(info.ptrPhDevices->devices[info.idPhDevice])
 		{
 			this->depthFormat = findDepthFormat(&this->physicalDevice);
 			vkGetPhysicalDeviceProperties(this->physicalDevice, &this->deviceProperties);
 			vkGetPhysicalDeviceFeatures(this->physicalDevice, &this->deviceFeatures);
 
-			std::vector<VkQueueFamilyProperties> queueFamilyProperties = {};
-			uint32_t count = 0;
-			vkGetPhysicalDeviceQueueFamilyProperties(
-					this->physicalDevice,
-					&count,
-					nullptr);
-			queueFamilyProperties.resize(count);
-			vkGetPhysicalDeviceQueueFamilyProperties(
-					this->physicalDevice,
-					&count,
-					queueFamilyProperties.data());
-
-			count = 0;
-			for (const VkQueueFamilyProperties& prop: queueFamilyProperties)
-			{
-				if (prop.queueFlags & VK_QUEUE_GRAPHICS_BIT)
-				{
-					this->graphicsQueueFamilyIndex = count;
-					this->countGraphicsQueue = prop.queueCount;
-					break;
-				}
-				count++;
-			}
-
-			count = 0;
-			for (const VkQueueFamilyProperties& prop: queueFamilyProperties)
-			{
-				if (prop.queueFlags & VK_QUEUE_GRAPHICS_BIT)
-				{
-					VkBool32 flag = VK_FALSE;
-					VkResult result = vkGetPhysicalDeviceSurfaceSupportKHR(
-							this->physicalDevice,
-							count,
-							info.ptrSurface->surface,
-							&flag);
-
-					Coders::vulkanProcessingError(result);
-					if (flag == VK_TRUE)
-					{
-						this->presentQueueFamilyIndex = count;
-						this->countPresentQueue = prop.queueCount;
-						break;
-					}
-				}
-				count++;
-			}
-
-			count = 0;
-			for (const VkQueueFamilyProperties& prop: queueFamilyProperties)
-			{
-				if (prop.queueFlags & VK_QUEUE_COMPUTE_BIT)
-				{
-					this->computeFamilyIndex = count;
-					this->countComputeQueue = prop.queueCount;
-					break;
-				}
-				count++;
-			}
-
-			count = 0;
-			for (const VkQueueFamilyProperties& prop: queueFamilyProperties)
-			{
-				if (prop.queueFlags & VK_QUEUE_TRANSFER_BIT)
-				{
-					this->transferFamilyIndex = count;
-					this->countTransferQueue = prop.queueCount;
-					break;
-				}
-				count++;
-			}
-
-			std::array<const char*, 1> enabledExtensionNames = {
+			constexpr std::array<const char*, 1> enabledExtensionNames = {
 					VK_KHR_SWAPCHAIN_EXTENSION_NAME
-//					"VK_EXT_extended_dynamic_state"
 			};
 
-			VkDeviceQueueCreateInfo deviceQueueCreateInfo = {};
-			deviceQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-			deviceQueueCreateInfo.pNext = nullptr;
-			deviceQueueCreateInfo.flags = 0;
-			deviceQueueCreateInfo.queueFamilyIndex = this->graphicsQueueFamilyIndex;
-			deviceQueueCreateInfo.queueCount = 1;
-			deviceQueueCreateInfo.pQueuePriorities = &this->queuePriorities;
+            const auto pQueueCreateInfos = new VkDeviceQueueCreateInfo[info.queueFamiliesInfo.size()];
+		    for (uint32_t i = 0; i < info.queueFamiliesInfo.size(); i++)
+		    {
+		        pQueueCreateInfos[i] = {};
+		        pQueueCreateInfos[i].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		        pQueueCreateInfos[i].pNext = nullptr;
+		        pQueueCreateInfos[i].flags = 0;
+		        pQueueCreateInfos[i].queueFamilyIndex = info.queueFamiliesInfo[i].QueueFamilyIndex;
+		        pQueueCreateInfos[i].queueCount = info.queueFamiliesInfo[i].QueueCount;
+		        pQueueCreateInfos[i].pQueuePriorities = info.queueFamiliesInfo[i].QueuePriorities.data();
+		    }
 
 			VkDeviceCreateInfo deviceCreateInfo = {};
 			deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -215,8 +145,8 @@ namespace core
 			deviceCreateInfo.ppEnabledLayerNames = nullptr;
 			deviceCreateInfo.enabledLayerCount = 0;
 			deviceCreateInfo.pEnabledFeatures = &this->deviceFeatures;
-			deviceCreateInfo.pQueueCreateInfos = &deviceQueueCreateInfo;
-			deviceCreateInfo.queueCreateInfoCount = 1;
+			deviceCreateInfo.pQueueCreateInfos = pQueueCreateInfos;
+			deviceCreateInfo.queueCreateInfoCount = info.queueFamiliesInfo.size();
 
 			VkResult result = vkCreateDevice(
 					this->physicalDevice,
@@ -231,7 +161,7 @@ namespace core
 				std::cout << "Ok: create vulkan device" << std::endl;
 			}
 
-			count = 0;
+			uint32_t count = 0;
 			std::vector<VkSurfaceFormatKHR> surfaceFormats = {};
 			result = vkGetPhysicalDeviceSurfaceFormatsKHR(
 					this->physicalDevice,
@@ -263,14 +193,16 @@ namespace core
 					info.ptrSurface->surface,
 					&this->surfaceCapabilitiesFormat);
 			Coders::vulkanProcessingError(result);
+
+		    delete[] pQueueCreateInfos;
 		}
 
-		Device Device::create(const DeviceInfo& info)
+		Device Device::create(const DeviceCreateInfo& info)
 		{
 			return Device(info);
 		}
 
-		Device* Device::ptrCreate(const DeviceInfo& info)
+		Device* Device::ptrCreate(const DeviceCreateInfo& info)
 		{
 			return new Device(info);
 		}
@@ -280,28 +212,8 @@ namespace core
 			vkDestroyDevice(this->device, nullptr);
 		}
 
-		uint32_t Device::getGraphicsQueueFamilyIndex() const
-		{
-			return this->graphicsQueueFamilyIndex;
-		}
-
-		uint32_t Device::getPresentQueueFamilyIndex() const
-		{
-			return this->presentQueueFamilyIndex;
-		}
-
-		uint32_t Device::getCountGraphicsQueue() const
-		{
-			return this->countGraphicsQueue;
-		}
-
-		uint32_t Device::getCountPresentQueue() const
-		{
-			return this->countPresentQueue;
-		}
-
-		uint32_t Device::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
-		{
+		uint32_t Device::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const
+        {
 			VkPhysicalDeviceMemoryProperties memProperties;
 			vkGetPhysicalDeviceMemoryProperties(this->physicalDevice, &memProperties);
 
@@ -313,36 +225,6 @@ namespace core
 			}
 
 			throw Coders(46);
-		}
-
-		uint32_t Device::getQueueFamilyIndex(const TypeFamilyQueue& type) const
-		{
-			switch (type)
-			{
-			case TypeFamilyQueue::GRAPHICS:
-				return this->graphicsQueueFamilyIndex;
-			case TypeFamilyQueue::PRESENT:
-				return this->presentQueueFamilyIndex;
-			case TypeFamilyQueue::COMPUTER:
-				return this->computeFamilyIndex;
-			default:
-				return this->transferFamilyIndex;
-			}
-		}
-
-		uint32_t Device::getCountQueue(const TypeFamilyQueue& type) const
-		{
-			switch (type)
-			{
-			case TypeFamilyQueue::GRAPHICS:
-				return this->countGraphicsQueue;
-			case TypeFamilyQueue::PRESENT:
-				return this->countPresentQueue;
-			case TypeFamilyQueue::COMPUTER:
-				return this->countComputeQueue;
-			default:
-				return this->countTransferQueue;
-			}
 		}
 	} // vulkan
 } // core

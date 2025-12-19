@@ -8,6 +8,7 @@
 #include "../../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
 #include <vulkan/vulkan.h>
+#include <vector>
 
 namespace core
 {
@@ -17,9 +18,10 @@ namespace core
 
 		struct SubmitInfo
 		{
-			class CommandBuffer* ptrCommandBuffer = nullptr;
-			class Semaphore* ptrWaitSemaphore = nullptr;
-			class Semaphore* ptrSignalSemaphore = nullptr;
+			std::vector<class CommandBuffer*> ptrCommandBuffer = {};
+			std::vector<class Semaphore*> ptrWaitSemaphore = {};
+			std::vector<class Semaphore*> ptrSignalSemaphore = {};
+		    class Fence* ptrFence = nullptr;
 		};
 
 		struct PresentInfo
@@ -32,13 +34,15 @@ namespace core
 		class Queue
 		{
 		private:
-			VkQueue queue = {};
+			VkQueue queue = nullptr;
 
-			Queue(class Device& device, uint32_t index);
+			Queue(class Device &device, uint32_t queueFamilyIndex, uint32_t queueIndex);
 
 		public:
-			static Queue create(class Device& device, const TypeFamilyQueue& type);
-			static Queue *ptrCreate(class Device& device, const TypeFamilyQueue& type);
+		    ~Queue() = default;
+
+			static Queue get(class Device& device, uint32_t queueFamilyIndex, uint32_t queueIndex);
+			static Queue *ptrGet(class Device& device, uint32_t queueFamilyIndex, uint32_t queueIndex);
 
 			void submit(SubmitInfo& info);
 			void present(PresentInfo& info);

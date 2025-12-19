@@ -7,8 +7,9 @@
 
 #include "../../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
-#include "../../../types/apiTypes.hpp"
 #include <vulkan/vulkan.h>
+#include <vector>
+#include "../../../types/apiTypes.hpp"
 
 namespace core
 {
@@ -33,7 +34,12 @@ namespace core
 
 			TYPE_MEMORY typeMemory = TYPE_MEMORY::HOST;
 			TYPE_USAGE_BUFFER typeBuffer = TYPE_USAGE_BUFFER::VERTEX;
-			bool exclusiveMode = true;
+
+		    /// @brief предназначена ли цепочка показа для одной очереди(использование для одной очереди более производительное)
+		    bool exclusiveMode = true;
+
+		    /// @brief список индексов семейств(нужно если выключен exclusiveMode)
+		    std::vector<uint32_t> queueFamilyIndices = {};
 
 			uint64_t size = 0;
 			void* data = nullptr;

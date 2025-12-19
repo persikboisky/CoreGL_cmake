@@ -8,6 +8,7 @@
 #include "../../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
 #include <vulkan/vulkan.h>
+#include <vector>
 
 namespace core
 {
@@ -26,29 +27,47 @@ namespace core
 
 		};
 
-		/// @brief информация для создания vulkan::Device
-		struct DeviceInfo
+	    /// @brief струтура для описания используемых очередей
+	    struct DeviceQueueFamilyInfo
+	    {
+            /// @brief индекс семейства
+            uint32_t QueueFamilyIndex = 0;
+
+	        /// @brief кол-во очередей для использования из семейства
+	        uint32_t QueueCount = 0;
+
+	        /// @brief приорететы очередей
+	        std::vector<float> QueuePriorities = {};
+	    };
+
+		/// @brief информация для создания core::vulkan::Device
+		struct DeviceCreateInfo
 		{
-			/// @brief указатель на объект класса vulkan::Instance
+			/// @brief указатель на объект класса core::vulkan::Instance
 			class Instance* ptrInstance = nullptr;
 
-			/// @brief указатель на объект класса vulkan::PhysicalDevices
+			/// @brief указатель на объект класса core::vulkan::PhysicalDevices
 			class PhysicalDevices* ptrPhDevices = nullptr;
 
-			/// @brief указатель на объект класса vulkan::Surface
+			/// @brief указатель на объект класса core::vulkan::Surface
 			class Surface* ptrSurface = nullptr;
 
-			/// @brief индекс выбранной видиокарты согласно списку vulkan::PhysicalDevices
+			/// @brief индекс выбранной видеокарты согласно списку core::vulkan::PhysicalDevices
 			unsigned int idPhDevice = 0;
 
 			DeviceExtensionsInfo* ptrDeviceExtensionsInfo = nullptr;
+
+		    /// @brief вектор перечесления объектов структуры core::vulkan::DeviceQueueFamilyInfo
+		    std::vector<DeviceQueueFamilyInfo> queueFamiliesInfo = {};
 		};
 
+		/// @brief класс логического устройства vulkan(контекст)
 		class Device
 		{
 		protected:
 			friend class Image;
 			friend class Queue;
+		    friend class Fence;
 			friend class Buffer;
 			friend class Sampler;
 			friend class SwapChain;
@@ -64,6 +83,7 @@ namespace core
 			friend class CommandBuffer;
 			friend class DescriptorPool;
 			friend class PipelineLayout;
+		    friend class ComputePipeline;
 			friend class GraphicsPipeline;
 			friend class DescriptorSetLayout;
 
@@ -75,24 +95,11 @@ namespace core
 			VkPhysicalDeviceFeatures deviceFeatures = {};
 			VkSurfaceFormatKHR surfaceFormat = {};
 			VkSurfaceCapabilitiesKHR surfaceCapabilitiesFormat = {};
-
 			VkFormat depthFormat = {};
 
-			uint32_t graphicsQueueFamilyIndex = 0;
-			uint32_t presentQueueFamilyIndex = 0;
-			uint32_t computeFamilyIndex = 0;
-			uint32_t transferFamilyIndex = 0;
+			explicit Device(const DeviceCreateInfo& info);
 
-			uint32_t countGraphicsQueue = 0;
-			uint32_t countPresentQueue = 0;
-			uint32_t countComputeQueue = 0;
-			uint32_t countTransferQueue = 0;
-
-			const float queuePriorities = 1.0f;
-
-			explicit Device(const DeviceInfo& info);
-
-			uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+			uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const;
 			void createImage(
 					uint32_t width,
 					uint32_t height,
@@ -100,26 +107,20 @@ namespace core
 					VkImageUsageFlags usage,
 					VkImage& image,
 					VkDeviceMemory& imageMemory);
-
-			VkImageView createImageView(
-					VkImage image,
-					VkFormat format,
-					VkImageAspectFlags aspectFlags);
+            VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags) const;
 
 		public:
-			static Device create(const DeviceInfo& info);
-			static Device* ptrCreate(const DeviceInfo& info);
+			/// @brief функция для создания логического устройства
+			/// @param info объект структуры core::vulkan::DeviceCreateInfo
+			/// @return объект класса core::vulkan::Device
+			static Device create(const DeviceCreateInfo& info);
+
+			/// @brief функция для создания логического устройства
+			/// @param info объект структуры core::vulkan::DeviceCreateInfo
+			/// @return указатель на объект класса core::vulkan::Device
+			static Device* ptrCreate(const DeviceCreateInfo& info);
 
 			~Device();
-
-			uint32_t getGraphicsQueueFamilyIndex() const;
-			uint32_t getPresentQueueFamilyIndex() const;
-
-			[[nodiscard]] uint32_t getCountGraphicsQueue() const;
-			[[nodiscard]] uint32_t getCountPresentQueue() const;
-
-			uint32_t getQueueFamilyIndex(const TypeFamilyQueue& type) const;
-			uint32_t getCountQueue(const TypeFamilyQueue& type) const;
 		};
 	} // vulkan
 } // core

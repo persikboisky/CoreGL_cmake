@@ -37,8 +37,8 @@ namespace core
 			}
 		}
 
-		CommandBuffer::CommandBuffer(Device &device, CommandPool &commandPool) : ptrDevice(&device.device),
-																				 ptrCommandPool(&commandPool.commandPool)
+		CommandBuffer::CommandBuffer(CommandPool &commandPool) :
+	        ptrDevice(commandPool.ptrDevice), ptrCommandPool(&commandPool.commandPool)
 		{
 			VkCommandBufferAllocateInfo commandBufferAllocateInfo = {};
 			commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -47,8 +47,8 @@ namespace core
 			commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 			commandBufferAllocateInfo.commandBufferCount = 1;
 
-			VkResult result = vkAllocateCommandBuffers(
-				device.device,
+            const VkResult result = vkAllocateCommandBuffers(
+				*ptrDevice,
 				&commandBufferAllocateInfo,
 				&this->commandBuffer);
 			Coders::vulkanProcessingError(result);
@@ -63,35 +63,35 @@ namespace core
 				&this->commandBuffer);
 		}
 
-		CommandBuffer CommandBuffer::create(Device &device, CommandPool &commandPool)
+		CommandBuffer CommandBuffer::create(CommandPool &commandPool)
 		{
-			return CommandBuffer(device, commandPool);
+			return CommandBuffer(commandPool);
 		}
 
-		CommandBuffer *CommandBuffer::ptrCreate(Device &device, CommandPool &commandPool)
+		CommandBuffer *CommandBuffer::ptrCreate( CommandPool &commandPool)
 		{
-			return new CommandBuffer(device, commandPool);
+			return new CommandBuffer(commandPool);
 		}
 
-		void CommandBuffer::begin()
-		{
+		void CommandBuffer::begin() const
+        {
 			VkCommandBufferBeginInfo beginInfo{};
 			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 			beginInfo.flags = 0;				  // Опциональные флаги
 			beginInfo.pInheritanceInfo = nullptr; // Только для вторичных буферов
 
-			VkResult result = vkBeginCommandBuffer(commandBuffer, &beginInfo);
+            const VkResult result = vkBeginCommandBuffer(commandBuffer, &beginInfo);
 			Coders::vulkanProcessingError(result);
 		}
 
-		void CommandBuffer::end()
-		{
-			VkResult result = vkEndCommandBuffer(commandBuffer);
+		void CommandBuffer::end() const
+        {
+            const VkResult result = vkEndCommandBuffer(commandBuffer);
 			Coders::vulkanProcessingError(result);
 		}
 
-		void CommandBuffer::beginRenderPass(const BeginRenderPassInfo &info)
-		{
+		void CommandBuffer::beginRenderPass(const BeginRenderPassInfo &info) const
+        {
 			VkRenderPassBeginInfo renderPassBeginInfo = {};
 			renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 			renderPassBeginInfo.renderPass = info.ptrRenderPass->renderPass;
@@ -127,13 +127,13 @@ namespace core
 			vkCmdBeginRenderPass(this->commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 		}
 
-		void CommandBuffer::endRenderPass()
-		{
+		void CommandBuffer::endRenderPass() const
+        {
 			vkCmdEndRenderPass(this->commandBuffer);
 		}
 
-		void CommandBuffer::bindGraphicsPipeline(const GraphicsPipeline &pipeline)
-		{
+		void CommandBuffer::bindGraphicsPipeline(const GraphicsPipeline &pipeline) const
+        {
 			vkCmdBindPipeline(this->commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipeline);
 		}
 
@@ -141,8 +141,8 @@ namespace core
 			uint32_t firstVertex,
 			uint32_t vertexCount,
 			uint32_t firstInstance,
-			uint32_t instanceCount)
-		{
+			uint32_t instanceCount) const
+        {
 			vkCmdDraw(
 				this->commandBuffer,
 				vertexCount,
@@ -151,8 +151,8 @@ namespace core
 				firstInstance);
 		}
 
-		void CommandBuffer::pushConstants(const PushConstantsInfo &info)
-		{
+		void CommandBuffer::pushConstants(const PushConstantsInfo &info) const
+        {
 			vkCmdPushConstants(
 				this->commandBuffer,
 				info.ptrPipelineLayout->layout,
@@ -164,12 +164,13 @@ namespace core
 
 		void
 		CommandBuffer::bindVertexBuffers(
-			uint32_t firstBinding,
-			uint32_t bindingCount,
-			VertexBuffer *ptrBuffers,
-			uint64_t *ptrOffset)
-		{
-			auto buffer = new VkBuffer[bindingCount];
+			const uint32_t firstBinding,
+			const uint32_t bindingCount,
+			const VertexBuffer *ptrBuffers,
+			const uint64_t *ptrOffset) const
+        {
+		    uint64_t offset = 0;
+            const auto buffer = new VkBuffer[bindingCount];
 			for (uint32_t index = 0; index < bindingCount; index++)
 				buffer[index] = ptrBuffers[index].buffer->buffer;
 			vkCmdBindVertexBuffers(
@@ -177,17 +178,19 @@ namespace core
 				firstBinding,
 				bindingCount,
 				buffer,
-				ptrOffset);
+				ptrOffset == nullptr ? &offset : ptrOffset);
 			delete[] buffer;
 		}
 
 		void
 		CommandBuffer::bindVertexBuffers(
-				uint32_t firstBinding,
-				uint32_t bindingCount,
-				Buffer* ptrBuffers,
-				uint64_t* ptrOffset)
-		{
+		    const uint32_t  firstBinding,
+		    const uint32_t  bindingCount,
+		    const Buffer   *ptrBuffers,
+		    const uint64_t *ptrOffset) const
+        {
+		    uint64_t offset = 0;
+
 			auto buffer = new VkBuffer[bindingCount];
 			for (uint32_t index = 0; index < bindingCount; index++)
 				buffer[index] = ptrBuffers[index].buffer;
@@ -196,12 +199,12 @@ namespace core
 					firstBinding,
 					bindingCount,
 					buffer,
-					ptrOffset);
+					ptrOffset == nullptr ? &offset : ptrOffset);
 			delete[] buffer;
 		}
 
-		void CommandBuffer::bindElementBuffer(ElementBuffer &buffer)
-		{
+		void CommandBuffer::bindElementBuffer(const ElementBuffer &buffer) const
+        {
 			vkCmdBindIndexBuffer(
 				this->commandBuffer,
 				buffer.buffer,
@@ -214,8 +217,8 @@ namespace core
 			uint32_t indexCount,
 			int32_t vertexOffset,
 			uint32_t firstInstance,
-			uint32_t instanceCount)
-		{
+			uint32_t instanceCount) const
+        {
 			vkCmdDrawIndexed(
 				this->commandBuffer,
 				indexCount,
@@ -225,8 +228,8 @@ namespace core
 				firstInstance);
 		}
 
-		void CommandBuffer::copyBuffer(Buffer *ptrSrcBuffer, Buffer *ptrDstBuffer, uint64_t size)
-		{
+		void CommandBuffer::copyBuffer(const Buffer *ptrSrcBuffer, const Buffer *ptrDstBuffer, uint64_t size) const
+        {
 			VkBufferCopy copyRegion{};
 			copyRegion.srcOffset = 0;
 			copyRegion.dstOffset = 0;
@@ -253,8 +256,8 @@ namespace core
 //					&copyRegion);
 		}
 
-		void CommandBuffer::bindDescriptorSet(DescriptorSet &set, PipelineLayout &layout)
-		{
+		void CommandBuffer::bindDescriptorSet(const DescriptorSet &set, const PipelineLayout &layout) const
+        {
 			vkCmdBindDescriptorSets(
 				this->commandBuffer,
 				VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -266,17 +269,17 @@ namespace core
 				nullptr);
 		}
 
-		void CommandBuffer::setCullMode(const CULL_FACE &cullFace)
-		{
+		void CommandBuffer::setCullMode(const CULL_MODE &cullMode) const
+        {
 			vkCmdSetCullMode(this->commandBuffer,
-							 (cullFace == CULL_FACE::NONE) ? VK_CULL_MODE_NONE :
-							 (cullFace == CULL_FACE::BACK) ? VK_CULL_MODE_BACK_BIT :
-							 (cullFace == CULL_FACE::FRONT) ? VK_CULL_MODE_FRONT_BIT :
+							 (cullMode == CULL_MODE::NONE) ? VK_CULL_MODE_NONE :
+							 (cullMode == CULL_MODE::BACK) ? VK_CULL_MODE_BACK_BIT :
+							 (cullMode == CULL_MODE::FRONT) ? VK_CULL_MODE_FRONT_BIT :
 							 VK_CULL_MODE_FRONT_AND_BACK);
 		}
 
-		void CommandBuffer::setScissor(const Rect2D& rect2d)
-		{
+		void CommandBuffer::setScissor(const Rect2D& rect2d) const
+        {
 			VkRect2D rect2D = {};
 			rect2D.offset.x = rect2d.x;
 			rect2D.offset.y = rect2d.y;
@@ -285,8 +288,8 @@ namespace core
 			vkCmdSetScissor(this->commandBuffer, 0, 1, &rect2D);
 		}
 
-		void CommandBuffer::setPrimitiveTopology(const PRIMITIVE& primitive)
-		{
+		void CommandBuffer::setPrimitiveTopology(const PRIMITIVE& primitive) const
+        {
 			VkPrimitiveTopology topology;
 			switch (primitive)
 			{

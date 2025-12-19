@@ -30,7 +30,7 @@ namespace core
 
 			vulkan::PRIMITIVE primitive = PRIMITIVE::TRIANGLE_LIST;
 			POLYGON_MODE polygonMode = POLYGON_MODE::FILL;
-			CULL_FACE cullFace = CULL_FACE::NONE;
+			CULL_MODE cullFace = CULL_MODE::NONE;
 			FRONT_FACE frontFace = FRONT_FACE::COUNTER_CLOCKWISE;
 
 			bool flagDepthTest = false;
@@ -75,6 +75,7 @@ namespace core
 		protected:
 			friend class GraphicsPipeline;
 			friend class CommandBuffer;
+		    friend class ComputePipeline;
 
 		private:
 			VkPipelineLayout layout = {};
@@ -96,7 +97,7 @@ namespace core
 
 		private:
 			VkDevice* ptrDevice = nullptr;
-			VkPipeline pipeline = {};
+			VkPipeline pipeline = nullptr;
 
 			GraphicsPipeline(const GraphicsPipelineInfo& info);
 
@@ -107,10 +108,27 @@ namespace core
 			~GraphicsPipeline();
 		};
 
-//		class ComputerPipeline
-//		{
-//
-//		};
+	    struct ComputePipelineCreateInfo
+	    {
+	        class Device* ptrDevice = nullptr;
+	        class ShaderModule* ptrShaderModule = nullptr;
+	        class PipelineLayout* ptrPipelineLayout = nullptr;
+	    };
+
+		class ComputePipeline
+		{
+		private:
+		    VkDevice* ptrDevice = nullptr;
+		    VkPipeline pipeline = nullptr;
+
+		    ComputePipeline(const ComputePipelineCreateInfo& info);
+
+		public:
+		    ~ComputePipeline();
+
+		    static ComputePipeline create(const ComputePipelineCreateInfo& info);
+		    static ComputePipeline *ptrCreate(const ComputePipelineCreateInfo& info);
+		};
 	} // vulkan
 } // core
 

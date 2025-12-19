@@ -6,39 +6,37 @@
 #if defined(CORE_INCLUDE_VULKAN)
 #include "../../../util/Coders.hpp"
 #include "vk_Device.hpp"
-#include "vk_Semaphore.hpp"
 #include "vk_Surface.hpp"
+#include "vk_Sync.hpp"
 #include <vector>
 
 namespace core
 {
 	namespace vulkan
 	{
-		SwapChain::SwapChain(const SwapChainInfo& info) : ptrDevice(&info.ptrDevice->device)
+		SwapChain::SwapChain(const SwapChainCreateInfo& info) : ptrDevice(&info.ptrDevice->device)
 		{
-			uint32_t FamilyIndices = info.ptrDevice->getPresentQueueFamilyIndex();
-
 			VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
 			swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 			swapchainCreateInfo.surface = info.ptrSurface->surface;
 			swapchainCreateInfo.flags = 0;
 			swapchainCreateInfo.pNext = nullptr;
-			swapchainCreateInfo.presentMode = (info.V_sync) ? VK_PRESENT_MODE_FIFO_KHR : VK_PRESENT_MODE_IMMEDIATE_KHR;
+			swapchainCreateInfo.presentMode = info.V_sync ? VK_PRESENT_MODE_FIFO_KHR : VK_PRESENT_MODE_IMMEDIATE_KHR;
 			swapchainCreateInfo.preTransform = info.ptrDevice->surfaceCapabilitiesFormat.currentTransform;
 			swapchainCreateInfo.minImageCount = info.countImage;
 			swapchainCreateInfo.imageUsage = info.ptrDevice->surfaceCapabilitiesFormat.supportedUsageFlags;
 			// swapchainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 			swapchainCreateInfo.imageFormat = info.ptrDevice->surfaceFormat.format;
 			swapchainCreateInfo.imageExtent = info.ptrDevice->surfaceCapabilitiesFormat.currentExtent;
-			swapchainCreateInfo.clipped = (info.clipped) ? VK_TRUE : VK_FALSE;
+			swapchainCreateInfo.clipped = info.clipped ? VK_TRUE : VK_FALSE;
 			swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 			swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 			swapchainCreateInfo.imageArrayLayers = 1;
 			swapchainCreateInfo.imageColorSpace = info.ptrDevice->surfaceFormat.colorSpace;
-			swapchainCreateInfo.pQueueFamilyIndices = &FamilyIndices;
-			swapchainCreateInfo.queueFamilyIndexCount = 1;
+			swapchainCreateInfo.pQueueFamilyIndices = info.queueFamilyIndices.data();
+			swapchainCreateInfo.queueFamilyIndexCount = info.queueFamilyIndices.size();
 
-			if (info.ptrDevice->getPresentQueueFamilyIndex() == info.ptrDevice->getGraphicsQueueFamilyIndex())
+			if (info.exclusiveMode)
 				swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 			else
 				swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
@@ -97,12 +95,12 @@ namespace core
 			}
 		}
 
-		SwapChain SwapChain::create(const SwapChainInfo& info)
+		SwapChain SwapChain::create(const SwapChainCreateInfo& info)
 		{
 			return SwapChain(info);
 		}
 
-		SwapChain* SwapChain::ptrCreate(const SwapChainInfo& info)
+		SwapChain* SwapChain::ptrCreate(const SwapChainCreateInfo& info)
 		{
 			return new SwapChain(info);
 		}
@@ -116,8 +114,8 @@ namespace core
 			vkDestroySwapchainKHR(*this->ptrDevice, this->swapChain, nullptr);
 		}
 
-		uint32_t SwapChain::getIndexNextImage(Semaphore& semaphore)
-		{
+		uint32_t SwapChain::getIndexNextImage(const Semaphore& semaphore) const
+        {
 			uint32_t index;
 			VkResult result = vkAcquireNextImageKHR(
 					*this->ptrDevice,
@@ -129,6 +127,35 @@ namespace core
 			Coders::vulkanProcessingError(result);
 			return index;
 		}
+
+        uint32_t SwapChain::getIndexNextImage(const Fence &fence) const
+        {
+		    uint32_t index;
+		    VkResult result = vkAcquireNextImageKHR(
+                    *this->ptrDevice,
+                    this->swapChain,
+                    UINT64_MAX,
+                    VK_NULL_HANDLE,
+                    fence.fence,
+                    &index);
+		    Coders::vulkanProcessingError(result);
+		    return index;
+        }
+
+        uint32_t SwapChain::getIndexNextImage(const Semaphore &semaphore, const class Fence &fence) const
+        {
+		    uint32_t index;
+		    VkResult result = vkAcquireNextImageKHR(
+                    *this->ptrDevice,
+                    this->swapChain,
+                    UINT64_MAX,
+                    semaphore.semaphore,
+                    fence.fence,
+                    &index);
+		    Coders::vulkanProcessingError(result);
+		    return index;
+        }
+
 	} // vulkan
 } // core
 

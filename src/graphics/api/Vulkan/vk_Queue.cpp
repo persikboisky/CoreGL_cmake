@@ -7,47 +7,60 @@
 #include "../../../util/Coders.hpp"
 #include "vk_CommandBuffer.hpp"
 #include "vk_Device.hpp"
-#include "vk_Semaphore.hpp"
 #include "vk_SwapChain.hpp"
+#include "vk_Sync.hpp"
 
 namespace core
 {
 	namespace vulkan
 	{
-		Queue::Queue(Device& device, uint32_t index)
+		Queue::Queue(class Device &device, uint32_t queueFamilyIndex, uint32_t queueIndex)
 		{
-			vkGetDeviceQueue(
-					device.device,
-					index,
-					0,
-					&this->queue);
+		    vkGetDeviceQueue(device.device, queueFamilyIndex, queueIndex, &queue);
 		}
 
-		Queue Queue::create(Device& device, const TypeFamilyQueue& type)
-		{
-			return Queue(device, device.getQueueFamilyIndex(type));
-		}
+        Queue Queue::get(class Device &device, uint32_t queueFamilyIndex, uint32_t queueIndex)
+        {
+            return Queue(device, queueFamilyIndex, queueIndex);
+        }
 
-		Queue* Queue::ptrCreate(Device& device, const TypeFamilyQueue& type)
-		{
-			return new Queue(device, device.getQueueFamilyIndex(type));
-		}
+        Queue *Queue::ptrGet(class Device &device, uint32_t queueFamilyIndex, uint32_t queueIndex)
+        {
+		    return new Queue(device, queueFamilyIndex, queueIndex);
+        }
 
 		void Queue::submit(SubmitInfo& info)
 		{
+            const auto cmds = new VkCommandBuffer[info.ptrCommandBuffer.size()];
+            for (size_t i = 0; i < info.ptrCommandBuffer.size(); i++)
+                cmds[i] = info.ptrCommandBuffer[i]->commandBuffer;
+
+            const auto waitSemaphores = new VkSemaphore[info.ptrWaitSemaphore.size()];
+		    for (size_t i = 0; i < info.ptrWaitSemaphore.size(); i++)
+		        waitSemaphores[i] = info.ptrWaitSemaphore[i]->semaphore;
+
+            const auto signalSemaphores = new VkSemaphore[info.ptrSignalSemaphore.size()];
+		    for (size_t i = 0; i < info.ptrSignalSemaphore.size(); i++)
+		        signalSemaphores[i] = info.ptrSignalSemaphore[i]->semaphore;
+
 			VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
 			VkSubmitInfo submitInfo = {};
 			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 			submitInfo.pNext = nullptr;
-			submitInfo.pCommandBuffers = &info.ptrCommandBuffer->commandBuffer;
-			submitInfo.commandBufferCount = 1;
+			submitInfo.pCommandBuffers = cmds;
+			submitInfo.commandBufferCount = info.ptrCommandBuffer.size();
 			submitInfo.pWaitDstStageMask = waitStages;
-			submitInfo.pSignalSemaphores = (info.ptrSignalSemaphore != nullptr) ? &info.ptrSignalSemaphore->semaphore : nullptr;
-			submitInfo.signalSemaphoreCount = (info.ptrSignalSemaphore != nullptr) ? 1 : 0;
-			submitInfo.pWaitSemaphores = (info.ptrWaitSemaphore != nullptr) ? &info.ptrWaitSemaphore->semaphore : nullptr;
-			submitInfo.waitSemaphoreCount = (info.ptrWaitSemaphore != nullptr) ? 1 : 0;
+			submitInfo.pSignalSemaphores = signalSemaphores;
+			submitInfo.signalSemaphoreCount = info.ptrSignalSemaphore.size();
+			submitInfo.pWaitSemaphores = waitSemaphores;
+			submitInfo.waitSemaphoreCount = info.ptrWaitSemaphore.size();
 
-			vkQueueSubmit(this->queue, 1, &submitInfo, VK_NULL_HANDLE);
+			vkQueueSubmit(this->queue, 1, &submitInfo,
+			    info.ptrFence != nullptr ? info.ptrFence->fence : VK_NULL_HANDLE);
+
+		    delete [] cmds;
+		    delete [] waitSemaphores;
+		    delete [] signalSemaphores;
 		}
 
 		void Queue::present(PresentInfo& info)

@@ -51,58 +51,59 @@ namespace core
 			VkDevice* ptrDevice = nullptr;
 			VkCommandPool* ptrCommandPool = nullptr;
 
-			CommandBuffer(class Device& device, class CommandPool& commandPool);
+			CommandBuffer(class CommandPool& commandPool);
 
 		public:
 			~CommandBuffer();
 
-			static CommandBuffer create(class Device& device, class CommandPool& commandPool);
-			static CommandBuffer* ptrCreate(class Device& device, class CommandPool& commandPool);
+			static CommandBuffer create(class CommandPool& commandPool);
+			static CommandBuffer* ptrCreate(class CommandPool& commandPool);
 
-			void begin();
-			void end();
+			void begin() const;
+			void end() const;
 
-			void beginRenderPass(const BeginRenderPassInfo& info);
-			void endRenderPass();
+			void beginRenderPass(const BeginRenderPassInfo& info) const;
+			void endRenderPass() const;
 
-			void bindGraphicsPipeline(const class GraphicsPipeline& pipeline);
+			void bindGraphicsPipeline(const class GraphicsPipeline& pipeline) const;
 
 			void draw(
 					uint32_t firstVertex,
 					uint32_t vertexCount,
 					uint32_t firstInstance = 0,
-					uint32_t instanceCount = 1);
+					uint32_t instanceCount = 1) const;
 
-			void pushConstants(const PushConstantsInfo& info);
+			void pushConstants(const PushConstantsInfo& info) const;
+
+			void bindVertexBuffers(
+					const uint32_t firstBinding,
+					const uint32_t bindingCount,
+					const class VertexBuffer* ptrBuffers,
+					const uint64_t* ptrOffset = nullptr) const;
 
 			void bindVertexBuffers(
 					uint32_t firstBinding,
 					uint32_t bindingCount,
-					class VertexBuffer* ptrBuffers,
-					uint64_t* ptrOffset);
-			void bindVertexBuffers(
-					uint32_t firstBinding,
-					uint32_t bindingCount,
-					class Buffer* ptrBuffers,
-					uint64_t* ptrOffset);
+					const class Buffer* ptrBuffers,
+					const uint64_t* ptrOffset = nullptr) const;
 
-			void bindElementBuffer(class ElementBuffer& buffer);
+			void bindElementBuffer(const class ElementBuffer& buffer) const;
 
 			void drawElements(
 					uint32_t firstIndex,
 					uint32_t indexCount,
 					int32_t vertexOffset = 0,
 					uint32_t firstInstance = 0,
-					uint32_t instanceCount = 1);
+					uint32_t instanceCount = 1) const;
 
-			void copyBuffer(class Buffer* ptrSrcBuffer, class Buffer* ptrDstBuffer, uint64_t size);
-			void copyImage(class Image* ptrSrcBuffer, class Image* ptrDstBuffer, uint64_t size);
+			void copyBuffer(const class Buffer* ptrSrcBuffer, const class Buffer* ptrDstBuffer, uint64_t size) const;
+            static void copyImage(class Image* ptrSrcBuffer, class Image* ptrDstBuffer, uint64_t size);
 
-			void bindDescriptorSet(class DescriptorSet& set, class PipelineLayout& layout);
+			void bindDescriptorSet(const class DescriptorSet& set, const class PipelineLayout& layout) const;
 
-			void setCullMode(const CULL_FACE& cullMode);
-			void setScissor(const Rect2D& rect2d);
-			void setPrimitiveTopology(const vulkan::PRIMITIVE& primitive);
+			void setCullMode(const CULL_MODE& cullMode) const;
+			void setScissor(const Rect2D& rect2d) const;
+			void setPrimitiveTopology(const vulkan::PRIMITIVE& primitive) const;
 		};
 	} // vulkan
 }// core

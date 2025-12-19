@@ -20,6 +20,7 @@ namespace core
 		protected:
 			friend class Device;
 			friend class SwapChain;
+		    friend class PhysicalDeviceInfo;
 
 		private:
 			VkSurfaceKHR surface;

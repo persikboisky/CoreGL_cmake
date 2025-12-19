@@ -29,6 +29,7 @@ namespace core
 			friend class PipelineLayout;
 			friend class GraphicsPipeline;
 			friend class DescriptorSetLayout;
+		    friend class ComputePipeline;
 
 		private:
 			VkDevice *ptrDevice = nullptr;

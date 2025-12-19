@@ -34,6 +34,7 @@
 #include "vk_Device.hpp"
 #include "vk_RenderPass.hpp"
 #include "vk_ShaderStage.hpp"
+#include <bits/ios_base.h>
 #include <vector>
 
 namespace core
@@ -209,12 +210,12 @@ namespace core
 					VK_POLYGON_MODE_FILL : (info.polygonMode == POLYGON_MODE::LINE) ?
 					VK_POLYGON_MODE_LINE : VK_POLYGON_MODE_POINT;
 
-			rasterizer.cullMode = (info.cullFace == CULL_FACE::NONE) ?
-					VK_CULL_MODE_NONE : (info.cullFace == CULL_FACE::BACK) ?
-					VK_CULL_MODE_BACK_BIT : (info.cullFace == CULL_FACE::FRONT) ?
+			rasterizer.cullMode = info.cullFace == CULL_MODE::NONE ?
+					VK_CULL_MODE_NONE : info.cullFace == CULL_MODE::BACK ?
+					VK_CULL_MODE_BACK_BIT : info.cullFace == CULL_MODE::FRONT ?
 					VK_CULL_MODE_FRONT_BIT : VK_CULL_MODE_FRONT_AND_BACK;
 
-			rasterizer.frontFace = (info.frontFace == FRONT_FACE::COUNTER_CLOCKWISE) ?
+			rasterizer.frontFace = info.frontFace == FRONT_FACE::COUNTER_CLOCKWISE ?
 					VK_FRONT_FACE_COUNTER_CLOCKWISE : VK_FRONT_FACE_CLOCKWISE;
 			rasterizer.depthBiasEnable = VK_FALSE;
 			rasterizer.lineWidth = 1.0f;
@@ -235,8 +236,8 @@ namespace core
 			auto ptrDynamicStates = new VkDynamicState[info.dynamicState.size()];
 			for (size_t index = 0; index < info.dynamicState.size(); index++)
 			{
-				ptrDynamicStates[index] = (info.dynamicState[index] == DYNAMIC_STATE::CULL_MODE) ?
-					VK_DYNAMIC_STATE_CULL_MODE : (info.dynamicState[index] == DYNAMIC_STATE::SCISSOR) ?
+				ptrDynamicStates[index] = info.dynamicState[index] == DYNAMIC_STATE::CULL_MODE ?
+					VK_DYNAMIC_STATE_CULL_MODE : info.dynamicState[index] == DYNAMIC_STATE::SCISSOR ?
 					VK_DYNAMIC_STATE_SCISSOR : VK_DYNAMIC_STATE_PRIMITIVE_TOPOLOGY;
 			}
 
@@ -244,7 +245,6 @@ namespace core
 			dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
 			dynamicState.dynamicStateCount = static_cast<uint32_t>(info.dynamicState.size());
 			dynamicState.pDynamicStates = ptrDynamicStates;
-			// VK_ 
 
 			VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
 			pipelineCreateInfo.pNext = VK_NULL_HANDLE;
@@ -296,6 +296,41 @@ namespace core
 			vkDestroyPipeline(*this->ptrDevice, this->pipeline, nullptr);
 		}
 
+        ComputePipeline::ComputePipeline(const ComputePipelineCreateInfo &info) : ptrDevice(&info.ptrDevice->device)
+        {
+            VkComputePipelineCreateInfo createInfo = {};
+		    createInfo.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
+		    createInfo.basePipelineHandle = VK_NULL_HANDLE;
+		    createInfo.basePipelineIndex = -1;
+		    createInfo.flags = 0;
+		    createInfo.pNext = nullptr;
+		    createInfo.stage = info.ptrShaderModule->stage;
+		    createInfo.layout = info.ptrPipelineLayout->layout;
+
+		    const VkResult result = vkCreateComputePipelines(
+		        info.ptrDevice->device,
+		        VK_NULL_HANDLE,
+		        1,
+		        &createInfo,
+		        VK_NULL_HANDLE,
+		        &this->pipeline);
+		    Coders::vulkanProcessingError(result);
+        }
+
+        ComputePipeline::~ComputePipeline()
+        {
+		    vkDestroyPipeline(*this->ptrDevice, this->pipeline, nullptr);
+        }
+
+        ComputePipeline ComputePipeline::create(const ComputePipelineCreateInfo &info)
+        {
+		    return ComputePipeline(info);
+        }
+
+        ComputePipeline *ComputePipeline::ptrCreate(const ComputePipelineCreateInfo &info)
+        {
+		    return new ComputePipeline(info);
+        }
 
 	} // vulkan
 } // core

@@ -8,6 +8,7 @@
 #include "vk_CommandBuffer.hpp"
 #include "vk_CommandPool.hpp"
 #include "vk_Device.hpp"
+#include "vk_PhysicalDevices.hpp"
 #include "vk_Queue.hpp"
 #include <cstring>
 
@@ -81,14 +82,17 @@ namespace core
 			Coders::vulkanProcessingError(result);
 			vkBindBufferMemory(info.ptrDevice->device, this->buffer, this->memory, 0);
 
-			Queue *queue = Queue::ptrCreate(*info.ptrDevice, TypeFamilyQueue::GRAPHICS);
+			Queue *queue = Queue::ptrGet(
+			    *info.ptrDevice,
+			    PhysicalDeviceInfo(info.ptrDevice->physicalDevice).getQueueFamilyIndex(OPERATES_TYPE::TRANSFER),
+		        0);
 
 			CommandPoolInfo commandPoolInfo = {};
 			commandPoolInfo.ptrDevice = info.ptrDevice;
-			commandPoolInfo.queueFamilyIndex = info.ptrDevice->getQueueFamilyIndex(TypeFamilyQueue::GRAPHICS);
+			// commandPoolInfo.queueFamilyIndex = info.ptrDevice->getQueueFamilyIndex(TypeFamilyQueue::GRAPHICS);
 			commandPoolInfo.flagAllowResetBuffer = false;
 			CommandPool *pool = CommandPool::ptrCreate(commandPoolInfo);
-			CommandBuffer *cmd = CommandBuffer::ptrCreate(*info.ptrDevice, *pool);
+			CommandBuffer *cmd = CommandBuffer::ptrCreate(*pool);
 
 			VkCommandBufferBeginInfo beginInfo = {};
 			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -107,7 +111,7 @@ namespace core
 					&copyRegion);
 
 			SubmitInfo submitInfo = {};
-			submitInfo.ptrCommandBuffer = cmd;
+			submitInfo.ptrCommandBuffer = {cmd};
 			cmd->end();
 			queue->submit(submitInfo);
 			queue->wait();

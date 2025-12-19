@@ -45,8 +45,8 @@ namespace core
 			bufferInfo.usage = convertBufferType(info.typeBuffer);
 			bufferInfo.sharingMode = info.exclusiveMode ? VK_SHARING_MODE_EXCLUSIVE : VK_SHARING_MODE_CONCURRENT;
 			bufferInfo.pNext = nullptr;
-			bufferInfo.pQueueFamilyIndices = nullptr;
-			bufferInfo.queueFamilyIndexCount = 0;
+			bufferInfo.pQueueFamilyIndices = info.queueFamilyIndices.data();
+			bufferInfo.queueFamilyIndexCount = info.queueFamilyIndices.size();
 			VkResult result = vkCreateBuffer(
 					info.ptrDevice->device,
 					&bufferInfo,

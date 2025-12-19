@@ -29,7 +29,7 @@ set(CoreGL_source
         src/graphics/api/Vulkan/vk_FrameBuffer.cpp
         src/graphics/api/Vulkan/vk_CommandPool.cpp
         src/graphics/api/Vulkan/vk_CommandBuffer.cpp
-        src/graphics/api/Vulkan/vk_Semaphore.cpp
+        src/graphics/api/Vulkan/vk_Sync.cpp
         src/graphics/api/Vulkan/vk_Queue.cpp
         src/graphics/api/Vulkan/vk_Pipeline.cpp
         src/graphics/api/Vulkan/vk_ShaderStage.cpp
