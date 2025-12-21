@@ -242,19 +242,19 @@ namespace core
 				&copyRegion);
 		}
 
-		void CommandBuffer::copyImage(Image* ptrSrcBuffer, Image* ptrDstBuffer, uint64_t size)
-		{
-//			VkImageCopy copyRegion{};
-//			copyRegion.srcOffset = 0;
-//			copyRegion.dstOffset = 0;
-//			copyRegion.size = size;
-//			vkCmdCopyImage(
-//					this->commandBuffer,
-//					ptrSrcBuffer->buffer,
-//					ptrDstBuffer->buffer,
-//					1,
-//					&copyRegion);
-		}
+		// void CommandBuffer::copyImage(Image* ptrSrcBuffer, Image* ptrDstBuffer, uint64_t size)
+		// {
+			// VkImageCopy copyRegion{};
+			// copyRegion.srcOffset = 0;
+			// copyRegion.dstOffset = 0;
+			// copyRegion.
+			// vkCmdCopyImage(
+			// 		this->commandBuffer,
+			// 		ptrSrcBuffer->buffer,
+			// 		ptrDstBuffer->buffer,
+			// 		1,
+			// 		&copyRegion);
+		// }
 
 		void CommandBuffer::bindDescriptorSet(const DescriptorSet &set, const PipelineLayout &layout) const
         {
@@ -316,6 +316,12 @@ namespace core
 			vkCmdSetPrimitiveTopology(this->commandBuffer, topology);
 		}
 
+        void CommandBuffer::pipelineImageMemoryBarrier(const PipelineImageMemoryBarrier &info)
+        {
+            VkImageMemoryBarrier imageMemoryBarrier = {};
+		    // imageMemoryBarrier.
+		    // vkCmdPipelineBarrier(commandBuffer, )
+        }
 
 	} // vulkan
 } // core

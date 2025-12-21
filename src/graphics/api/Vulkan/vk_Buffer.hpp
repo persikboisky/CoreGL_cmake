@@ -66,9 +66,9 @@ namespace core
 
 			~Buffer();
 
-			void copy(void* data, uint64_t size);
+			void copy(void* data, uint64_t size, uint64_t offset = 0);
 
-			uint64_t getSzie() const;
+			uint64_t getSize() const;
 		};
 	} // vulkan
 } // core

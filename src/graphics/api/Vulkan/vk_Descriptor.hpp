@@ -59,7 +59,7 @@ namespace core
 			VkDevice *prtDevice = nullptr;
 			VkDescriptorPool descriptorPool = nullptr;
 
-			DescriptorPool(const DescriptorPoolCreateInfo& info);
+            explicit DescriptorPool(const DescriptorPoolCreateInfo& info);
 
 		public:
 			static DescriptorPool create(const DescriptorPoolCreateInfo& info);
@@ -78,7 +78,7 @@ namespace core
 			VkDevice *prtDevice = nullptr;
 			VkDescriptorSetLayout layout = nullptr;
 
-			DescriptorSetLayout(const DescriptorSetLayoutCreateInfo& info);
+			explicit DescriptorSetLayout(const DescriptorSetLayoutCreateInfo& info);
 
 		public:
 			~DescriptorSetLayout();
@@ -113,7 +113,7 @@ namespace core
 			VkDescriptorPool* ptrDescriptorPool = nullptr;
 			VkDescriptorSet descriptorSet = nullptr;
 
-			DescriptorSet(const DescriptorSetCreateInfo& info);
+            explicit DescriptorSet(const DescriptorSetCreateInfo& info);
 
 		public:
 			~DescriptorSet();

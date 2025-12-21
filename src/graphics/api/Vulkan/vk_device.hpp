@@ -24,7 +24,7 @@ namespace core
 
 		struct DeviceExtensionsInfo
 		{
-
+            bool FILTER_CUBIC_IMG = false;
 		};
 
 	    /// @brief струтура для описания используемых очередей

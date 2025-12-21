@@ -39,6 +39,11 @@ namespace core
 			const void* data = nullptr;
 		};
 
+	    struct PipelineImageMemoryBarrier
+	    {
+
+	    };
+
 		class CommandBuffer
 		{
 		protected:
@@ -97,13 +102,15 @@ namespace core
 					uint32_t instanceCount = 1) const;
 
 			void copyBuffer(const class Buffer* ptrSrcBuffer, const class Buffer* ptrDstBuffer, uint64_t size) const;
-            static void copyImage(class Image* ptrSrcBuffer, class Image* ptrDstBuffer, uint64_t size);
+            // void copyImage(class Image* ptrSrcBuffer, class Image* ptrDstBuffer, uint64_t size);
 
 			void bindDescriptorSet(const class DescriptorSet& set, const class PipelineLayout& layout) const;
 
 			void setCullMode(const CULL_MODE& cullMode) const;
 			void setScissor(const Rect2D& rect2d) const;
 			void setPrimitiveTopology(const vulkan::PRIMITIVE& primitive) const;
+
+            void pipelineImageMemoryBarrier(const PipelineImageMemoryBarrier& info);
 		};
 	} // vulkan
 }// core

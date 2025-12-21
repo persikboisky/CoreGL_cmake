@@ -215,8 +215,65 @@ namespace core
 			DEVICE_LOCAL,
 			HOST
 		};
+	    enum class IMAGE_FORMAT : int
+        {
+            R8G8B8A8_UNORM,
+            B8G8R8A8_UNORM,
+            R8G8B8A8_SRGB,
+            R8G8B8_UNORM,
+            R8G8B8_SRGB,
+            R16G16B16A16_SFLOAT,
+            R16G16_SFLOAT,
+            R16_SFLOAT,
+            R32G32B32A32_SFLOAT,
+            R32G32B32_SFLOAT,
+            D32_SFLOAT,
+            D24_UNORM_S8_UINT,
+            D32_SFLOAT_S8_UINT,
+            D16_UNORM,
+            A8_UNORM,
+        };
+	    enum class TEXTURE_FILTER : int
+	    {
+	        NEAREST,
+	        LINEAR,
+	        CUBIC_EXT,
+	        CUBIC_IMG
+	    };
+	    enum class TEXTURE_WRAP : int
+        {
+            REPEAT,
+            CLAMP_TO_EDGE,
+            CLAMP_TO_BORDER,
+            MIRRORED_REPEAT
+        };
+        enum class IMAGE_LAYOUT : int
+	    {
+	        UNDEFINED,
+	        GENERAL,
+	        TRANSFER_SRC_OPTIMAL,
+	        TRANSFER_DST_OPTIMAL,
+	        SHADER_READ_ONLY_OPTIMAL,
+	        COLOR_ATTACHMENT_OPTIMAL,
+	        DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+	        PRESENT_SRC_KHR
+	    };
 
-		VkFormat convertFormat(const FORMAT_VARIABLE& format);
+	    class Convert
+	    {
+	    protected:
+            friend class GraphicsPipeline;
+	        friend class RenderPass;
+
+	    private:
+	        static VkFormat convert(const FORMAT_VARIABLE& format);
+	        static VkPrimitiveTopology convert(const vulkan::PRIMITIVE& primitive);
+	        static VkPolygonMode convert(const POLYGON_MODE& mode);
+	        static VkCullModeFlags convert(const CULL_MODE& mode);
+	        static VkFrontFace convert(const FRONT_FACE& face);
+	        static VkDynamicState convert(const DYNAMIC_STATE& state);
+	        static VkImageLayout convert(const IMAGE_LAYOUT& layout);
+	    };
 	}
 #endif //defined(CORE_INCLUDE_VULKAN)
 

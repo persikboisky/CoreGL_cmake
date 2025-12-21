@@ -98,15 +98,15 @@ namespace core
 			vkDestroyBuffer(*this->ptrDevice, this->buffer, nullptr);
 		}
 
-		void Buffer::copy(void* data, uint64_t size)
+		void Buffer::copy(void* data, uint64_t size, uint64_t offset)
 		{
 			void* ptrMemory;
-			vkMapMemory(*this->ptrDevice, this->memory, 0, size, 0, &ptrMemory);
+			vkMapMemory(*this->ptrDevice, this->memory, offset, size, 0, &ptrMemory);
 			memcpy(ptrMemory, data, size);
 			vkUnmapMemory(*this->ptrDevice, this->memory);
 		}
 
-		uint64_t Buffer::getSzie() const
+		uint64_t Buffer::getSize() const
 		{
 			return this->size;
 		}

@@ -7,36 +7,21 @@
 
 #include "../../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
+#include "../../../types/apiTypes.hpp"
 
 namespace core::vulkan
 {
-	enum class LoadOp : int
+	enum class LOAD_OP : int
 	{
 		LOAD_OP_CLEAR,
 		LOAD_OP_LOAD
 	};
 
-	enum class InitialLayout : int
-	{
-		LAYOUT_UNDEFINED,
-		LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-		LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	};
-
-	enum class FinalLayout : int
-	{
-		LAYOUT_PRESENT_SRC_KHR,
-		LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
-	};
-
 	struct AttachmentsInfo
 	{
-		LoadOp loadOp = LoadOp::LOAD_OP_CLEAR;
-		InitialLayout initLayout = InitialLayout::LAYOUT_UNDEFINED;
-		FinalLayout finalLayout = FinalLayout::LAYOUT_PRESENT_SRC_KHR;
+		LOAD_OP loadOp = LOAD_OP::LOAD_OP_CLEAR;
+		IMAGE_LAYOUT initLayout = IMAGE_LAYOUT::UNDEFINED;
+		IMAGE_LAYOUT finalLayout = IMAGE_LAYOUT::PRESENT_SRC_KHR;
 	};
 }
 

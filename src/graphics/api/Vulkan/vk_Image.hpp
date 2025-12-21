@@ -10,152 +10,133 @@
 #include "../../../types/apiTypes.hpp"
 #include "../../../types/size.hpp"
 #include <vulkan/vulkan.h>
+#include <vector>
 
 namespace core
 {
 	namespace vulkan
 	{
-		enum class IMAGE_TYPE : int
-		{
-			IMG_1D,
-			IMG_2D,
-			IMG_3D
-		};
+	    enum class IMAGE_TYPE : int
+	    {
+	        IMG_1D,
+            IMG_2D,
+            IMG_3D
+	    };
 
-		enum class IMAGE_FORMAT : int
-		{
-			B8G8R8_SRGB,
-			B8G8R8_UINT,
-			B8G8R8A8_SRGB,
-			B8G8R8A8_UINT,
-			D24_UNORM_S8_UINT,
-			D32_SFLOAT
-		};
+	    enum class IMAGE_USAGE : int
+	    {
+	        SAMPLED,
+	        TRANSFER_DST,
+	        TRANSFER_SRC,
+	        SAMPLED_TRANSFER_DST,
+	        SAMPLED_TRANSFER_SRC,
+	    };
 
-		enum class TYPE_USAGE_IMAGE : int
-		{
-			TRANSFER_SRC,
-			TRANSFER_DST,
-			SAMPLED,
-			STORAGE,
-			COLOR_ATTACHMENT,
-			DEPTH_STENCIL_ATTACHMENT
-		};
+        struct ImageCreateInfo
+        {
+            class Device* ptrDevice = nullptr;
+            IMAGE_TYPE type = IMAGE_TYPE::IMG_2D;
+            Size3ui extent = {0, 0, 0};
+            uint32_t mipLevels = 1;
+            IMAGE_FORMAT format = IMAGE_FORMAT::R8G8B8_UNORM;
+            IMAGE_USAGE usage = IMAGE_USAGE::SAMPLED;
 
-		struct ImageTypeInfo
-		{
-			IMAGE_TYPE image = IMAGE_TYPE::IMG_2D;
-			IMAGE_FORMAT format = IMAGE_FORMAT::B8G8R8A8_SRGB;
-			TYPE_USAGE_IMAGE usage = TYPE_USAGE_IMAGE::SAMPLED;
-		};
+            /// @brief предназначена ли цепочка показа для одной очереди(использование для одной очереди более производительное)
+            bool exclusiveMode = true;
 
-		struct ImageSubresourceInfo
-		{
-			uint32_t baseMipLevel = 0;
-			uint32_t levelCount = 1;
-			uint32_t baseArrayLayer = 0;
-			uint32_t layerCount = 1;
-		};
+            /// @brief список индексов семейств(нужно если выключен exclusiveMode)
+            std::vector<uint32_t> queueFamilyIndices = {};
 
-		struct ImageCreateInfo
-		{
-			class Device* ptrDevice = nullptr;
+            uint64_t size = 0;
+            void* ptrImageData = nullptr;
 
-			Size3i extent = {};
-			ImageTypeInfo* ptrImageType = nullptr;
-			TYPE_MEMORY typeMemory = TYPE_MEMORY::HOST;
+            TYPE_MEMORY typeMemory = TYPE_MEMORY::HOST;
+        };
 
-			bool exclusiveMode = true;
-			uint32_t mipLevels = 1;
+	    class Image
+	    {
+	    protected:
+            friend class ImageView;
 
-			size_t size = 0;
-			void* data = nullptr;
-		};
+	    private:
+	        VkDevice device = nullptr;
+	        VkImage image = nullptr;
+	        VkDeviceMemory memory = nullptr;
 
-		struct ImageViewCreateInfo
-		{
-			class Device* ptrDevice = nullptr;
-			class Image* ptrImage = nullptr;
-			ImageTypeInfo* ptrImageType = nullptr;
-			ImageSubresourceInfo* ptrSubresourceInfo = nullptr;
-		};
+	        Image(const ImageCreateInfo& info);
 
-		struct SamplerCreateInfo
-		{
-			class Device* ptrDevice = nullptr;
-			FILTER magFilter = FILTER::NEAREST;
-			FILTER minFilter = FILTER::NEAREST;
-			MIPMAP_MODE mipmapMode = MIPMAP_MODE::NEAREST;
-			ADDRESS_MODE addressModeU = ADDRESS_MODE::REPEAT;
-			ADDRESS_MODE addressModeV = ADDRESS_MODE::REPEAT;
-			ADDRESS_MODE addressModeW = ADDRESS_MODE::REPEAT;
-			BORDER_COLOR borderColor = BORDER_COLOR::FLOAT_OPAQUE_WHITE;
-			bool anisotropyEnable = false;
-			uint32_t maxAnisotropy = 4.0f;
-		};
+	    public:
+	        static Image create(const ImageCreateInfo& info);
+	        static Image* ptrCreate(const ImageCreateInfo& info);
 
-		class Image
-		{
-		protected:
-			friend class ImageView;
-			friend class CommandBuffer;
+	        ~Image();
 
-		private:
-			VkDevice* ptrDevice = nullptr;
-			VkImage image = nullptr;
-			VkDeviceMemory memory = nullptr;
+	        void copy(void* data, uint64_t size, uint64_t offset = 0);
+	    };
 
-			Image(const ImageCreateInfo& info);
+        struct ImageViewCreateInfo
+        {
+            class Device* ptrDevice = nullptr;
+            Image* ptrImage = nullptr;
+            IMAGE_FORMAT format = IMAGE_FORMAT::R8G8B8_UNORM;
+            IMAGE_TYPE type = IMAGE_TYPE::IMG_2D;
+        };
 
-		public:
-			~Image();
+        class ImageView
+        {
+        protected:
+            friend class DescriptorSet;
 
-			static Image create(const ImageCreateInfo& info);
-			static Image *ptrCreate(const ImageCreateInfo& info);
+        private:
+            VkDevice device = nullptr;
+            VkImageView imageView = nullptr;
 
-			void copy(void* data, uint64_t size);
-		};
+            ImageView(const ImageViewCreateInfo& info);
 
-		class ImageView
-		{
-		protected:
-			friend class DescriptorSet;
+        public:
+            static ImageView create(const ImageViewCreateInfo& info);
+            static ImageView *ptrCreate(const ImageViewCreateInfo& info);
 
-		private:
-			VkDevice* ptrDevice = nullptr;
-			VkImageView imageView = nullptr;
+            ~ImageView();
+        };
 
-			ImageView(const ImageViewCreateInfo& info);
+	    struct SamplerFilter
+	    {
+	        TEXTURE_FILTER magFilter = TEXTURE_FILTER::LINEAR;
+	        TEXTURE_FILTER minFilter = TEXTURE_FILTER::LINEAR;
+	    };
 
-		public:
-			static ImageView create(const ImageViewCreateInfo& info);
-			static ImageView *ptrCreate(const ImageViewCreateInfo& info);
+	    struct SamplerAddressMode
+	    {
+            vulkan::TEXTURE_WRAP addressModeU = vulkan::TEXTURE_WRAP::REPEAT;
+	        vulkan::TEXTURE_WRAP addressModeV = vulkan::TEXTURE_WRAP::REPEAT;
+	        vulkan::TEXTURE_WRAP addressModeW = vulkan::TEXTURE_WRAP::REPEAT;
+	    };
 
-			~ImageView();
-		};
+	    struct SamplerCreateInfo
+	    {
+	        class Device* ptrDevice = nullptr;
+            SamplerFilter filter = {};
+	        SamplerAddressMode addressMode = {};
+	    };
 
-		class Sampler
-		{
-		protected:
-			friend class DescriptorSet;
+	    class Sampler
+	    {
+	    protected:
+	        friend class DescriptorSet;
 
-		private:
-			VkDevice* ptrDevice = nullptr;
-			VkSampler sampler = nullptr;
+	    private:
+	        VkSampler sampler = nullptr;
+	        VkDevice device = nullptr;
 
-			Sampler(const SamplerCreateInfo& info);
+            Sampler(const SamplerCreateInfo& info);
 
-		public:
-			static Sampler create(const SamplerCreateInfo& info);
-			static Sampler* ptrCreate(const SamplerCreateInfo& info);
+	    public:
+	        ~Sampler();
 
-			~Sampler();
-		};
-
-		class Texture
-		{
-
-		};
+	        static Sampler create(const SamplerCreateInfo& info);
+	        static Sampler *ptrCreate(const SamplerCreateInfo& info);
+	    };
 	} // vulkan
 } // core
 

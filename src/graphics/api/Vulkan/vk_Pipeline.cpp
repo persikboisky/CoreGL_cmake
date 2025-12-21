@@ -145,8 +145,7 @@ namespace core
 					ptrAttributeDescription[index].location = info.ptrPipelineVertexInputInfo->vecVertexAttributeDescriptions[index].location;
 					ptrAttributeDescription[index].binding = info.ptrPipelineVertexInputInfo->vecVertexAttributeDescriptions[index].binding;
 					ptrAttributeDescription[index].offset = info.ptrPipelineVertexInputInfo->vecVertexAttributeDescriptions[index].offset;
-					ptrAttributeDescription[index].format = convertFormat(
-							info.ptrPipelineVertexInputInfo->vecVertexAttributeDescriptions[index].format);
+					ptrAttributeDescription[index].format = Convert::convert(info.ptrPipelineVertexInputInfo->vecVertexAttributeDescriptions[index].format);
 				}
 
 				vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -159,27 +158,7 @@ namespace core
 			VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
 			inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 			inputAssembly.primitiveRestartEnable = VK_FALSE;
-			switch (info.primitive)
-			{
-			case TRIANGLE_STRIP:
-				inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
-				break;
-			case TRIANGLE_LIST:
-				inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-				break;
-			case TRIANGLE_FAN:
-				inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN;
-				break;
-			case LINE_STRIP:
-				inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP;
-				break;
-			case POINT_LIST:
-				inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
-				break;
-			default:
-				inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
-				break;
-			}
+		    inputAssembly.topology = Convert::convert(info.primitive);
 
 			VkRect2D scissor = {};
 			scissor.offset.x = info.scissor.x;
@@ -206,17 +185,9 @@ namespace core
 			rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 			rasterizer.depthClampEnable = VK_FALSE;
 			rasterizer.rasterizerDiscardEnable = VK_FALSE;
-			rasterizer.polygonMode = (info.polygonMode == POLYGON_MODE::FILL) ?
-					VK_POLYGON_MODE_FILL : (info.polygonMode == POLYGON_MODE::LINE) ?
-					VK_POLYGON_MODE_LINE : VK_POLYGON_MODE_POINT;
-
-			rasterizer.cullMode = info.cullFace == CULL_MODE::NONE ?
-					VK_CULL_MODE_NONE : info.cullFace == CULL_MODE::BACK ?
-					VK_CULL_MODE_BACK_BIT : info.cullFace == CULL_MODE::FRONT ?
-					VK_CULL_MODE_FRONT_BIT : VK_CULL_MODE_FRONT_AND_BACK;
-
-			rasterizer.frontFace = info.frontFace == FRONT_FACE::COUNTER_CLOCKWISE ?
-					VK_FRONT_FACE_COUNTER_CLOCKWISE : VK_FRONT_FACE_CLOCKWISE;
+			rasterizer.polygonMode = Convert::convert(info.polygonMode);
+			rasterizer.cullMode = Convert::convert(info.cullFace);
+			rasterizer.frontFace = Convert::convert(info.frontFace);
 			rasterizer.depthBiasEnable = VK_FALSE;
 			rasterizer.lineWidth = 1.0f;
 
@@ -235,11 +206,7 @@ namespace core
 
 			auto ptrDynamicStates = new VkDynamicState[info.dynamicState.size()];
 			for (size_t index = 0; index < info.dynamicState.size(); index++)
-			{
-				ptrDynamicStates[index] = info.dynamicState[index] == DYNAMIC_STATE::CULL_MODE ?
-					VK_DYNAMIC_STATE_CULL_MODE : info.dynamicState[index] == DYNAMIC_STATE::SCISSOR ?
-					VK_DYNAMIC_STATE_SCISSOR : VK_DYNAMIC_STATE_PRIMITIVE_TOPOLOGY;
-			}
+				ptrDynamicStates[index] = Convert::convert(info.dynamicState[index]);
 
 			VkPipelineDynamicStateCreateInfo dynamicState = {};
 			dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;

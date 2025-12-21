@@ -49,7 +49,7 @@ namespace core
 			VkMemoryRequirements memRequirements;
 			vkGetImageMemoryRequirements(this->device, image, &memRequirements);
 
-			VkMemoryAllocateInfo allocInfo{};
+			VkMemoryAllocateInfo allocInfo = {};
 			allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 			allocInfo.allocationSize = memRequirements.size;
 			allocInfo.memoryTypeIndex = findMemoryType(
@@ -120,9 +120,12 @@ namespace core
 			vkGetPhysicalDeviceProperties(this->physicalDevice, &this->deviceProperties);
 			vkGetPhysicalDeviceFeatures(this->physicalDevice, &this->deviceFeatures);
 
-			constexpr std::array<const char*, 1> enabledExtensionNames = {
+			std::array<const char*, 1> enabledExtensionNames = {
 					VK_KHR_SWAPCHAIN_EXTENSION_NAME
 			};
+
+		    // if (info.ptrDeviceExtensionsInfo->FILTER_CUBIC_IMG)
+		    //     enabledExtensionNames.push_back(VK_IMG_FILTER_CUBIC_EXTENSION_NAME);
 
             const auto pQueueCreateInfos = new VkDeviceQueueCreateInfo[info.queueFamiliesInfo.size()];
 		    for (uint32_t i = 0; i < info.queueFamiliesInfo.size(); i++)
@@ -214,15 +217,15 @@ namespace core
 
 		uint32_t Device::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const
         {
-			VkPhysicalDeviceMemoryProperties memProperties;
-			vkGetPhysicalDeviceMemoryProperties(this->physicalDevice, &memProperties);
+		    VkPhysicalDeviceMemoryProperties memProperties;
+		    vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
 
-			for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
-				if ((typeFilter & (1 << i)) &&
-					((memProperties.memoryTypes[i].propertyFlags & properties) == properties)) {
-					return i;
-				}
-			}
+		    for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+		        if ((typeFilter & (1 << i)) &&
+                    (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
+		                return i;
+                    }
+		    }
 
 			throw Coders(46);
 		}

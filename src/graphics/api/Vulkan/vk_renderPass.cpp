@@ -12,39 +12,9 @@ namespace core
 {
 	namespace vulkan
 	{
-		static inline VkAttachmentLoadOp convertAttachmentLoadOp(const LoadOp& loadOp)
+		static inline VkAttachmentLoadOp convertAttachmentLoadOp(const LOAD_OP& loadOp)
 		{
-			return (loadOp == LoadOp::LOAD_OP_LOAD) ? VK_ATTACHMENT_LOAD_OP_LOAD : VK_ATTACHMENT_LOAD_OP_CLEAR;
-		}
-
-		static inline VkImageLayout convertInitLayout(const InitialLayout& initialLayout)
-		{
-			switch (initialLayout)
-			{
-			case InitialLayout::LAYOUT_UNDEFINED:
-				return VK_IMAGE_LAYOUT_UNDEFINED;
-			case InitialLayout::LAYOUT_COLOR_ATTACHMENT_OPTIMAL:
-				return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-			case InitialLayout::LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
-				return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-			default:
-				return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			}
-		}
-
-		static inline VkImageLayout convertFinalLayout(const FinalLayout& finalLayout)
-		{
-			switch (finalLayout)
-			{
-			case FinalLayout::LAYOUT_COLOR_ATTACHMENT_OPTIMAL:
-				return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-			case FinalLayout::LAYOUT_SHADER_READ_ONLY_OPTIMAL:
-				return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			case FinalLayout::LAYOUT_PRESENT_SRC_KHR:
-				return VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-			default:
-				return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-			}
+			return (loadOp == LOAD_OP::LOAD_OP_LOAD) ? VK_ATTACHMENT_LOAD_OP_LOAD : VK_ATTACHMENT_LOAD_OP_CLEAR;
 		}
 
 		RenderPass::RenderPass(const RenderPassInfo& info) : ptrDevice(&info.ptrDevice->device)
@@ -62,8 +32,8 @@ namespace core
 				colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 				colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 				colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-				colorAttachment.initialLayout = convertInitLayout(info.ptrColorAttachment->initLayout);
-				colorAttachment.finalLayout = convertFinalLayout(info.ptrColorAttachment->finalLayout);
+				colorAttachment.initialLayout = Convert::convert(info.ptrColorAttachment->initLayout);
+				colorAttachment.finalLayout = Convert::convert(info.ptrColorAttachment->finalLayout);
 
 				colorRef.attachment = 0;
 				colorRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
@@ -79,8 +49,8 @@ namespace core
 				depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 				depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 				depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-				depthAttachment.initialLayout = convertInitLayout(info.ptrDepthStencilAttachment->initLayout);
-				depthAttachment.finalLayout = convertFinalLayout(info.ptrDepthStencilAttachment->finalLayout);
+				depthAttachment.initialLayout = Convert::convert(info.ptrDepthStencilAttachment->initLayout);
+				depthAttachment.finalLayout = Convert::convert(info.ptrDepthStencilAttachment->finalLayout);
 
 				depthRef.attachment = 1;
 				depthRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
