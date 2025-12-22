@@ -44,7 +44,7 @@ namespace core
 		PipelineLayout::PipelineLayout(const PipelineLayoutInfo& info) : ptrDevice(&info.ptrDevice->device)
 		{
 			uint32_t index = 0;
-			auto pushConstantRanges = new VkPushConstantRange[info.vecPushConstantInfos.size()];
+            auto pushConstantRanges = new VkPushConstantRange[info.vecPushConstantInfos.size()];
 			for (const auto &pushConstInfo : info.vecPushConstantInfos)
 			{
 				pushConstantRanges[index].size = pushConstInfo.size;
@@ -53,7 +53,7 @@ namespace core
 				index++;
 			}
 
-			auto setLayouts = new VkDescriptorSetLayout[info.vecPtrDescriptorSetsLayouts.size()];
+            auto setLayouts = new VkDescriptorSetLayout[info.vecPtrDescriptorSetsLayouts.size()];
 			for (index = 0; index < info.vecPtrDescriptorSetsLayouts.size(); index++)
 			{
 				setLayouts[index] = info.vecPtrDescriptorSetsLayouts[index]->layout;

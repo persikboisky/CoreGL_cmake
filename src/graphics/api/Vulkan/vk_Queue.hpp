@@ -18,9 +18,9 @@ namespace core
 
 		struct SubmitInfo
 		{
-			std::vector<class CommandBuffer*> ptrCommandBuffer = {};
-			std::vector<class Semaphore*> ptrWaitSemaphore = {};
-			std::vector<class Semaphore*> ptrSignalSemaphore = {};
+			std::vector<class CommandBuffer*> vecPtrCommandBuffer = {};
+			std::vector<class Semaphore*> vecPtrWaitSemaphore = {};
+			std::vector<class Semaphore*> vecPtrSignalSemaphore = {};
 		    class Fence* ptrFence = nullptr;
 		};
 

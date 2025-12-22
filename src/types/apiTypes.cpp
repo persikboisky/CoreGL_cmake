@@ -120,5 +120,65 @@ VkImageLayout Convert::convert(const IMAGE_LAYOUT &layout)
     }
 }
 
+VkImageAspectFlags Convert::convert(const IMAGE_ASPECT &aspect)
+{
+    switch (aspect)
+    {
+    case IMAGE_ASPECT::COLOR:
+        return VK_IMAGE_ASPECT_COLOR_BIT;
+    case IMAGE_ASPECT::DEPTH:
+        return VK_IMAGE_ASPECT_DEPTH_BIT;
+    case IMAGE_ASPECT::STENCIL:
+        return VK_IMAGE_ASPECT_STENCIL_BIT;
+    case IMAGE_ASPECT::DEPTH_STENCIL:
+    default:
+        return VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+    }
+}
+
+VkAccessFlags Convert::convert(const ACCESS &access)
+{
+    switch (access)
+    {
+    case ACCESS::NONE:
+        return VK_ACCESS_NONE;
+    case ACCESS::MEMORY_READ:
+        return VK_ACCESS_MEMORY_READ_BIT;
+    case ACCESS::MEMORY_WRITE:
+        return VK_ACCESS_MEMORY_WRITE_BIT;
+    case ACCESS::SHADER_READ:
+        return VK_ACCESS_SHADER_READ_BIT;
+    case ACCESS::TRANSFER_READ:
+        return VK_ACCESS_TRANSFER_READ_BIT;
+    case ACCESS::TRANSFER_WRITE:
+        return VK_ACCESS_TRANSFER_WRITE_BIT;
+    case ACCESS::SHADER_WRITE:
+    default:
+        return VK_ACCESS_SHADER_WRITE_BIT;
+    }
+}
+
+VkPipelineStageFlags Convert::convert(const PIPELINE_STAGE &stage)
+{
+    switch (stage)
+    {
+    case PIPELINE_STAGE::FRAGMENT_SHADER:
+        return VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+    case PIPELINE_STAGE::GEOMETRY_SHADER:
+        return VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT;
+    case PIPELINE_STAGE::TOP_OF_PIPE:
+        return VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+    case PIPELINE_STAGE::TRANSFER:
+        return VK_PIPELINE_STAGE_TRANSFER_BIT;
+    case PIPELINE_STAGE::VERTEX_INPUT:
+        return VK_PIPELINE_STAGE_VERTEX_INPUT_BIT;
+    case PIPELINE_STAGE::VERTEX_SHADER:
+        return VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
+    case PIPELINE_STAGE::NONE:
+    default:
+        return VK_PIPELINE_STAGE_NONE;
+    }
+}
+
 } // namespace core::vulkan
 #endif //defined(CORE_INCLUDE_VULKAN)

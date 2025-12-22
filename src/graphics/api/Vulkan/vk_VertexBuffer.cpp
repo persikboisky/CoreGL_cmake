@@ -52,7 +52,7 @@ namespace core
 			cmd->copyBuffer(ptrStagingBuffer, this->buffer, info.size);
 
 			SubmitInfo submitInfo = {};
-			submitInfo.ptrCommandBuffer = {cmd};
+			submitInfo.vecPtrCommandBuffer = {cmd};
 			cmd->end();
 			queue->submit(submitInfo);
 			queue->wait();

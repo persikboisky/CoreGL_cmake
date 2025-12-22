@@ -164,8 +164,8 @@ namespace core
 
 		void
 		CommandBuffer::bindVertexBuffers(
-			const uint32_t firstBinding,
-			const uint32_t bindingCount,
+			uint32_t firstBinding,
+			uint32_t bindingCount,
 			const VertexBuffer *ptrBuffers,
 			const uint64_t *ptrOffset) const
         {
@@ -242,19 +242,32 @@ namespace core
 				&copyRegion);
 		}
 
-		// void CommandBuffer::copyImage(Image* ptrSrcBuffer, Image* ptrDstBuffer, uint64_t size)
-		// {
-			// VkImageCopy copyRegion{};
-			// copyRegion.srcOffset = 0;
-			// copyRegion.dstOffset = 0;
-			// copyRegion.
-			// vkCmdCopyImage(
-			// 		this->commandBuffer,
-			// 		ptrSrcBuffer->buffer,
-			// 		ptrDstBuffer->buffer,
-			// 		1,
-			// 		&copyRegion);
-		// }
+        void CommandBuffer::copyBufferToImage(const ImageBufferCopyInfo &info)
+        {
+		    VkBufferImageCopy region = {};
+		    region.bufferOffset = info.bufferOffset;
+		    region.bufferRowLength = info.bufferRowLength;
+		    region.bufferImageHeight = info.bufferImageHeight;
+		    region.imageSubresource.aspectMask = Convert::convert(info.ptrImageSubresourceRange->aspect);
+		    region.imageSubresource.mipLevel = info.ptrImageSubresourceRange->mipLevel;
+		    region.imageSubresource.baseArrayLayer = info.ptrImageSubresourceRange->baseArrayLayer;
+		    region.imageSubresource.layerCount = info.ptrImageSubresourceRange->layerCount;
+		    region.imageOffset.x = info.imageOffset.x;
+            region.imageOffset.y = info.imageOffset.y;
+		    region.imageOffset.z = info.imageOffset.z;
+		    region.imageExtent.width = info.imageExtent.width;
+		    region.imageExtent.height = info.imageExtent.height;
+		    region.imageExtent.depth = info.imageExtent.depth;
+
+		    vkCmdCopyBufferToImage(
+                commandBuffer,
+                info.ptrSrcBuffer->buffer,
+                info.ptrDstImage->image,
+                Convert::convert(info.layout),
+                1,
+                &region
+            );
+        }
 
 		void CommandBuffer::bindDescriptorSet(const DescriptorSet &set, const PipelineLayout &layout) const
         {
@@ -319,8 +332,31 @@ namespace core
         void CommandBuffer::pipelineImageMemoryBarrier(const PipelineImageMemoryBarrier &info)
         {
             VkImageMemoryBarrier imageMemoryBarrier = {};
-		    // imageMemoryBarrier.
-		    // vkCmdPipelineBarrier(commandBuffer, )
+		    imageMemoryBarrier.pNext = nullptr;
+		    imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		    imageMemoryBarrier.newLayout = Convert::convert(info.newLayout);
+		    imageMemoryBarrier.oldLayout = Convert::convert(info.oldLayout);
+		    imageMemoryBarrier.image = info.ptrImage->image;
+		    imageMemoryBarrier.dstQueueFamilyIndex = info.QueueFamilyIgnored ? VK_QUEUE_FAMILY_IGNORED : info.dstQueueFamilyIndex;
+		    imageMemoryBarrier.srcQueueFamilyIndex = info.QueueFamilyIgnored ? VK_QUEUE_FAMILY_IGNORED : info.srcQueueFamilyIndex;
+		    imageMemoryBarrier.subresourceRange.aspectMask = Convert::convert(info.ptrImageSubresourceRange->aspect);
+		    imageMemoryBarrier.subresourceRange.baseMipLevel = info.ptrImageSubresourceRange->baseMipLevel;
+		    imageMemoryBarrier.subresourceRange.baseArrayLayer = info.ptrImageSubresourceRange->baseArrayLayer;
+		    imageMemoryBarrier.subresourceRange.layerCount = info.ptrImageSubresourceRange->layerCount;
+		    imageMemoryBarrier.subresourceRange.levelCount = info.ptrImageSubresourceRange->levelCount;
+		    imageMemoryBarrier.srcAccessMask = Convert::convert(info.srcAccessMask);
+		    imageMemoryBarrier.dstAccessMask = Convert::convert(info.dstAccessMask);
+		    vkCmdPipelineBarrier(
+		        commandBuffer,
+		        Convert::convert(info.srcStageMask),
+		        Convert::convert(info.dstStageMask),
+		        0,
+		        0,
+		        nullptr,
+		        0,
+		        nullptr,
+		        1,
+		        &imageMemoryBarrier);
         }
 
 	} // vulkan

@@ -31,29 +31,29 @@ namespace core
 
 		void Queue::submit(SubmitInfo& info)
 		{
-            const auto cmds = new VkCommandBuffer[info.ptrCommandBuffer.size()];
-            for (size_t i = 0; i < info.ptrCommandBuffer.size(); i++)
-                cmds[i] = info.ptrCommandBuffer[i]->commandBuffer;
+            const auto cmds = new VkCommandBuffer[info.vecPtrCommandBuffer.size()];
+            for (size_t i = 0; i < info.vecPtrCommandBuffer.size(); i++)
+                cmds[i] = info.vecPtrCommandBuffer[i]->commandBuffer;
 
-            const auto waitSemaphores = new VkSemaphore[info.ptrWaitSemaphore.size()];
-		    for (size_t i = 0; i < info.ptrWaitSemaphore.size(); i++)
-		        waitSemaphores[i] = info.ptrWaitSemaphore[i]->semaphore;
+            const auto waitSemaphores = new VkSemaphore[info.vecPtrWaitSemaphore.size()];
+		    for (size_t i = 0; i < info.vecPtrWaitSemaphore.size(); i++)
+		        waitSemaphores[i] = info.vecPtrWaitSemaphore[i]->semaphore;
 
-            const auto signalSemaphores = new VkSemaphore[info.ptrSignalSemaphore.size()];
-		    for (size_t i = 0; i < info.ptrSignalSemaphore.size(); i++)
-		        signalSemaphores[i] = info.ptrSignalSemaphore[i]->semaphore;
+            const auto signalSemaphores = new VkSemaphore[info.vecPtrSignalSemaphore.size()];
+		    for (size_t i = 0; i < info.vecPtrSignalSemaphore.size(); i++)
+		        signalSemaphores[i] = info.vecPtrSignalSemaphore[i]->semaphore;
 
 			VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
 			VkSubmitInfo submitInfo = {};
 			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 			submitInfo.pNext = nullptr;
 			submitInfo.pCommandBuffers = cmds;
-			submitInfo.commandBufferCount = info.ptrCommandBuffer.size();
+			submitInfo.commandBufferCount = info.vecPtrCommandBuffer.size();
 			submitInfo.pWaitDstStageMask = waitStages;
 			submitInfo.pSignalSemaphores = signalSemaphores;
-			submitInfo.signalSemaphoreCount = info.ptrSignalSemaphore.size();
+			submitInfo.signalSemaphoreCount = info.vecPtrSignalSemaphore.size();
 			submitInfo.pWaitSemaphores = waitSemaphores;
-			submitInfo.waitSemaphoreCount = info.ptrWaitSemaphore.size();
+			submitInfo.waitSemaphoreCount = info.vecPtrWaitSemaphore.size();
 
 			vkQueueSubmit(this->queue, 1, &submitInfo,
 			    info.ptrFence != nullptr ? info.ptrFence->fence : VK_NULL_HANDLE);

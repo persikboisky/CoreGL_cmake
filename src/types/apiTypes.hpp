@@ -258,12 +258,43 @@ namespace core
 	        DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 	        PRESENT_SRC_KHR
 	    };
+	    enum class IMAGE_ASPECT : int
+	    {
+	        COLOR,
+	        DEPTH,
+	        STENCIL,
+	        DEPTH_STENCIL
+	    };
+
+	    enum class ACCESS : int
+	    {
+	        NONE,
+	        SHADER_READ,
+	        SHADER_WRITE,
+	        MEMORY_READ,
+	        MEMORY_WRITE,
+	        TRANSFER_READ,
+            TRANSFER_WRITE
+	    };
+
+	    enum class PIPELINE_STAGE : int
+	    {
+	        NONE,
+	        TOP_OF_PIPE,
+	        TRANSFER,
+	        GEOMETRY_SHADER,
+	        VERTEX_INPUT,
+	        VERTEX_SHADER,
+	        FRAGMENT_SHADER
+	    };
 
 	    class Convert
 	    {
 	    protected:
             friend class GraphicsPipeline;
 	        friend class RenderPass;
+	        friend class CommandBuffer;
+	        friend class ImageView;
 
 	    private:
 	        static VkFormat convert(const FORMAT_VARIABLE& format);
@@ -273,6 +304,9 @@ namespace core
 	        static VkFrontFace convert(const FRONT_FACE& face);
 	        static VkDynamicState convert(const DYNAMIC_STATE& state);
 	        static VkImageLayout convert(const IMAGE_LAYOUT& layout);
+	        static VkImageAspectFlags convert(const IMAGE_ASPECT& aspect);
+	        static VkAccessFlags convert(const ACCESS& access);
+	        static VkPipelineStageFlags convert(const PIPELINE_STAGE& stage);
 	    };
 	}
 #endif //defined(CORE_INCLUDE_VULKAN)

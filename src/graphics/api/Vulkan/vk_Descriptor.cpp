@@ -14,7 +14,7 @@ namespace core
 {
 	namespace vulkan
 	{
-		static inline VkDescriptorType convertDescriptorType(const DESCRIPTOR_TYPE& type)
+		static VkDescriptorType convertDescriptorType(const DESCRIPTOR_TYPE& type)
 		{
 			return (type == DESCRIPTOR_TYPE::UNIFORM_BUFFER) ?
 				   VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER :
@@ -23,7 +23,7 @@ namespace core
 
 		DescriptorPool::DescriptorPool(const DescriptorPoolCreateInfo& info) : prtDevice(&info.ptrDevice->device)
 		{
-			auto pPoolSizes = new VkDescriptorPoolSize[info.vecPtrDescriptorPoolSize.size()];
+            const auto pPoolSizes = new VkDescriptorPoolSize[info.vecPtrDescriptorPoolSize.size()];
 			for (size_t index = 0; index < info.vecPtrDescriptorPoolSize.size(); index++)
 			{
 				pPoolSizes[index].descriptorCount = info.vecPtrDescriptorPoolSize[index]->count;
@@ -65,13 +65,19 @@ namespace core
 
 		DescriptorSetLayout::DescriptorSetLayout(const DescriptorSetLayoutCreateInfo& info) : prtDevice(&info.ptrDevice->device)
 		{
-			auto bindings = new VkDescriptorSetLayoutBinding[info.layoutBinding.size()];
+            const auto bindings = new VkDescriptorSetLayoutBinding[info.layoutBinding.size()];
 			for (size_t index = 0; index < info.layoutBinding.size(); index++)
 			{
 				bindings[index].binding = info.layoutBinding[index].binding;
 				bindings[index].descriptorCount = info.layoutBinding[index].count;
 				bindings[index].stageFlags = ShaderModule::convertStage(info.layoutBinding[index].shaderStages);
 				bindings[index].descriptorType = convertDescriptorType(info.layoutBinding[index].type);
+
+			    /// из-за того что я долбаёб не прописал = nullptr, программа ложилась.
+			    /// зато теперь я умею дебагом пользоваться :)
+			    /// прикол этот класс существует уже месяц,
+			    /// а ошибку увидел ток сегодня(21.12.25), когда решил текстуры отрисовать вулканом
+			    bindings[index].pImmutableSamplers = nullptr;
 			}
 
 			VkDescriptorSetLayoutCreateInfo layoutInfo = {};
@@ -110,11 +116,10 @@ namespace core
 			ptrDevice(&info.ptrDevice->device),
 			ptrDescriptorPool(&info.ptrDescriptorPool->descriptorPool)
 		{
-			auto l = new VkDescriptorSetLayout[info.vecPtrLayouts.size()];
+            const auto l = new VkDescriptorSetLayout[info.vecPtrLayouts.size()];
 			for (size_t i = 0; i < info.vecPtrLayouts.size(); i++)
-			{
 				l[i] = info.vecPtrLayouts[i]->layout;
-			}
+
 
 			VkDescriptorSetAllocateInfo allocInfo = {};
 			allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -149,8 +154,8 @@ namespace core
 			return new DescriptorSet(info);
 		}
 
-		void DescriptorSet::update(const DescriptorSetUpdateInfo& info)
-		{
+		void DescriptorSet::update(const DescriptorSetUpdateInfo& info) const
+        {
 			if (info.ptrBuffer != nullptr)
 			{
 				VkDescriptorBufferInfo bufferInfo = {};

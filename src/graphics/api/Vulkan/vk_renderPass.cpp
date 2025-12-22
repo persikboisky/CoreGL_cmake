@@ -12,7 +12,7 @@ namespace core
 {
 	namespace vulkan
 	{
-		static inline VkAttachmentLoadOp convertAttachmentLoadOp(const LOAD_OP& loadOp)
+		static VkAttachmentLoadOp convertAttachmentLoadOp(const LOAD_OP& loadOp)
 		{
 			return (loadOp == LOAD_OP::LOAD_OP_LOAD) ? VK_ATTACHMENT_LOAD_OP_LOAD : VK_ATTACHMENT_LOAD_OP_CLEAR;
 		}

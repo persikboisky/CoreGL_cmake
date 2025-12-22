@@ -57,6 +57,7 @@ namespace core
 	    {
 	    protected:
             friend class ImageView;
+	        friend class CommandBuffer;
 
 	    private:
 	        VkDevice device = nullptr;
@@ -74,12 +75,22 @@ namespace core
 	        void copy(void* data, uint64_t size, uint64_t offset = 0);
 	    };
 
+	    struct ImageSubresourceRange
+	    {
+	        IMAGE_ASPECT aspect = IMAGE_ASPECT::COLOR;
+	        uint32_t baseMipLevel = 0;
+	        uint32_t levelCount = 1;
+	        uint32_t baseArrayLayer = 0;
+	        uint32_t layerCount = 1;
+	    };
+
         struct ImageViewCreateInfo
         {
             class Device* ptrDevice = nullptr;
             Image* ptrImage = nullptr;
             IMAGE_FORMAT format = IMAGE_FORMAT::R8G8B8_UNORM;
             IMAGE_TYPE type = IMAGE_TYPE::IMG_2D;
+            ImageSubresourceRange* ptrSubresourceRange = {};
         };
 
         class ImageView

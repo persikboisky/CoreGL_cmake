@@ -121,7 +121,7 @@ namespace core
 			static DescriptorSet create(const DescriptorSetCreateInfo& info);
 			static DescriptorSet* ptrCreate(const DescriptorSetCreateInfo& info);
 
-			void update(const DescriptorSetUpdateInfo& info);
+			void update(const DescriptorSetUpdateInfo& info) const;
 		};
 	} // vulkan
 } // core
