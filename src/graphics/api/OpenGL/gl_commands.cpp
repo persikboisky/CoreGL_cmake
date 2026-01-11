@@ -41,6 +41,20 @@ namespace core
 {
 	namespace opengl
 	{
+	    static unsigned int converIndexType(const INDEX_TYPE &indexType)
+	    {
+	        switch (indexType)
+	        {
+	        case INDEX_TYPE::UINT8:
+	            return GL_UNSIGNED_BYTE;
+	        case INDEX_TYPE::UINT16:
+	            return GL_UNSIGNED_SHORT;
+	        case INDEX_TYPE::UINT32:
+	        default:
+	            return GL_UNSIGNED_INT;
+	        }
+	    }
+
 		void drawVertex(
 				const PRIMITIVE& primitive,
 				int firstVert,
@@ -54,24 +68,26 @@ namespace core
 
 		void drawElement(
 				const PRIMITIVE& primitive,
+				const INDEX_TYPE& indexType,
 				int countVert)
 		{
 			glDrawElements(
 					convertPrimitive(primitive),
 					countVert,
-					GL_UNSIGNED_INT,
+					converIndexType(indexType),
 					(void*)0);
 		}
 
 		void drawElementArray(
 				const PRIMITIVE& primitive,
+				const INDEX_TYPE& indexType,
 				int countVert,
-				unsigned int* array)
+				const void* array)
 		{
 			glDrawElements(
 					convertPrimitive(primitive),
 					countVert,
-					GL_UNSIGNED_INT,
+					converIndexType(indexType),
 					array);
 		}
 

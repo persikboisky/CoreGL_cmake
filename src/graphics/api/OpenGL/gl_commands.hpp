@@ -11,6 +11,7 @@ namespace core
 	enum class FRONT_FACE : int;
 	enum class POLYGON_MODE : int;
 	enum class POLYGON : int;
+    enum class INDEX_TYPE : unsigned int;
 
 	namespace color
 	{
@@ -33,6 +34,7 @@ namespace core
 		/// @param countVert кол-во вершин
 		void drawElement(
 				const PRIMITIVE& primitive,
+				const INDEX_TYPE& indexType,
 				int countVert);
 
 		/// @brief запускает проход рендера для массива индексов
@@ -41,8 +43,9 @@ namespace core
 		/// @param array указатель на массив
 		void drawElementArray(
 			const PRIMITIVE& primitive,
+			const INDEX_TYPE& indexType,
 			int countVert,
-			unsigned int* array);
+			const void* array);
 
 		/// @brief устанавливает состояние теста глубины
 		/// @param flag true - включен тест глубины, false - выключен

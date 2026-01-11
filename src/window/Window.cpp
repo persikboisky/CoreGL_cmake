@@ -4,7 +4,7 @@
 
 #include "Window.hpp"
 #include "../config.hpp"
-#include "../file/image.hpp"
+#include "../loaders/image.hpp"
 #include "../modules.hpp"
 #include "../types/pos.hpp"
 #include "../types/size.hpp"
@@ -21,8 +21,6 @@
 #endif // defined(CORE_INCLUDE_VULKAN)
 
 #define HEIGHT_HEAD_WINDOW 30
-
-bool core::Window::flagGladInit = true;
 
 void core::Window::createWindow(int width, int height, const char *title, bool resizable, bool vkAPI, GLFWmonitor *ptrMon)
 {
@@ -47,13 +45,13 @@ void core::Window::createWindow(int width, int height, const char *title, bool r
 
     if (this->window == nullptr)
     {
-        throw core::Coders(1);
+        throw Coders(CODE_FAILED_INIT_WINDOW);
     }
 
     if (CORE_INFO)
     {
-        core::console::printTime();
-        std::cout << "Ok: create window" << std::endl;
+        console::printTime();
+        std::cout << "Ok: create window, name: " << title << std::endl;
     }
 }
 
@@ -68,7 +66,7 @@ void core::Window::Init()
     this->cursor = new Cursor(*this->window);
 }
 
-core::Window::Window(const core::WindowInfo &winInfo) : 
+core::Window::Window(const core::WindowCreateInfo &winInfo) : 
     window(nullptr), event(nullptr), width(winInfo.width), height(winInfo.height),
     posX(winInfo.posX), posY(winInfo.posY), saveWidth(winInfo.width), saveHeight(winInfo.height),
     cursor(nullptr), monitor(new Monitor()), flagFullScreen(winInfo.fullScreen),
@@ -116,7 +114,7 @@ core::Window::Window(const core::WindowInfo &winInfo) :
 }
 
 core::Window::Window(int width, int height, const char *title, bool resizable, bool vkAPI) :
-    window(nullptr), cursor(nullptr), VSfps(true), monitor(nullptr),
+    window(nullptr), cursor(nullptr), VSfps(true), monitor(new Monitor()),
     event(nullptr), width(width), height(height), posX(0), posY(0), saveWidth(width), saveHeight(height),
     time(glfwGetTime()), deltaTime(glfwGetTime())
 {
@@ -135,7 +133,7 @@ core::Window::Window(int width, int height, const char *title, bool resizable, b
     this->Init();
 }
 
-void core::Window::setMonitor(core::Monitor &monitor)
+void core::Window::setMonitor(core::Monitor &monitor) const
 {
     glfwSetWindowMonitor(
         this->window,
@@ -146,7 +144,7 @@ void core::Window::setMonitor(core::Monitor &monitor)
         GLFW_DONT_CARE);
 }
 
-void core::Window::resetMonitor()
+void core::Window::resetMonitor() const
 {
     glfwSetWindowMonitor(
         this->window,
@@ -156,9 +154,19 @@ void core::Window::resetMonitor()
         GLFW_DONT_CARE);
 }
 
-core::Window core::Window::create(const core::WindowInfo &winInfo)
+core::Window core::Window::create(const core::WindowCreateInfo &winInfo)
 {
     return Window(winInfo);
+}
+
+core::Window *core::Window::ptrCreate(const WindowCreateInfo &winInfo)
+{
+    return new Window(winInfo);
+}
+
+core::Window *core::Window::ptrCreate(int width, int height, const char *title, bool resizable, bool vkAPI)
+{
+    return new Window(width, height, title, resizable, vkAPI);
 }
 
 core::Window core::Window::create(int width, int height, const char *title, bool resizable, bool vkAPI)
@@ -171,7 +179,7 @@ GLFWwindow *core::Window::getWindowOBJ()
     return this->window;
 }
 
-bool core::Window::isContext()
+bool core::Window::isGlContext() const
 {
 #if defined(CORE_INCLUDE_VULKAN)
     if (this->VulknanAPI)
@@ -193,16 +201,15 @@ core::Window::~Window()
     glfwDestroyWindow(this->window);
 }
 
-static inline void glInit()
+static void glInit(bool debugInfo)
 {
     glewExperimental = GL_TRUE;
-    GLenum err = glewInit();
-    if (err != GLEW_OK)
+    if (glewInit() != GLEW_OK)
     {
         throw core::Coders(2);
     }
 
-    if (CORE_INFO)
+    if (CORE_INFO && debugInfo)
     {
         core::console::printTime();
         std::cout << "=== OpenGL System Information ===" << std::endl;
@@ -220,9 +227,9 @@ static inline void glInit()
         glGetIntegerv(GL_MINOR_VERSION, &minor);
         std::cout << "Core Version: " << major << "." << minor << std::endl;
         core::console::printTime();
-        if (glewIsSupported("GL_VERSION_4_5"))
+        if (glewIsSupported("GL_VERSION_4_6"))
         {
-            std::cout << "OpenGL 4.5 is supported!" << std::endl;
+            std::cout << "OpenGL 4.6 is supported!" << std::endl;
         }
         core::console::printTime();
         int maxTextureSize;
@@ -244,18 +251,17 @@ void core::Window::setGlContext()
     {
 #endif // defined(CORE_INCLUDE_VULKAN)
         glfwMakeContextCurrent(this->window);
-
-        if (this->flagGladInit)
+        if (flagGlewInit)
         {
-            glInit();
-            this->flagGladInit = false;
+            glInit(true);
+            flagGlewInit = false;
         }
 #if defined(CORE_INCLUDE_VULKAN)
     }
 #endif // defined(CORE_INCLUDE_VULKAN)
 }
 
-void core::Window::swapBuffers()
+void core::Window::swapBuffers() const
 {
 #if defined(CORE_INCLUDE_VULKAN)
     if (!this->VulknanAPI)
@@ -268,7 +274,7 @@ void core::Window::swapBuffers()
 #endif // defined(CORE_INCLUDE_VULKAN)
 }
 
-void core::Window::setIcon(const char *pathToImg)
+void core::Window::setIcon(const char *pathToImg) const
 {
     GLFWimage images[1] = {};
 
@@ -294,7 +300,7 @@ core::Size2i core::Window::getSize() const
     return Size2i(this->width, this->height);
 }
 
-float core::Window::getAspect()
+float core::Window::getAspect() const
 {
     return (float)this->getWidth() / (float)this->getHeight();
 }
@@ -376,12 +382,12 @@ void core::Window::setPos(const POSITION &pos)
     }
 }
 
-void core::Window::setSize(int width, int height)
+void core::Window::setSize(int width, int height) const
 {
     glfwSetWindowSize(this->window, width, height);
 }
 
-void core::Window::setSize(const Size2i &size)
+void core::Window::setSize(const Size2i &size) const
 {
     glfwSetWindowSize(this->window, size.width, size.height);
 }
@@ -398,7 +404,7 @@ void core::Window::fullScreen(bool flag)
     }
     else
     {
-        if (this->flagGladInit)
+        if (this->flagGlewInit)
         {
             this->width = this->saveWidth;
             this->height = this->saveHeight;
@@ -406,7 +412,7 @@ void core::Window::fullScreen(bool flag)
 
         this->resetMonitor();
 
-        if (this->flagGladInit)
+        if (this->flagGlewInit)
         {
             this->setPos(this->posX, this->posY);
         }
@@ -418,7 +424,7 @@ double core::Window::getDeltaTime() const
     return this->deltaTime;
 }
 
-void core::Window::close()
+void core::Window::close() const
 {
     glfwSetWindowShouldClose(this->window, true);
 }
@@ -434,4 +440,9 @@ void core::Window::update()
     this->time = glfwGetTime();
 
     this->event->update();
+}
+
+void core::Window::setTitle(std::string title) const
+{
+    glfwSetWindowTitle(window, title.c_str());
 }

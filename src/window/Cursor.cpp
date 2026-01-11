@@ -4,7 +4,7 @@
 
 #include "Cursor.hpp"
 #include "../config.hpp"
-#include "../file/image.hpp"
+#include "../loaders/image.hpp"
 #include "../util/Coders.hpp"
 #include "../util/console.hpp"
 #include "Window.hpp"

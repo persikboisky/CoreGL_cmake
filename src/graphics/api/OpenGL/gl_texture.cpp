@@ -5,6 +5,7 @@
 #include "gl_texture.hpp"
 #include "../../../util/Coders.hpp"
 #include "../../../util/console.hpp"
+#include "../../../config.hpp"
 #include <GL/glew.h>
 #include <format>
 #include <iostream>
@@ -13,7 +14,7 @@ namespace core
 {
 	namespace opengl
 	{
-		Texture::Texture(const TextureInfo& info)
+		Texture::Texture(const TextureCreateInfo& info) : id(0), unit(0)
 		{
 		    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 			glGenTextures(1, &this->id);
@@ -33,45 +34,46 @@ namespace core
 		        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		    }
 
-			GLint format;
-			if (info.channels == 1)
-			{
-			    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-			    format = GL_RED;
-			}
-			else if (info.channels == 3)
-			{
-			    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-			    format = GL_RGB;
-			}
-			else
-			    format = GL_RGBA;
-
 			glTexImage2D(
 					GL_TEXTURE_2D,
 					0,
-					format,
-					info.width,
-					info.height,
+					Convert::convertAndAlignment(info.internalFormat),
+					static_cast<int>(info.width),
+					static_cast<int>(info.height),
 					0,
-					format,
-					GL_UNSIGNED_BYTE,
+					Convert::convert(info.format),
+					info.type == IMAGE_TYPE::UNSIGNED_BYTE ? GL_UNSIGNED_BYTE : GL_FLOAT,
 					info.data);
+
+		    GLenum error = glGetError();
+		    if (error != GL_NO_ERROR)
+		    {
+		        const char* errorStr = nullptr;
+		            switch(error)
+		            {
+		            case GL_INVALID_ENUM:      errorStr = "(GL_INVALID_ENUM)"; break;
+		            case GL_INVALID_VALUE:     errorStr = "(GL_INVALID_VALUE)"; break;
+		            case GL_INVALID_OPERATION: errorStr = "(GL_INVALID_OPERATION)"; break;
+		            case GL_OUT_OF_MEMORY:     errorStr = "(GL_OUT_OF_MEMORY)"; break;
+		            default:                   break;
+		            }
+
+		        throw Coders(NONE_CODERS,
+		            std::format("Error[core::opengl::Texture]: {}", error));
+		    }
 
 		    if (info.useMipmap)
 		        glGenerateMipmap(GL_TEXTURE_2D);
 
 			this->unBind();
 
-		    if (info.debugInfo)
+		    if (CORE_INFO)
 		    {
 		        console::printTime();
 		        std::cout << std::format(
-		            "OK: create texture id = {}, width = {}, height = {}, channels = {}",
-		            this->id, info.width, info.height, info.channels) << std::endl;
+		            "OK: create texture id = {}, width = {}, height = {}",
+		            this->id, info.width, info.height) << std::endl;
 		    }
-
-		    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 		}
 
 		Texture::~Texture()
@@ -79,17 +81,17 @@ namespace core
 			glDeleteTextures(1, &this->id);
 		}
 
-		Texture Texture::create(const TextureInfo& info)
+		Texture Texture::create(const TextureCreateInfo& info)
 		{
 			return Texture(info);
 		}
 
-		Texture *Texture::ptrCreate(const TextureInfo& info)
+		Texture *Texture::ptrCreate(const TextureCreateInfo& info)
 		{
 			return new Texture(info);
 		}
 
-		void Texture::bind(unsigned int unit) const
+		void Texture::bind(unsigned int unit)
 		{
 			try
 			{
@@ -108,17 +110,14 @@ namespace core
 			{
 				throw Coders(17);
 			}
+
+		    this->unit = unit;
 		}
 
-		void Texture::unBind() const
+		void Texture::unBind()
 		{
 			glBindTexture(GL_TEXTURE_2D, 0);
+		    unit = 0;
 		}
-
-		unsigned int Texture::getId() const
-		{
-			return this->id;
-		}
-
 	} // opengl
 } // core

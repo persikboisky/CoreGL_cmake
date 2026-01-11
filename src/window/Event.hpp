@@ -67,9 +67,6 @@ namespace core
         /// @return true - в момент нажатия, false - в остальных случаях
         [[nodiscard]] bool downKey(const core::KEY& key);
 
-        /// @brief
-        /// @param key 
-        /// @return 
         [[nodiscard]] bool upKey(const core::KEY& key);
         [[nodiscard]] bool stateMouseKey(const core::MOUSE_KEY& key);
         [[nodiscard]] bool downMouseKey(const core::MOUSE_KEY& key);

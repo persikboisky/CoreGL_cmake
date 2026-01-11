@@ -1,43 +1,48 @@
 //
-// Created by kisly on 11.09.2025.
+// Created by kisly on 23.12.2025.
 //
 
-#ifndef RENDER_VK_VERTEXBUFFER_HPP
-#define RENDER_VK_VERTEXBUFFER_HPP
+#ifndef VK_VERTEXBUFFER_HPP
+#define VK_VERTEXBUFFER_HPP
 
 #include "../../../modules.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
-#include <vulkan/vulkan.h>
+
+typedef unsigned long long uint64_t;
 
 namespace core
 {
-	namespace vulkan
-	{
-		struct VertexBufferInfo
-		{
-			class Device* ptrDevice = nullptr;
-			void* data = nullptr;
-			uint64_t size = 0;
-		};
+namespace vulkan
+{
+    class Buffer;
+    class Device;
 
-		class VertexBuffer
-		{
-		protected:
-			friend class CommandBuffer;
+    struct VertexBufferCreateInfo
+    {
+        Device* ptrDevice = nullptr;
+        void* data = nullptr;
+        uint64_t size = 0;
+    };
 
-		private:
-			class Buffer* buffer = nullptr;
+    class VertexBuffer
+    {
+    protected:
+        friend class CommandBuffer;
 
-			VertexBuffer(const VertexBufferInfo& info);
+    private:
+        Buffer* ptrBuffer = nullptr;
 
-		public:
-			~VertexBuffer();
+      explicit VertexBuffer(const VertexBufferCreateInfo& info);
 
-			static VertexBuffer create(const VertexBufferInfo& info);
-			static VertexBuffer *ptrCreate(const VertexBufferInfo& info);
-		};
-	} // vulkan
-} // core
+    public:
+        ~VertexBuffer();
 
-#endif //defined(CORE_INCLUDE_VULKAN)
-#endif //RENDER_VK_VERTEXBUFFER_HPP
+        static VertexBuffer create(const VertexBufferCreateInfo& info);
+        static VertexBuffer* ptrCreate(const VertexBufferCreateInfo& info);
+    };
+
+} // namespace vulkan
+} // namespace core
+
+#endif // defined(CORE_INCLUDE_VULKAN)
+#endif // VK_VERTEXBUFFER_HPP

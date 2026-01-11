@@ -3,7 +3,7 @@
 //
 
 #include "aBuffer.hpp"
-#include "../file/wav.hpp"
+#include "../loaders/wav.hpp"
 #include "../util/Coders.hpp"
 #include <al.h>
 #include <iostream>

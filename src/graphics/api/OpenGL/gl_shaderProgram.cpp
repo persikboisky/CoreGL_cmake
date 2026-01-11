@@ -4,7 +4,7 @@
 
 #include "gl_shaderProgram.hpp"
 #include "../../../config.hpp"
-#include "../../../file/code.hpp"
+#include "../../../loaders/Code.hpp"
 #include "../../../math/Matrix4.hpp"
 #include "../../../math/Vectors.hpp"
 #include "../../../types/apiTypes.hpp"
@@ -66,7 +66,7 @@ namespace core
 			GLint result = GL_FALSE;
 			int infoLogLength;
 
-			std::string code = code::load(path).getStr();
+			std::string code = Code::load(path).getStr();
 			const char* ptrCode = code.c_str();
 
 			glShaderSource(this->id, 1, &ptrCode, NULL);
@@ -213,7 +213,7 @@ namespace core
 
 		void ShaderProgram::setUniformTextureSampler2D(class core::opengl::Texture& text, const char* name) const
 		{
-			glUniform1ui(getLocateUniform(this->id, name), text.getId());
+			glUniform1ui(getLocateUniform(this->id, name), text.unit);
 		}
 
 		void ShaderProgram::setUniformRGB(const color::RGB& color, const char* name, bool normalize) const
@@ -257,5 +257,10 @@ namespace core
 						name);
 			}
 		}
+
+        void ShaderProgram::setUniform1i(int value, const char *name) const
+        {
+		    glUniform1i(getLocateUniform(this->id, name), value);
+        }
 	} // opengl
 } // core

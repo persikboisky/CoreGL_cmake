@@ -173,6 +173,71 @@ namespace core
         NEAREST_MIPMAP_LINEAR,
         LINEAR_MIPMAP_LINEAR
     };
+    enum class INDEX_TYPE : unsigned int
+    {
+        UINT8,
+        UINT16,
+        UINT32
+    };
+
+    namespace opengl
+    {
+        enum class IMAGE_INTERNAL_FORMAT : unsigned int
+        {
+            R8,
+            R16,
+            R16F,
+            R32F,
+            RG8,
+            RG16,
+            RG16F,
+            RG32F,
+            RGB8,
+            RGB16,
+            RGB16F,
+            RGB32F,
+            RGBA8,
+            RGBA16,
+            RGBA16F,
+            RGBA32F,
+            DEPTH_COMPONENT16,
+            DEPTH_COMPONENT24,
+            DEPTH24_STENCIL8,
+            DEPTH32F_STENCIL8
+        };
+        enum class IMAGE_FORMAT : unsigned int
+        {
+            RED,
+            GREEN,
+            BLUE,
+            RG,
+            RGB,
+            BGR,
+            RGBA,
+            BGRA,
+            ALPHA,
+            DEPTH_COMPONENT,
+            DEPTH_STENCIL
+        };
+        enum class IMAGE_TYPE : unsigned int {
+            UNSIGNED_BYTE,
+            FLOAT
+        };
+
+        class Convert
+        {
+        protected:
+            friend class VertexBuffer;
+            friend class Texture;
+
+        private:
+            static int convert(const TYPE& type);
+            static unsigned int convertSizeType(const TYPE& type);
+            static int convertAndAlignment(const IMAGE_INTERNAL_FORMAT& format);
+            static unsigned int convert(const IMAGE_FORMAT& format);
+        };
+    }
+
 
 #if defined(CORE_INCLUDE_VULKAN)
 	namespace vulkan
@@ -258,6 +323,17 @@ namespace core
 	        DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 	        PRESENT_SRC_KHR
 	    };
+        enum class LOAD_OP : int
+        {
+            LOAD_OP_CLEAR,
+            LOAD_OP_LOAD,
+            LOAD_OP_DONT_CARE
+        };
+        enum class STORE_OP : int
+        {
+            STORE_OP_STORE,
+            STORE_OP_DONT_CARE
+        };
 	    enum class IMAGE_ASPECT : int
 	    {
 	        COLOR,
@@ -269,24 +345,97 @@ namespace core
 	    enum class ACCESS : int
 	    {
 	        NONE,
-	        SHADER_READ,
-	        SHADER_WRITE,
-	        MEMORY_READ,
-	        MEMORY_WRITE,
-	        TRANSFER_READ,
-            TRANSFER_WRITE
+	        // Чтение
+            INDIRECT_COMMAND_READ,          // Чтение indirect buffers
+            VERTEX_ATTRIBUTE_READ,          // Чтение вершинных буферов
+            UNIFORM_READ,                   // Чтение uniform buffers
+            INPUT_ATTACHMENT_READ,          // Чтение input attachments
+            SHADER_READ,                    // Чтение в шейдере (текстуры)
+            COLOR_ATTACHMENT_READ,          // Чтение из color attachment
+            DEPTH_STENCIL_ATTACHMENT_READ,  // Чтение глубины/трафарета
+
+            // Запись
+            SHADER_WRITE_BIT,                   // Запись в шейдере (SSBO, image)
+            COLOR_ATTACHMENT_WRITE,         // Запись в color attachment
+            DEPTH_STENCIL_ATTACHMENT_WRITE, // Запись глубины/трафарета
+            TRANSFER_WRITE,                 // Запись при копировании
+
+            // Комбинированные
+            COLOR_ATTACHMENT_READ_WRITE,    // Чтение+запись color attachment
+            DEPTH_STENCIL_ATTACHMENT_READ_WRITE, // Чтение+запись глубины
+            MEMORY_READ,                    // Любое чтение из памяти
+            MEMORY_WRITE,                   // Любая запись в память
 	    };
 
 	    enum class PIPELINE_STAGE : int
 	    {
-	        NONE,
-	        TOP_OF_PIPE,
-	        TRANSFER,
-	        GEOMETRY_SHADER,
-	        VERTEX_INPUT,
-	        VERTEX_SHADER,
-	        FRAGMENT_SHADER
+            NONE,
+
+	        // Ранние стадии (вершинный пайплайн)
+	        TOP_OF_PIPE,        // Самое начало
+            DRAW_INDIRECT,      // Чтение indirect buffers
+            VERTEX_INPUT,       // Чтение вершинных буферов
+            VERTEX_SHADER,     // Вершинный шейдер
+            TESSELLATION_CONTROL_SHADER,
+            TESSELLATION_EVALUATION_SHADER,
+            GEOMETRY_SHADER,
+
+            // Фрагментный пайплайн
+            FRAGMENT_SHADER,   // Фрагментный шейдер
+            EARLY_FRAGMENT_TESTS,// Ранние тесты глубины/трафарета
+            LATE_FRAGMENT_TESTS, // Поздние тесты глубины/трафарета
+            COLOR_ATTACHMENT_OUTPUT,// Запись в color attachment
+
+            // Поздние стадии
+            BOTTOM_OF_PIPE,     // Самое окончание
+            TRANSFER,           // Копирование данных
+            COMPUTE_SHADER,     // Вычислительный шейдер
+
+            // Сокращения (битовые маски нескольких стадий)
+            ALL_GRAPHICS,       // Все графические стадии
+            ALL_COMMANDS,       // Все стадии
 	    };
+
+        enum class PIPELINE_BIND_POINT : int
+        {
+            GRAPHICS,
+            COMPUTER
+        };
+
+        enum class SAMPLES : int
+        {
+            _1BIT,
+            _2BIT,
+            _4BIT,
+            _8BIT,
+            _16BIT,
+            _32BIT,
+            _64BIT
+        };
+
+        enum class IMAGE_TYPE : int
+        {
+            IMG_1D,
+            IMG_2D,
+            IMG_3D
+        };
+
+        enum class IMAGE_USAGE : int
+        {
+            SAMPLED,
+            TRANSFER_DST,
+            TRANSFER_SRC,
+            SAMPLED_TRANSFER_DST,
+            SAMPLED_TRANSFER_SRC,
+            DEPTH_STENCIL_ATTACHMENT
+        };
+
+        enum class DESCRIPTOR_TYPE : int
+        {
+            UNIFORM_BUFFER,
+            UNIFORM_BUFFER_DYNAMIC,
+            COMBINED_IMAGE_SAMPLER
+        };
 
 	    class Convert
 	    {
@@ -295,10 +444,16 @@ namespace core
 	        friend class RenderPass;
 	        friend class CommandBuffer;
 	        friend class ImageView;
+	        friend class Image;
+	        friend class PhysicalDeviceInfo;
+	        friend class SwapChain;
+	        friend class DescriptorPool;
+	        friend class DescriptorSetLayout;
 
 	    private:
 	        static VkFormat convert(const FORMAT_VARIABLE& format);
-	        static VkPrimitiveTopology convert(const vulkan::PRIMITIVE& primitive);
+	        static VkFormat convert(const IMAGE_FORMAT& format);
+	        static VkPrimitiveTopology convert(const PRIMITIVE& primitive);
 	        static VkPolygonMode convert(const POLYGON_MODE& mode);
 	        static VkCullModeFlags convert(const CULL_MODE& mode);
 	        static VkFrontFace convert(const FRONT_FACE& face);
@@ -307,6 +462,13 @@ namespace core
 	        static VkImageAspectFlags convert(const IMAGE_ASPECT& aspect);
 	        static VkAccessFlags convert(const ACCESS& access);
 	        static VkPipelineStageFlags convert(const PIPELINE_STAGE& stage);
+	        static VkIndexType convert(const INDEX_TYPE& type);
+	        static VkAttachmentLoadOp convert(const LOAD_OP& op);
+	        static VkAttachmentStoreOp convert(const STORE_OP& op);
+	        static VkSampleCountFlagBits convert(const SAMPLES& samples);
+	        static VkPipelineBindPoint convert(const PIPELINE_BIND_POINT& bind_point);
+	        static VkImageUsageFlags convert(const IMAGE_USAGE& usage);
+	        static VkDescriptorType convert(const DESCRIPTOR_TYPE& type);
 	    };
 	}
 #endif //defined(CORE_INCLUDE_VULKAN)

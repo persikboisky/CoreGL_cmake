@@ -5,18 +5,24 @@
 #ifndef GL_VERTEXBUFFER_HPP
 #define GL_VERTEXBUFFER_HPP
 
+#include "../../../types/apiTypes.hpp"
+
 namespace core
 {
-	enum class TYPE : int;
+    namespace model
+    {
+        class OBJ;
+        class FBX;
+    }
 
 	namespace opengl
 	{
-		struct VertexBufferInfo
+		struct VertexBufferCreateInfo
 		{
-			void *ptrArray = nullptr;
-			unsigned long long sizeOfByte = 0;
+			const void *ptrArray = nullptr;
+			int sizeOfByte = 0;
 			unsigned int countElementToVertex = 0;
-			TYPE valueType;
+			TYPE valueType = TYPE::FLOAT;
 		};
 
 		class VertexBuffer
@@ -29,7 +35,7 @@ namespace core
 			unsigned int sizeOfByte = 0;
 			TYPE type;
 
-			VertexBuffer(const VertexBufferInfo& info);
+            explicit VertexBuffer(const VertexBufferCreateInfo& info);
 
 		public:
 			~VertexBuffer();
@@ -37,12 +43,18 @@ namespace core
 			/// @brief создаёт вершинный буфер
 			/// @param info объект структуры opengl::VertexBufferInfo
 			/// @return объект класса opengl::VertexBuffer
-			static VertexBuffer create(const VertexBufferInfo& info);
+			static VertexBuffer create(const VertexBufferCreateInfo& info);
 
 			/// @brief создаёт вершинный буфер
 			/// @param info объект структуры opengl::VertexBufferInfo
 			/// @return указатель на объект класса opengl::VertexBuffer
-			static VertexBuffer *ptrCreate(const VertexBufferInfo& info);
+			static VertexBuffer *ptrCreate(const VertexBufferCreateInfo& info);
+
+		    static VertexBuffer create(const model::OBJ& obj, unsigned int indexMesh);
+		    static VertexBuffer *ptrCreate(const model::OBJ& obj, unsigned int indexMesh);
+
+		    static VertexBuffer create(const model::FBX& fbx, unsigned int indexMesh);
+		    static VertexBuffer *ptrCreate(const model::FBX& fbx, unsigned int indexMesh);
 
 			/// @brief прикпрепляет буфер
 			void bind() const;

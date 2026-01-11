@@ -5,28 +5,31 @@
 #include "gl_vertexBuffer.hpp"
 #include "../../../types/apiTypes.hpp"
 #include "../../../util/Coders.hpp"
+#include "../../../loaders/models/m_OBJ.hpp"
+#include "../../../loaders/models/m_FBX.hpp"
 #include <GL/glew.h>
+#include <vector>
 
 namespace core
 {
 	namespace opengl
 	{
-		VertexBuffer::VertexBuffer(const VertexBufferInfo& info) :
+		VertexBuffer::VertexBuffer(const VertexBufferCreateInfo& info) :
 			type(info.valueType), countElementToVertex(info.countElementToVertex)
 		{
 			this->sizeOfByte = info.sizeOfByte;
 
-			glGenVertexArrays(1, &this->VAO);
-			glGenBuffers(1, &this->VBO);
+			glGenVertexArrays(1, &VAO);
+			glGenBuffers(1, &VBO);
 
-			if (this->VAO == -1)
+			if (VAO == -1)
 			{
-				throw Coders(13);
+				throw Coders(CODE_FAILED_CREATE_VAO);
 			}
 
 			if (VBO == -1)
 			{
-				throw Coders(14);
+				throw Coders(CODE_FAILED_CREATE_VBO);
 			}
 
 			this->bind();
@@ -38,21 +41,7 @@ namespace core
 					GL_STATIC_DRAW);
 			this->unBind();
 
-			switch (info.valueType)
-			{
-			case TYPE::INT:
-				this->byteToElement = sizeof(GLint);
-				break;
-			case TYPE::UNSIGNED_INT:
-				this->byteToElement = sizeof(GLuint);
-				break;
-			case TYPE::FLOAT:
-				this->byteToElement = sizeof(GLfloat);
-				break;
-			case TYPE::DOUBLE:
-				this->byteToElement = sizeof(GLdouble);
-				break;
-			}
+            byteToElement = Convert::convertSizeType(info.valueType);
 		}
 
 		VertexBuffer::~VertexBuffer()
@@ -61,17 +50,57 @@ namespace core
 			glDeleteBuffers(1, &this->VBO);
 		}
 
-		VertexBuffer VertexBuffer::create(const VertexBufferInfo& info)
+		VertexBuffer VertexBuffer::create(const VertexBufferCreateInfo& info)
 		{
 			return VertexBuffer(info);
 		}
 
-		VertexBuffer* VertexBuffer::ptrCreate(const VertexBufferInfo& info)
+		VertexBuffer* VertexBuffer::ptrCreate(const VertexBufferCreateInfo& info)
 		{
 			return new VertexBuffer(info);
 		}
 
-		void VertexBuffer::bind() const
+        VertexBuffer VertexBuffer::create(const model::OBJ &obj, unsigned int indexMesh)
+        {
+		    VertexBufferCreateInfo info = {};
+		    info.valueType = TYPE::FLOAT;
+		    info.ptrArray = obj.meshes[indexMesh].vertices.data();
+		    info.countElementToVertex = 8;
+            info.sizeOfByte = obj.meshes[indexMesh].vertices.size() * sizeof(obj.meshes[indexMesh].vertices[0]);
+		    return VertexBuffer(info);
+        }
+
+        VertexBuffer *VertexBuffer::ptrCreate(const model::OBJ &obj, unsigned int indexMesh)
+        {
+		    VertexBufferCreateInfo info = {};
+		    info.valueType = TYPE::FLOAT;
+		    info.ptrArray = obj.meshes[indexMesh].vertices.data();
+		    info.countElementToVertex = 8;
+		    info.sizeOfByte = obj.meshes[indexMesh].vertices.size() * sizeof(obj.meshes[indexMesh].vertices[0]);
+		    return new VertexBuffer(info);
+        }
+
+        VertexBuffer VertexBuffer::create(const model::FBX &fbx, unsigned int indexMesh)
+        {
+		    VertexBufferCreateInfo info = {};
+		    info.valueType = TYPE::FLOAT;
+		    info.ptrArray = fbx.meshes[indexMesh].vertices.data();
+		    info.countElementToVertex = 8;
+		    info.sizeOfByte = fbx.meshes[indexMesh].vertices.size() * sizeof(fbx.meshes[indexMesh].vertices[0]);
+		    return VertexBuffer(info);
+        }
+
+        VertexBuffer *VertexBuffer::ptrCreate(const model::FBX &fbx, unsigned int indexMesh)
+        {
+		    VertexBufferCreateInfo info = {};
+		    info.valueType = TYPE::FLOAT;
+		    info.ptrArray = fbx.meshes[indexMesh].vertices.data();
+		    info.countElementToVertex = 8;
+		    info.sizeOfByte = fbx.meshes[indexMesh].vertices.size() * sizeof(fbx.meshes[indexMesh].vertices[0]);
+		    return new VertexBuffer(info);
+        }
+
+        void VertexBuffer::bind() const
 		{
 			try
 			{
@@ -79,7 +108,7 @@ namespace core
 			}
 			catch (...)
 			{
-				throw Coders(12, "id = " + std::to_string(this->VAO));
+				throw Coders(CODE_FAILED_BIND_VAO, "id = " + std::to_string(this->VAO));
 			}
 		}
 
@@ -90,41 +119,23 @@ namespace core
 
 		void VertexBuffer::addAttribute(unsigned int location, int nElement, int offset) const
 		{
-			int type = 0;
-			switch (this->type)
-			{
-			case TYPE::INT:
-				type = GL_INT;
-				break;
-			case TYPE::UNSIGNED_INT:
-				type = GL_UNSIGNED_INT;
-				break;
-			case TYPE::FLOAT:
-				type = GL_FLOAT;
-				break;
-			case TYPE::DOUBLE:
-				type = GL_DOUBLE;
-				break;
-			}
-
-			this->bind();
-			try
-			{
-				glVertexAttribPointer(
-						location,
-						nElement,
-						type,
-						GL_FALSE,
-						this->countElementToVertex * this->byteToElement,
-						(void*)(offset * static_cast<unsigned long long>(this->byteToElement)));
-				glEnableVertexAttribArray(location);
-				this->unBind();
-			}
-			catch (...)
-			{
-				throw Coders(15);
-			}
-			this->unBind();
+		    try
+		    {
+		        this->bind();
+		        glVertexAttribPointer(
+                        location,
+                        nElement,
+                        Convert::convert(type),
+                        GL_FALSE,
+                        this->countElementToVertex * this->byteToElement,
+                        (void*)(offset * static_cast<unsigned long long>(this->byteToElement)));
+		        glEnableVertexAttribArray(location);
+		        this->unBind();
+		    }
+		    catch (...)
+		    {
+		        throw Coders(CODE_FAILED_ADD_ATTRIBUTE_TO_VAO);
+		    }
 		}
 
 		unsigned int VertexBuffer::getSizeOfByte() const

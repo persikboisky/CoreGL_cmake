@@ -9,16 +9,29 @@
 #include <windows.h>
 #include <string>
 #include <iostream>
-#include <fcntl.h>
+
+#define NAME_SYSTEM_SIZE 30
 
 void core::console::printTime()
 {
     SYSTEMTIME st;
     GetLocalTime(&st);
-    std::cout << '[';
-    std::cout << st.wHour << ':';
-    std::cout << st.wMinute << ':';
-    std::cout << st.wSecond << "] -> ";
+    std::cout << '[' << st.wYear << '/' << st.wMonth << '/' << st.wDay << ']';
+    std::cout << '[' << st.wHour << ':' << st.wMinute << ':' << st.wSecond << '.';
+    if (9 < st.wMilliseconds && st.wMilliseconds < 100)
+        std::cout << "0" << st.wMilliseconds << "] -> ";
+    else if (st.wMilliseconds < 10)
+        std::cout << "00" << st.wMilliseconds << "] -> ";
+    else
+        std::cout << st.wMilliseconds << "] -> ";
+}
+
+void core::console::printMassage(std::string system, std::string massage)
+{
+    system += std::string(NAME_SYSTEM_SIZE, ' ');
+    system.erase(NAME_SYSTEM_SIZE);
+    printTime();
+    std::cout << "[func: " + system + "] " << massage << std::endl;
 }
 
 void core::console::clear()

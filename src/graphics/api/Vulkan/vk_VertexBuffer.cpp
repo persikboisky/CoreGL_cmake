@@ -1,83 +1,69 @@
 //
-// Created by kisly on 11.09.2025.
+// Created by kisly on 23.12.2025.
 //
 
-#include <iostream>
 #include "vk_VertexBuffer.hpp"
 #if defined(CORE_INCLUDE_VULKAN)
-#include "../../../util/Coders.hpp"
-#include "vk_Buffer.hpp"
-#include "vk_CommandBuffer.hpp"
-#include "vk_CommandPool.hpp"
-#include "vk_Device.hpp"
-#include "vk_PhysicalDevices.hpp"
-#include "vk_Queue.hpp"
+#include "core/vk_Buffer.hpp"
+#include "core/vk_CommandBuffer.hpp"
+#include "core/vk_CommandPool.hpp"
+#include "core/vk_Device.hpp"
+#include "core/vk_PhysicalDevices.hpp"
+#include "core/vk_Queue.hpp"
 
-namespace core
+namespace core::vulkan
 {
-	namespace vulkan
-	{
-		VertexBuffer::VertexBuffer(const VertexBufferInfo& info)
-		{
-			BufferCreateInfo bufferCreateInfo = {};
-			bufferCreateInfo.ptrDevice = info.ptrDevice;
-			bufferCreateInfo.typeBuffer = TYPE_USAGE_BUFFER::TRANSFER_SRC;
-			bufferCreateInfo.exclusiveMode = true;
-			bufferCreateInfo.typeMemory = TYPE_MEMORY::HOST;
-			bufferCreateInfo.data = info.data;
-			bufferCreateInfo.size = info.size;
-			Buffer* ptrStagingBuffer = Buffer::ptrCreate(bufferCreateInfo);
+    VertexBuffer::VertexBuffer(const VertexBufferCreateInfo& info)
+    {
+        BufferCreateInfo bufferCreateInfo = {};
+        bufferCreateInfo.data = info.data;
+        bufferCreateInfo.size = info.size;
+        bufferCreateInfo.exclusiveMode = true;
+        bufferCreateInfo.ptrDevice = info.ptrDevice;
+        bufferCreateInfo.queueFamilyIndices = {};
+        bufferCreateInfo.typeBuffer = TYPE_USAGE_BUFFER::TRANSFER_SRC;
+        bufferCreateInfo.typeMemory = TYPE_MEMORY::HOST;
+        Buffer buffer = Buffer::create(bufferCreateInfo);
 
-			bufferCreateInfo.typeBuffer = TYPE_USAGE_BUFFER::VERTEX_TRANSFER_DST;
-			bufferCreateInfo.typeMemory = TYPE_MEMORY::DEVICE_LOCAL;
-			this->buffer = Buffer::ptrCreate(bufferCreateInfo);
+        bufferCreateInfo.typeBuffer = TYPE_USAGE_BUFFER::VERTEX_TRANSFER_DST;
+        bufferCreateInfo.typeMemory = TYPE_MEMORY::DEVICE_LOCAL;
+        ptrBuffer = Buffer::ptrCreate(bufferCreateInfo);
 
-			Queue *queue = Queue::ptrGet(
-			    *info.ptrDevice,
-			    PhysicalDeviceInfo(info.ptrDevice->physicalDevice).getQueueFamilyIndex(OPERATES_TYPE::TRANSFER),
-			    0);
+        CommandPoolCreateInfo commandPoolInfo = {};
+        commandPoolInfo.ptrDevice = info.ptrDevice;
+        commandPoolInfo.flagAllowResetBuffer = false;
+        commandPoolInfo.queueFamilyIndex =
+            PhysicalDeviceInfo(info.ptrDevice->physicalDevice).getQueueFamilyIndex(OPERATES_TYPE::TRANSFER);
+        CommandPool commandPool = CommandPool::create(commandPoolInfo);
+        CommandBuffer commandBuffer = CommandBuffer::create(commandPool);
 
-			CommandPoolInfo commandPoolInfo = {};
-			commandPoolInfo.ptrDevice = info.ptrDevice;
-			// commandPoolInfo.queueFamilyIndex = info.ptrDevice->getQueueFamilyIndex(TypeFamilyQueue::GRAPHICS);
-			commandPoolInfo.flagAllowResetBuffer = false;
-			CommandPool *pool = CommandPool::ptrCreate(commandPoolInfo);
-			CommandBuffer *cmd = CommandBuffer::ptrCreate(*pool);
+        commandBuffer.begin();
+        commandBuffer.copyBuffer(&buffer, ptrBuffer, info.size);
+        commandBuffer.end();
 
-			VkCommandBufferBeginInfo beginInfo = {};
-			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-			vkBeginCommandBuffer(cmd->commandBuffer, &beginInfo);
+        SubmitInfo submitInfo = {};
+        submitInfo.vecPtrCommandBuffer = {&commandBuffer};
 
-			cmd->copyBuffer(ptrStagingBuffer, this->buffer, info.size);
+        Queue queue = Queue::get(*info.ptrDevice, commandPoolInfo.queueFamilyIndex, 0);
+        queue.submit(submitInfo);
+        queue.wait();
+    }
 
-			SubmitInfo submitInfo = {};
-			submitInfo.vecPtrCommandBuffer = {cmd};
-			cmd->end();
-			queue->submit(submitInfo);
-			queue->wait();
+    VertexBuffer::~VertexBuffer()
+    {
+        delete ptrBuffer;
+    }
 
-			delete cmd;
-			delete pool;
-			delete queue;
-			delete ptrStagingBuffer;
-		}
+    VertexBuffer VertexBuffer::create(const VertexBufferCreateInfo &info)
+    {
+        return VertexBuffer(info);
+    }
 
-		VertexBuffer::~VertexBuffer()
-		{
-			delete buffer;
-		}
+    VertexBuffer *VertexBuffer::ptrCreate(const VertexBufferCreateInfo &info)
+    {
+        return new VertexBuffer(info);
+    }
 
-		VertexBuffer VertexBuffer::create(const VertexBufferInfo& info)
-		{
-			return VertexBuffer(info);
-		}
+} // namespace core::vulkan
 
-		VertexBuffer* VertexBuffer::ptrCreate(const VertexBufferInfo& info)
-		{
-			return new VertexBuffer(info);
-		}
-	} // vulkan
-} // core
-
-#endif //defined(CORE_INCLUDE_VULKAN)
+#endif // defined(CORE_INCLUDE_VULKAN)

@@ -7,6 +7,7 @@
 
 #include "../modules.hpp"
 #include "../types/apiTypes.hpp"
+#include <string>
 
 struct GLFWwindow;
 struct GLFWmonitor;
@@ -23,7 +24,7 @@ namespace core
     };
 
     /// @brief структура описывающая параметры для создания окна
-    struct WindowInfo
+    struct WindowCreateInfo
     {
         /// @brief если выключен vulkan, то этот указатель указывает н аобъект структуры core::WindowApiGlInfo
         WindowApiGlInfo* ptrApiGlInfo = nullptr;
@@ -72,10 +73,11 @@ namespace core
     {
     protected:
         friend class CustomCursor;
+        friend class luaWindow;
 
     private:
-        GLFWwindow *window;
-        static bool flagGladInit;
+        GLFWwindow *window = nullptr;
+        bool flagGlewInit = true;
 
         int width;
         int height;
@@ -100,11 +102,11 @@ namespace core
         void getSizeWindow();
         void Init();
 
-        explicit Window(const WindowInfo &winInfo = {});
+        explicit Window(const WindowCreateInfo &winInfo = {});
         Window(int width, int height, const char *title, bool resizable, bool vkAPI);
 
-        void setMonitor(Monitor& monitor);
-        void resetMonitor();
+        void setMonitor(Monitor& monitor) const;
+        void resetMonitor() const;
 
     public:
         /// @brief указатель на объект событий данного окна
@@ -121,7 +123,8 @@ namespace core
         /// @brief функйция создания окна
         /// @param winInfo объект структуры core::WindowInfo
         /// @return объект класса core::Window
-        [[nodiscard]] static Window create(const WindowInfo &winInfo = {});
+        static Window create(const WindowCreateInfo &winInfo = {});
+        static Window *ptrCreate(const WindowCreateInfo &winInfo = {});
 
         /// @brief функйция создания окна
         /// @param width ширина окна
@@ -130,12 +133,12 @@ namespace core
         /// @param resizable разрешить изменять размер окна
         /// @param vkAPI режим vulkan(opengl не работает в этом режиме для данного окна)
         /// @return объект класса core::Window
-        [[nodiscard]] static Window create(int width, int height, const char *title = "", bool resizable = false, bool vkAPI = false);
-
+        static Window create(int width, int height, const char *title = "", bool resizable = false, bool vkAPI = false);
+        static Window *ptrCreate(int width, int height, const char *title = "", bool resizable = false, bool vkAPI = false);
         
         /// @brief проверяет является ли окно контекстом(работает только когда выключен vulkan)
         /// @return флаг
-        [[nodiscard]] bool isContext();
+        [[nodiscard]] bool isGlContext() const;
 
         /// @brief удаляет окно и все его ресурсы
         ~Window();
@@ -144,11 +147,11 @@ namespace core
         void setGlContext();
 
         /// @brief сменяет буферы кадра встроенные в окно(работает только когда выключен vulkan)
-        void swapBuffers();
+        void swapBuffers() const;
 
         /// @brief устанавливает иконку
         /// @param pathToImg путь к иконке (форматы: JPEG, PNG, TGA, BMP, PSD, GIF (без анимации), HDR, PIC, PNM)
-        void setIcon(const char *pathToImg);
+        void setIcon(const char *pathToImg) const;
 
         /// @brief получает ширину окна
         /// @return ширина
@@ -164,7 +167,7 @@ namespace core
 
         /// @brief получает коэффициент соотношение сторон
         /// @return коэффициент
-        [[nodiscard]] float getAspect();
+        [[nodiscard]] float getAspect() const;
 
         /// @brief включает вертикальную синхронизация(работает только когда выключен vulkan)
         /// @param flag влаг
@@ -186,11 +189,11 @@ namespace core
         /// @brief устанавливает размер окна
         /// @param width ширина
         /// @param height высота
-        void setSize(int width, int height);
+        void setSize(int width, int height) const;
 
         /// @brief устанавливает размер окна
         /// @param size объект структуры core::Size2i
-        void setSize(const struct Size2i &size);
+        void setSize(const struct Size2i &size) const;
 
         /// @brief устанавливает или выключает полноэкранный режим
         /// @param flag флаг
@@ -201,10 +204,12 @@ namespace core
         [[nodiscard]] double getDeltaTime() const;
 
         /// @brief создаёт сигнал на закрытие окна(окно не закрывает)
-        void close();
+        void close() const;
 
-        /// @brief обновляет все состовляющее объекта окна
+        /// @brief обновляет все составляющее объекта окна
         void update();
+
+        void setTitle(std::string title) const;
     };
 }
 

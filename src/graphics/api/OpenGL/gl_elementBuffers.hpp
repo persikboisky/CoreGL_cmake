@@ -7,6 +7,12 @@
 
 namespace core
 {
+    namespace model
+    {
+        class OBJ;
+        class FBX;
+    }
+
 	namespace opengl
 	{
 		/// @brief буфер индексов
@@ -16,22 +22,27 @@ namespace core
 			unsigned int id;
 			unsigned int countVertex = 0;
 
-			ElementBuffer(unsigned int *array, unsigned int sizeOfByte);
+			ElementBuffer(const void *array, unsigned int sizeOfByte);
 
 		public:
 			~ElementBuffer();
 
-			/// @brief создаёт идексный буфер
+			/// @brief создаёт индексный буфер
 			/// @param array указатель на массив индексов
 			/// @param sizeOfByte размер массива в байтах
 			/// @return объект класса opengl::ElementBuffers
-			static ElementBuffer create(unsigned int *array, unsigned int sizeOfByte);
+			static ElementBuffer create(const void *array, unsigned int sizeOfByte);
 
-			/// @brief создаёт идексный буфер
+			/// @brief создаёт индексный буфер
 			/// @param array указатель на массив индексов
 			/// @param sizeOfByte размер массива в байтах
 			/// @return указатель на объект класса opengl::ElementBuffers
-			static ElementBuffer* ptrCreate(unsigned int *array, unsigned int sizeOfByte);
+			static ElementBuffer* ptrCreate(const void *array, unsigned int sizeOfByte);
+
+		    static ElementBuffer create(const model::OBJ& obj, unsigned int indexMesh);
+		    static ElementBuffer* ptrCreate(const model::OBJ& obj, unsigned int indexMesh);
+		    static ElementBuffer create(const model::FBX& fbx, unsigned int indexMesh);
+		    static ElementBuffer* ptrCreate(const model::FBX& fbx, unsigned int indexMesh);
 
 			/// @brief прикрепляет буфер индексов
 			void bind() const;

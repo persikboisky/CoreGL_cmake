@@ -6,6 +6,7 @@
 #include "console.hpp"
 #include <iostream>
 #include <string>
+#include <termcolor.hpp>
 #if defined(CORE_INCLUDE_VULKAN)
 #include <vulkan/vulkan.h>
 #endif //defined(CORE_INCLUDE_VULKAN)
@@ -26,7 +27,7 @@ const std::string INFO_CODERS[] = {
         "FAILED_LOCATE_UNIFORM_VARIABLE",       // 11
         "FAILED_BIND_VAO",                      // 12
         "FAILED_CREATE_VAO",                    // 13
-        "FAILED_CREATE_VBO_FOR_VAO",            // 14
+        "FAILED_CREATE_VBO",                    // 14
         "FAILED_ADD_ATTRIBUTE_TO_VAO",          // 15
         "FAILED_CREATE_TEXTURE",                // 16
         "FAILED_BIND_TEXTURE",                  // 17
@@ -65,7 +66,7 @@ const std::string INFO_CODERS[] = {
         "VK_FAILED_TO_CREATE_DEPTH_IMAGE",             // 50
         "VK_FAILED_TO_ALLOCATE_DEPTH_IMAGE_MEMORY",    // 51
         "ASSIMP_FAILED_LOAD_FBX_MODEL(s)",             // 52
-        ""
+        "FAILED_PARSING_JSON"                           // 53
 };
 
 core::Coders::Coders(int codeError, std::string addInfo)
@@ -91,9 +92,9 @@ std::string core::Coders::getInfo()
 void core::Coders::print()
 {
     console::printTime();
-    std::cout << "code: " << this->getCode() << std::endl;
+    std::cout << termcolor::red << "code: " << this->getCode() << std::endl;
     console::printTime();
-    std::cout << this->getInfo() << std::endl;
+    std::cout << termcolor::red << this->getInfo() << std::endl;
 }
 
 #if defined(CORE_INCLUDE_VULKAN)

@@ -3,11 +3,13 @@
 //
 
 #include "aDevice.hpp"
+
 #include "../config.hpp"
 #include "../util/Coders.hpp"
 #include "../util/console.hpp"
+#include "alext.h"
+#include <AL/al.h>
 #include <AL/alc.h>
-#include <AL\al.h>
 #include <fcntl.h>
 #include <iostream>
 #include <string>

@@ -5,6 +5,8 @@
 #ifndef CONSOLE_HPP
 #define CONSOLE_HPP
 
+#include <iostream>
+
 namespace core
 {
     struct Pos2i;
@@ -22,6 +24,7 @@ namespace core
     namespace console
     {
         void printTime();
+        void printMassage(std::string system, std::string massage);
         void clear();
 
         void setPosCursor(int x, int y);

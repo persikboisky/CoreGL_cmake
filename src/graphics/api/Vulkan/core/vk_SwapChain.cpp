@@ -1,0 +1,182 @@
+//
+// Created by kisly on 04.09.2025.
+//
+
+#include "vk_SwapChain.hpp"
+#if defined(CORE_INCLUDE_VULKAN)
+#include "../../../../util/Coders.hpp"
+#include "vk_Sync.hpp"
+#include "vk_PhysicalDevices.hpp"
+#include "vk_Device.hpp"
+#include "vk_Surface.hpp"
+#include "vk_Image.hpp"
+#include <vector>
+
+namespace core
+{
+	namespace vulkan
+	{
+		SwapChain::SwapChain(const SwapChainCreateInfo& info) : ptrDevice(&info.ptrDevice->device)
+		{
+			VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
+			swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+			swapchainCreateInfo.surface = info.ptrSurface->surface;
+			swapchainCreateInfo.flags = 0;
+			swapchainCreateInfo.pNext = nullptr;
+			swapchainCreateInfo.presentMode = info.V_sync ? VK_PRESENT_MODE_FIFO_KHR : VK_PRESENT_MODE_IMMEDIATE_KHR;
+			swapchainCreateInfo.preTransform = info.ptrDevice->surfaceCapabilitiesFormat.currentTransform;
+			swapchainCreateInfo.minImageCount = info.countImage;
+			swapchainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+			swapchainCreateInfo.imageFormat = Convert::convert(info.imageFormat);
+			swapchainCreateInfo.imageExtent = info.ptrDevice->surfaceCapabilitiesFormat.currentExtent;
+			swapchainCreateInfo.clipped = info.clipped ? VK_TRUE : VK_FALSE;
+			swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
+			swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+			swapchainCreateInfo.imageArrayLayers = 1;
+			swapchainCreateInfo.imageColorSpace =
+			    PhysicalDeviceInfo(info.ptrDevice->physicalDevice).getColorSpace(*info.ptrSurface, info.imageFormat);
+			swapchainCreateInfo.pQueueFamilyIndices = info.queueFamilyIndices.data();
+			swapchainCreateInfo.queueFamilyIndexCount = info.queueFamilyIndices.size();
+
+			if (info.exclusiveMode)
+				swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+			else
+				swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+
+			VkResult result = vkCreateSwapchainKHR(
+					info.ptrDevice->device,
+					&swapchainCreateInfo,
+					nullptr,
+					&this->swapChain);
+			Coders::vulkanProcessingError(result);
+
+			uint32_t count = 0;
+			std::vector<VkImage> swapChainImages = {};
+			result = vkGetSwapchainImagesKHR(
+					*this->ptrDevice,
+					this->swapChain,
+					&count,
+					nullptr);
+			Coders::vulkanProcessingError(result);
+
+			swapChainImages.resize(count);
+			result = vkGetSwapchainImagesKHR(
+					*this->ptrDevice,
+					this->swapChain,
+					&count,
+					swapChainImages.data());
+			Coders::vulkanProcessingError(result);
+
+			this->imagesView.resize(swapChainImages.size());
+			uint32_t index = 0;
+
+			for (const VkImage& image : swapChainImages)
+			{
+			    VkImageViewCreateInfo viewInfo = {};
+			    viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+			    viewInfo.image = image;
+			    viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+			    viewInfo.format = swapchainCreateInfo.imageFormat;
+			    viewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+			    viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+			    viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+			    viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+			    viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			    viewInfo.subresourceRange.baseMipLevel = 0; // Начинаем с 0-го уровня мипмаппинга
+			    viewInfo.subresourceRange.levelCount = 1; // Сколько уровней мипмаппинга использовать
+			    viewInfo.subresourceRange.baseArrayLayer = 0; // Начинаем с 0-го слоя
+			    viewInfo.subresourceRange.layerCount = 1; // Сколько слоев использовать (1 для 2D текстур)
+
+			    this->imagesView[index] = new ImageView();
+			    this->imagesView[index]->device = nullptr;
+			    this->imagesView[index]->flagDestructor = false;
+				result = vkCreateImageView(
+						*this->ptrDevice,
+						&viewInfo,
+						nullptr,
+						&this->imagesView[index]->imageView);
+				Coders::vulkanProcessingError(result);
+				index++;
+			}
+		}
+
+		SwapChain SwapChain::create(const SwapChainCreateInfo& info)
+		{
+			return SwapChain(info);
+		}
+
+		SwapChain* SwapChain::ptrCreate(const SwapChainCreateInfo& info)
+		{
+			return new SwapChain(info);
+		}
+
+		SwapChain::~SwapChain()
+		{
+		    for (const auto& img : this->imagesView)
+		    {
+		        vkDestroyImageView(*this->ptrDevice, img->imageView, nullptr);
+		        delete img;
+		    }
+		    vkDestroySwapchainKHR(*this->ptrDevice, this->swapChain, nullptr);
+		}
+
+		uint32_t SwapChain::getIndexNextImage(const Semaphore& semaphore, uint64_t timeout) const
+        {
+			uint32_t index;
+			VkResult result = vkAcquireNextImageKHR(
+					*this->ptrDevice,
+					this->swapChain,
+					timeout,
+					semaphore.semaphore,
+					VK_NULL_HANDLE,
+					&index);
+			Coders::vulkanProcessingError(result);
+			return index;
+		}
+
+        uint32_t SwapChain::getIndexNextImage(const Fence &fence, uint64_t timeout) const
+        {
+		    uint32_t index;
+		    VkResult result = vkAcquireNextImageKHR(
+                    *this->ptrDevice,
+                    this->swapChain,
+                    timeout,
+                    VK_NULL_HANDLE,
+                    fence.fence,
+                    &index);
+		    Coders::vulkanProcessingError(result);
+		    return index;
+        }
+
+        uint32_t SwapChain::getIndexNextImage(const Semaphore &semaphore, const class Fence &fence, uint64_t timeout) const
+        {
+		    uint32_t index;
+		    VkResult result = vkAcquireNextImageKHR(
+                    *this->ptrDevice,
+                    this->swapChain,
+                    timeout,
+                    semaphore.semaphore,
+                    fence.fence,
+                    &index);
+		    Coders::vulkanProcessingError(result);
+		    return index;
+        }
+
+        uint32_t SwapChain::getCountImage() const
+        {
+		    return imagesView.size();
+        }
+
+        std::vector<ImageView*> SwapChain::getPtrImagesView()
+        {
+		    return imagesView;
+        }
+
+        IMAGE_LAYOUT SwapChain::getLayout() const
+        {
+		    return IMAGE_LAYOUT::COLOR_ATTACHMENT_OPTIMAL;
+        }
+	} // vulkan
+} // core
+
+#endif // defined(CORE_INCLUDE_VULKAN)

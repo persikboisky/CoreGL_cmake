@@ -64,13 +64,13 @@ namespace core
 			~ShaderProgram();
 
 			/// @brief создаёт шейдерную программу
-			/// @param ptrShaders массив указтелей на шейдеры
+			/// @param ptrShaders массив указателей на шейдеры
 			/// @param count кол-во шейдеров
 			/// @return объект класса ShaderProgram
 			static ShaderProgram create(Shader **ptrShaders, uint32_t count);
 
 			/// @brief создаёт шейдерную программу
-			/// @param ptrShaders массив указтелей на шейдеры
+			/// @param ptrShaders массив указателей на шейдеры
 			/// @param count кол-во шейдеров
 			/// @return указатель на объект класса ShaderProgram
 			static ShaderProgram *ptrCreate(Shader **ptrShaders, uint32_t count);
@@ -81,52 +81,54 @@ namespace core
 			/// @brief выключает шейдерную программу
 			void unUse() const;
 
-			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна бать включена)
+			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна быть включена)
 			/// @param value значение
 			/// @param name имя uniform переменной в шейдере
 			void setUniform1f(float value, const char *name) const;
 
-			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна бать включена)
+			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна быть включена)
 			/// @param vec2 значение
 			/// @param name имя uniform переменной в шейдере
 			void setUniform2f(const math::Vec2 &vec2, const char *name) const;
 
-			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна бать включена)
+			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна быть включена)
 			/// @param vec3 значение
 			/// @param name имя uniform переменной в шейдере
 			void setUniform3f(const math::Vec3 &vec3, const char *name) const;
 
-			// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна бать включена)
+			// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна быть включена)
 			/// @param vec4 значение
 			/// @param name имя uniform переменной в шейдере
 			void setUniform4f(const math::Vec4 &vec4, const char *name) const;
 
-			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна бать включена)
+			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна быть включена)
 			/// @param matrix значение
 			/// @param name имя uniform переменной в шейдере
 			void setUniformMat4(math::Mat4 matrix, const char *name) const;
 
-			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна бать включена)
+			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна быть включена)
 			/// @param sampler значение
 			/// @param name имя uniform переменной в шейдере
 			void setUniformSampler2D(unsigned int sampler, const char *name) const;
 
-			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна бать включена)
+			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна быть включена)
 			/// @param text значение
 			/// @param name имя uniform переменной в шейдере
 			void setUniformTextureSampler2D(class Texture &text, const char *name) const;
 
-			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна бать включена)
+			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна быть включена)
 			/// @param color значение
 			/// @param name имя uniform переменной в шейдере
-			/// @param normalize надо ли преобразовть цвет в диапозон [0-1]
+			/// @param normalize надо ли преобразовать цвет в диапазон [0-1]
 			void setUniformRGB(const color::RGB &color, const char *name, bool normalize = false) const;
 
-			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна бать включена)
+			/// @brief передаёт значение в uniform переменную шейдеров(шейдерная программа должна быть включена)
 			/// @param color значение
 			/// @param name имя uniform переменной в шейдере
-			/// @param normalize надо ли преобразовть цвет в диапозон [0-1]
+			/// @param normalize надо ли преобразовать цвет в диапазон [0-1]
 			void setUniformRGBA(const color::RGBA &color, const char *name, bool normalize = false) const;
+
+		    void setUniform1i(int value, const char *name) const;
 		};
 	} // opengl
 } // core
